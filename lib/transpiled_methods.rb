@@ -1,13 +1,13 @@
 module TranspiledMethods
-  def self.f_at_least( value, *args)
+  def f_at_least( value, *args)
     (value < args[0]) ? args[0] : value
   end
 
-  def self.f_at_most( value, *args)
+  def f_at_most( value, *args)
     (value < args[0]) ? value : args[0]
   end
 
-  def self.f_divided_by( value, *args)
+  def f_divided_by( value, *args)
     if args[0].is_a?( Integer)
       (value / args[0]).floor
     else
@@ -15,22 +15,26 @@ module TranspiledMethods
     end
   end
 
-  def self.f_floor( value)
+  def f_floor( value)
     if value.is_a?( String)
       value = value.to_f
     end
     value.floor
   end
 
-  def self.f_split( value, *args)
+  def f_split( value, *args)
     value.split( args[0])
   end
 
-  def self.f_times( value, *args)
+  def f_times( value, *args)
     value * args[0]
   end
 
-  def self.x( context, *args)
+  def t( thing)
+    thing.to_s
+  end
+
+  def x( context, *args)
     args.each do |arg|
       if context.is_a?( Hash)
         context = context[arg]

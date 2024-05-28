@@ -52,6 +52,14 @@ class TestTranspiler < Minitest::Test
     end
   end
 
+  def test_abs
+    fire( <<ABS)
+{{ -17 | abs }}
+{{ 4 | abs }}
+{{ "-19.86" | abs }}
+ABS
+  end
+
   def test_and_or1
     fire( <<AND_OR1)
 {% if true or false and false %}
@@ -71,6 +79,14 @@ AND_OR1
   false
 {% endif %}
 AND_OR2
+  end
+
+  def test_append
+    fire( <<APPEND)
+{{ "/my/fancy/url" | append: ".html" }}
+{% assign filename = "/index.html" %}
+{{ "website.com" | append: filename }}
+APPEND
   end
 
   def test_assign1
@@ -103,6 +119,25 @@ AT_MOST
 BREAK
   end
 
+  def test_capitalize
+    fire( <<CAPITALIZE)
+{{ "my GREAT title" | capitalize }}
+CAPITALIZE
+  end
+
+  def test_capture
+    fire( <<CAPTURE)
+{% assign favorite_food = "pizza" %}
+{% assign age = 35 %}
+
+{% capture about_me %}
+I am {{ age }} and my favorite food is {{ favorite_food }}.
+{% endcapture %}
+
+{{ about_me }}
+CAPTURE
+  end
+
   def test_case
     fire( <<CASE)
 {% case 2 %}
@@ -121,6 +156,16 @@ CASE
 CASE_ELSE
   end
 
+  def test_ceil
+    fire( <<CEIL)
+{{ "my GREAT title" | capitalize }}
+{{ 1.2 | ceil }}
+{{ 2.0 | ceil }}
+{{ 183.357 | ceil }}
+{{ "3.5" | ceil }}
+CEIL
+  end
+
   def test_comment
     fire( <<COMMENT)
 {% assign verb = "turned" %}
@@ -130,6 +175,29 @@ CASE_ELSE
 Anything you put between {% comment %} and {% endcomment %} tags
 is {{ verb }} into a comment.
 COMMENT
+  end
+
+  def test_compact
+    fire( <<COMPACT, {'items' => [{'category' => 'A'},{},{'category' => 'B'}]})
+{% assign categories = items | map: "category" | compact %}
+
+{% for category in categories %}
+- {{ category }}
+{% endfor %}
+COMPACT
+  end
+
+  def test_concat
+    fire( <<CONCAT)
+{% assign fruits = "apples, oranges, peaches" | split: ", " %}
+{% assign vegetables = "carrots, turnips, potatoes" | split: ", " %}
+
+{% assign everything = fruits | concat: vegetables %}
+
+{% for item in everything %}
+- {{ item }}
+{% endfor %}
+CONCAT
   end
 
   def test_contains1
@@ -171,6 +239,47 @@ CONTINUE
 CYCLE
   end
 
+  def test_date
+    fire( <<DATE1, {'published_at' => Time.gm(2024,5,20)})
+{{ published_at | date: "%a, %b %d, %y" }}
+DATE1
+    fire( <<DATE2)
+{{ "March 14, 2016" | date: "%b %d, %y" }}
+DATE2
+    fire( <<DATE3)
+now {{ "now" | date: "%Y-%m-%d" }}
+today {{ "today" | date: "%Y-%m-%d" }}
+DATE3
+  end
+
+  def test_decrement
+    fire( <<DECREMENT)
+{% assign var = 10 %}
+{% decrement var %}
+{% decrement var %}
+{% decrement var %}
+{{ var }}
+DECREMENT
+  end
+
+  def test_default
+    fire( <<DEFAULT)
+{{ field1 | default: 2.99 }}
+{% assign field2 = 4.99 %}
+{{ field2 | default: 2.99 }}
+{% assign field3 = "" %}
+{{ field3 | default: 2.99 }}
+{% assign field4 = false %}
+{{ field4 | default: true, allow_false: true }}
+DEFAULT
+  end
+
+  def test_downcase
+    fire( <<DOWNCASE)
+{{ "Parker Moore" | downcase }}
+DOWNCASE
+  end
+
   def test_divided_by
     fire( <<DIVIDED_BY)
 {{ 16 | divided_by: 4 }}
@@ -191,6 +300,29 @@ Empty array
 Non-existing object
 {% endif %}
 EMPTY
+  end
+
+  def test_escape
+    fire( <<ESCAPE)
+{{ "Have you read 'James & the Giant Peach'?" | escape }}
+ESCAPE
+  end
+
+  def test_escape_once
+    fire( <<ESCAPE_ONCE)
+{{ "1 < 2 & 3" | escape_once | escape_once }}
+ESCAPE_ONCE
+  end
+
+  def test_first
+    fire( <<FIRST)
+{{ "Ground control to Major Tom." | split: " " | first }}
+
+{% assign my_array = "zebra, octopus, giraffe, tiger" | split: ", " %}
+{% if my_array.first == "zebra" %}
+  Here comes a zebra!
+{% endif %}
+FIRST
   end
 
   def test_floor
@@ -304,6 +436,16 @@ Apple
 IF2
   end
 
+  def test_increment
+    fire( <<INCREMENT)
+{% assign var = 10 %}
+{% increment var %}
+{% increment var %}
+{% increment var %}
+{{ var }}
+INCREMENT
+  end
+
   def test_inline_comment
     fire( <<INLINE_COMMENT)
 {% # for i in (1..3) -%}
@@ -317,6 +459,27 @@ IF2
   ###############################
 %}
 INLINE_COMMENT
+  end
+
+  def test_join
+    fire( <<JOIN)
+{% assign beatles = "John, Paul, George, Ringo" | split: ", " %}
+
+{{ beatles | join: " and " }}
+JOIN
+  end
+
+  def test_last
+    fire( <<LAST)
+{{ "Ground control to Major Tom." | split: " " | last }}
+
+{% assign my_array = "zebra, octopus, giraffe, tiger" | split: ", " %}
+{{ my_array.last }}
+
+{% if my_array.last == "tiger" %}
+  There goes a tiger!
+{% endif %}
+LAST
   end
 
   def test_liquid1
@@ -341,6 +504,39 @@ when 3
   echo 'currant' | capitalize
 endcase %}
 LIQUID2
+  end
+
+  def test_lstrip
+    fire( <<LSTRIP)
+{{ "          So much room for activities          " | lstrip }}!
+LSTRIP
+  end
+
+  def test_minus
+    fire( <<MINUS)
+{{ 4 | minus: 2 }}
+{{ 16 | minus: 4 }}
+{{ 183.357 | minus: 12 }}
+MINUS
+  end
+
+  def test_modulo
+    fire( <<MODULO)
+{{ 3 | modulo: 2 }}
+{{ 24 | modulo: 7 }}
+{{ 183.357 | modulo: 12 }}
+MODULO
+  end
+
+  def test_newline_to_br
+    fire( <<NEWLINE_TO_BR)
+{% capture string_with_newlines %}
+Hello
+there
+{% endcapture %}
+
+{{ string_with_newlines | newline_to_br }}
+NEWLINE_TO_BR
   end
 
   def test_nil
@@ -394,12 +590,40 @@ Correct 6
 OPERATORS
   end
 
+  def test_plus
+    fire( <<PLUS)
+{{ 4 | plus: 2 }}
+{{ 16 | plus: 4 }}
+{{ 183.357 | plus: 12 }}
+PLUS
+  end
+
+  def test_prepend
+    fire( <<PREPEND)
+{{ "apples, oranges, and bananas" | prepend: "Some fruit: " }}
+{% assign url = "example.com" %}
+{{ "/index.html" | prepend: url }}
+PREPEND
+  end
+
   def test_raw
     fire( <<RAW)
 {% raw %}
 In Handlebars, {{ this }} will be HTML-escaped, but {{{ that }}} will not.
 {% endraw %}
 RAW
+  end
+
+  def test_remove
+    fire( <<REMOVE)
+{{ "I strained to see the train through the rain" | replace: "rain" }}
+REMOVE
+  end
+
+  def test_remove_first
+    fire( <<REMOVE_FIRST)
+{{ "I strained to see the train through the rain" | remove_first: "rain" }}
+REMOVE_FIRST
   end
 
   def test_render1
@@ -411,19 +635,139 @@ RENDER1
   end
 
   def test_render2
-    prepare( <<RENDER1, 'included.liquid')
+    prepare( <<RENDER2, 'included.liquid')
 Passed {{ count }} {{ fruit }}
-RENDER1
+RENDER2
     fire2( "{% render 'included', count:3, fruit:'apples' %}",
            {})
   end
 
   def test_render3
-    prepare( <<RENDER1, 'included.liquid')
+    prepare( <<RENDER3, 'included.liquid')
 Passed {{ count }} {{ fruit }}
-RENDER1
+RENDER3
     fire2( "{% render 'included', count:counts[0],fruit:'apples' %}",
            {'counts' => [3]})
+  end
+
+  def test_render4
+    prepare( <<RENDER4, 'included.liquid')
+Passed {{ threepwood }}
+RENDER4
+    fire2( "{% render 'included' with guybrush as threepwood %}",
+           {'guybrush' => 'Mighty pirate'})
+  end
+
+  def test_render5
+    prepare( <<RENDER5, 'included.liquid')
+Passed {{ name }}
+length {{ forloop.length }}
+index {{ forloop.index }}
+index0 {{ forloop.index0 }}
+rindex {{ forloop.rindex }}
+rindex0 {{ forloop.rindex0 }}
+first {{ forloop.first }}
+last {{ forloop.last }}
+RENDER5
+    fire2( "{% render 'included' for names as name %}",
+           {'names' => ['Guybrush','Threepwood']})
+  end
+
+  def test_replace
+    fire( <<REPLACE)
+{{ "Take my protein pills and put my helmet on" | replace: "my", "your" }}
+REPLACE
+  end
+
+  def test_replace_first
+    fire( <<REPLACE_FIRST)
+{{ "Take my protein pills and put my helmet on" | replace_first: "my", "your" }}
+REPLACE_FIRST
+  end
+
+  def test_reverse
+    fire( <<REVERSE)
+{% assign my_array = "apples, oranges, peaches, plums" | split: ", " %}
+
+{{ my_array | reverse | join: ", " }}
+
+{{ "Ground control to Major Tom." | split: "" | reverse | join: "" }}
+REVERSE
+  end
+
+  def test_round
+    fire( <<ROUND)
+{{ 1.2 | round }}
+{{ 2.7 | round }}
+{{ 183.357 | round: 2 }}
+ROUND
+  end
+
+  def test_rstrip
+    fire( <<RSTRIP)
+{{ "          So much room for activities          " | rstrip }}!
+RSTRIP
+  end
+
+  def test_size
+    fire( <<SIZE)
+{{ "Ground control to Major Tom." | size }}
+  
+{% assign my_array = "apples, oranges, peaches, plums" | split: ", " %}
+
+{{ my_array.size }} 
+
+{% if my_array.size > 3 %}
+  Plenty of fruit!
+{% endif %}
+SIZE
+  end
+
+  def test_slice
+    fire( <<SLICE)
+{{ "Liquid" | slice: 0 }}
+{{ "Liquid" | slice: 2 }}
+{{ "Liquid" | slice: 2, 5 }}
+{{ "Liquid" | slice: -3, 2 }}
+{% assign beatles = "John, Paul, George, Ringo" | split: ", " %}
+{{ beatles | slice: 0 }}
+{{ beatles | slice: 1, 2 }}
+{{ beatles | slice: -2 2 }}
+SLICE
+  end
+
+  def test_sort1
+    fire( <<SORT1)
+{% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}
+
+{{ my_array | sort | join: ", " }}
+SORT1
+  end
+
+  def test_sort2
+    fire( <<SORT2, {'fruit' => [{'price' => 3, 'name' => 'Apple'},{'price' => 2, 'name' => 'Banana'}]})
+{% assign fruit_by_price = fruit | sort: "price" %}
+{% for item in fruit_by_price %}
+  <h4>{{ item.name }}</h4>
+{% endfor %}
+SORT2
+  end
+
+  def test_sort_natural1
+    fire( <<SORT1)
+{% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}
+
+{{ my_array | sort_natural | join: ", " }}
+SORT1
+  end
+
+  def test_sort_natural2
+    fire( <<SORT2, {'animals' => [{'name' => 'zebra'},{'name' => 'Sally Snake'}]})
+{% assign animals_by_name = animals | sort: "name" %}
+{% for animal in animals_by_name %}
+  <h4>{{ animal.name }}</h4>
+{% endfor %}
+SORT2
   end
 
   def test_split
@@ -434,6 +778,43 @@ RENDER1
   {{ member }}
 {% endfor %}
 SPLIT
+  end
+
+  def test_strip
+    fire( <<STRIP)
+{{ "          So much room for activities          " | strip }}!
+STRIP
+  end
+
+  def test_strip_html
+    fire( <<STRIP_HTML)
+{{ "Have <em>you</em> read <strong>Ulysses</strong>?" | strip_html }}
+STRIP_HTML
+  end
+
+  def test_strip_newlines
+    fire( <<STRIP_NEWLINES)
+{% capture string_with_newlines %}
+Hello
+there
+{% endcapture %}
+
+{{ string_with_newlines | strip_newlines }}
+STRIP_NEWLINES
+  end
+
+  def test_sum1
+    fire( <<SUM1, {'animals' => [{'count' => 1},{'count' => 3}]})
+{% assign total_count = animals | sum: "count" %}
+
+{{ total_count }}
+SUM1
+  end
+
+  def test_sum2
+    fire( <<SUM2, {'ratings' => [4,8]})
+{{ ratings | sum }}
+SUM2
   end
 
   def test_tablerow
@@ -511,12 +892,88 @@ TABLEROWLOOP
 TIMES
   end
 
+  def test_truncate
+    fire( <<TRUNCATE)
+{{ "Ground control to Major Tom." | truncate: 50 }}
+
+{{ "Ground control to Major Tom." | truncate: 20 }}
+
+{{ "Ground control to Major Tom." | truncate: 25, ", and so on" }}
+
+{{ "Ground control to Major Tom." | truncate: 20, "" }}
+TRUNCATE
+  end
+
+  def test_truncatewords
+    fire( <<TRUNCATEWORDS)
+{{ "Ground control to Major Tom." | truncatewords: 50 }}
+
+{{ "Ground control to Major Tom." | truncatewords: 3 }}
+
+{{ "Ground control to Major Tom." | truncatewords: 3, "---" }}
+
+{{ "Ground control to Major Tom." | truncatewords: 3, "" }}
+TRUNCATEWORDS
+  end
+
+  def test_uniq
+    fire( <<UNIQ)
+{% assign my_array = "ants, bugs, bees, bugs, ants" | split: ", " %}
+
+{{ my_array | uniq | join: ", " }}
+UNIQ
+  end
+
   def test_unless
     fire( <<UNLESS)
 {% unless false %}
 Apple
 {% endunless %}
 UNLESS
+  end
+
+  def test_upcase
+    fire( <<UPCASE)
+{{ "Parker Moore" | upcase }}
+UPCASE
+  end
+
+  def test_url_decode
+    fire( <<URL_DECODE)
+{{ "%27Stop%21%27+said+Fred" | url_decode }}
+URL_DECODE
+  end
+
+  def test_url_encode
+    fire( <<URL_ENCODE)
+{{ "john@liquid.com" | url_encode }}
+
+{{ "Tetsuro Takara" | url_encode }}
+URL_ENCODE
+  end
+
+  def test_where
+    products = [{'name' => 'Vacuum', 'room' => 'lounge', 'available' => true},
+                {'name' => 'Spatula', 'room' => 'kitchen', 'available' => false},
+                {'name' => 'Shirt', 'room' => 'bedroom', 'available' => true}]
+    fire( <<URL_WHERE, {'products' => products})
+{% assign kitchen_products = products | where: "room", "kitchen" %}
+
+Kitchen products:
+{% for product in kitchen_products %}
+- {{ product.name }}
+{% endfor %}
+
+{% assign available_products = products | where: "available" %}
+
+Available products:
+{% for product in available_products %}
+- {{ product.name }}
+{% endfor %}
+
+First shirt:
+- {{ products | where: "room", "bedroom" | first }}
+URL_WHERE
   end
 
   def test_white_space
