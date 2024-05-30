@@ -1,5 +1,3 @@
-require_relative '../expression'
-
 module LiquidTranspiler
   module Parts
     class Part
@@ -10,27 +8,21 @@ module LiquidTranspiler
         @children = []
       end
 
-      def add_text( text, rstrip, lstrip)
+      def add_text( offset, text, rstrip, lstrip)
         text = text.lstrip if rstrip
         text = text.rstrip if lstrip
         if text.size > 0
-          @children << Text.new( text)
+          @children << Text.new( offset, text)
         end
-      end
-
-      def deduce_arguments
-        @children.collect do |child|
-          child.deduce_arguments
-        end.flatten
       end
 
       def digest( source, rstrip)
         if text = source.find( digest_find)
           lstrip, part, rstrip1 = parse( source)
-          add_text( text, rstrip, lstrip)
+          add_text( source.offset, text, rstrip, lstrip)
           return part, rstrip1
         else
-          add_text( source.remnant, rstrip, false)
+          add_text( source.offset, source.remnant, rstrip, false)
           return Parts::EndOfFile.new( source.offset), false
         end
       end
@@ -39,9 +31,15 @@ module LiquidTranspiler
         /({{|{%)/
       end
 
-      def generate( arguments, indent, io)
+      def find_arguments( names)
         @children.each do |child|
-          child.generate( arguments, indent, io)
+          child.find_arguments( names)
+        end
+      end
+
+      def generate( context, indent, io)
+        @children.each do |child|
+          child.generate( context, indent, io)
         end
       end
 
@@ -50,7 +48,7 @@ module LiquidTranspiler
         offset = source.offset
         if source.next( '{{')
           lstrip = source.next( '-')
-          expr, term = Expression.parse( source)
+          expr, term = TranspilerExpression.parse( source)
 
           source.skip_space
           rstrip = source.next( '-')
@@ -59,10 +57,15 @@ module LiquidTranspiler
           else
             raise TranspilerError.new( offset, 'Expecting }}')
           end
-        else
+        elsif source.next( '{%')
           lstrip = source.next( '-')
           name   = source.expect_name
-          part   = Object.const_get( 'Tag' + name.capitalize).new( offset, source)
+          part   = Object.const_get( 'LiquidTranspiler::Parts::Tag' + name.capitalize).new( offset)
+          term   = part.setup( source)
+
+          unless term.nil?
+            raise TranspilerError.new( offset, 'Unexpected ' + term.to_s)
+          end
 
           source.skip_space
           rstrip = source.next( '-')
@@ -71,6 +74,8 @@ module LiquidTranspiler
           else
             raise TranspilerError.new( offset, 'Expecting %}')
           end
+        else
+          raise TranspilerError.new( offset, 'Internal error')
         end
       end
     end

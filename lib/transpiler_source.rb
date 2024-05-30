@@ -1,5 +1,5 @@
 module LiquidTranspiler
-  class Source
+  class TranspilerSource
     attr_reader :offset
 
     def initialize( path)
@@ -29,7 +29,7 @@ module LiquidTranspiler
       prefix = nil
       @text.match( re, @offset) do |m|
         was, @offset = @offset, m.begin(0)
-        prefix = @text[@was...@offset]
+        prefix = @text[was...@offset]
       end
       prefix
     end
@@ -48,9 +48,9 @@ module LiquidTranspiler
         @offset += 1
         return letter
       elsif /[0-9]/ =~ letter
-        get_number
+        return get_number
       elsif /[a-z_]/i =~ letter
-        get_name
+        return get_name
       end
 
       case letter
@@ -95,7 +95,13 @@ module LiquidTranspiler
     end
 
     def get_name
-      raise 'Dev'
+      origin = @offset
+      if m = @text.match( /[^a-z0-9_]/, @offset)
+        @offset = m.end(0) - 1
+      else
+        @offset = @text.size
+      end
+      @text[origin...@offset]
     end
 
     def get_number
@@ -131,6 +137,11 @@ module LiquidTranspiler
       end
     end
 
+    def remnant
+      @offset, text = @text.size, @text[@offset..-1]
+      text
+    end
+
     def skip_space
       until eof?
         @text.match( /\S/, @offset) do |m|
@@ -148,11 +159,6 @@ module LiquidTranspiler
           break
         end
       end
-    end
-
-    def unget( token)
-      raise TranspilerError( @offset, 'Internal error') if @ungot
-      @ungot = token
     end
   end
 end

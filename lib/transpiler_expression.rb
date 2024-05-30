@@ -2,17 +2,13 @@ require_relative 'operators/array'
 require_relative 'operators/leaf'
 
 module LiquidTranspiler
-  class Expression
+  class TranspilerExpression
     OPERATORS = {
       'and' => [:eat_logical, 'o_and'],
       'or'  => [:eat_logical, 'o_or'],
       '.'   => [:eat_dereference],
       '|'   => [:eat_filter]
     }
-
-    def initialize( formula)
-      @formula = formula
-    end
 
     def self.check_literal_or_variable( source, element)
       if element.nil?
@@ -25,10 +21,6 @@ module LiquidTranspiler
         raise TranspilerError.new( source.offset, 'Expected literal or variable')
       end
       Operators::Leaf.new( element)
-    end
-
-    def deduce_arguments
-      @formula.deduce_arguments
     end
 
     def self.parse( source)

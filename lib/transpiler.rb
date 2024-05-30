@@ -1,8 +1,4 @@
-require_relative 'source'
-require_relative 'parts/embedded'
-require_relative 'parts/end_of_file'
-require_relative 'parts/template'
-require_relative 'transpiler_error'
+require_relative 'transpiler_requires'
 
 module LiquidTranspiler
   class Transpiler
@@ -27,15 +23,6 @@ module LiquidTranspiler
 
     private
 
-    def argument_map( args)
-      (Hash.new {|h,k| h[k] = []}).tap  do |map|
-        (0...args.size).each do |i|
-          map[args[i]] = "a#{i}"
-        end
-        map[:out] = 'h'
-      end
-    end
-
     def deduce_arguments
       index = 0
       @parsed.each_pair do |name, ast|
@@ -49,7 +36,7 @@ module LiquidTranspiler
         write_start( clazz, io)
         @signature.each_pair do |name, info|
           write_method_start( info, io)
-          @parsed[name].generate( argument_map(info[1]), 4, io)
+          @parsed[name].generate( TranspilerContext.new( info[1]), 4, io)
           write_method_end( io)
         end
         io.puts 'end'
@@ -57,7 +44,7 @@ module LiquidTranspiler
     end
 
     def parse( path)
-      source  = Source.new( path)
+      source  = TranspilerSource.new( path)
       context = Parts::Template.new
       rstrip  = false
 

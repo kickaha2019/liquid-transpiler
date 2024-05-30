@@ -5,12 +5,14 @@ module LiquidTranspiler
         @token = token
       end
 
-      def deduce_arguments
-        (/^[a-z_]/i =~ @token) ? [@token] : []
+      def find_arguments( names)
+        if /^[a-z_]/i =~ @token
+          names.reference( @token)
+        end
       end
 
-      def generate( arguments)
-        (/^[a-z_]/i =~ @token) ? arguments[@token] : @token
+      def generate( context)
+        (/^[a-z_]/i =~ @token) ? context.variable(@token) : @token
       end
     end
   end

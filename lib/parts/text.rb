@@ -2,10 +2,15 @@ require_relative 'part'
 
 module LiquidTranspiler
   module Parts
-    class Embedded < Part
-      def initialize( offset, expression)
+    class Text < Part
+      SUB = [['\\', '\\\\'],
+             ["\n", '\\n'],
+             ['"',  '\\"'],
+             ['#',  '\\#']]
+
+      def initialize( offset, text)
         super( offset)
-        @expression = expression
+        @text = text
       end
 
       def add( part)
@@ -13,13 +18,18 @@ module LiquidTranspiler
       end
 
       def find_arguments( names)
-        @expression.find_arguments( names)
       end
 
       def generate( context, indent, io)
         io.print(' ' * indent)
         io.print context.output
-        io.puts ' << t(' + @expression.generate(context) + ')'
+        subbed = @text
+
+        SUB.each do |sub|
+          subbed = subbed.gsub( * sub)
+        end
+
+        io.puts ' << "' + subbed + '"'
       end
     end
   end
