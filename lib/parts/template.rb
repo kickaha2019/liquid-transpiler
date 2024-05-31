@@ -4,36 +4,38 @@ module LiquidTranspiler
   module Parts
     class Template < Part
       class Names
-        def initialize( names = {})
-          @names = names
+        def initialize( arguments = {}, variables = {})
+          @arguments = arguments
+          @variables = variables
+          @locals    = {}
+        end
+
+        def arguments
+          @arguments.keys
         end
 
         def assign( name)
-          @names[name] = :local unless @names[name]
+          @variables[name] = true unless known?( name)
+        end
+
+        def known?( name)
+          @arguments[name] || @variables[name]
         end
 
         def local?( name)
-          @names[name] == :local
+          @locals[name]
         end
 
-        def globals
-          @names.keys.select {|name| @names[name] == :global}
-        end
-
-        def known( name)
-          @names[name]
-        end
-
-        def names
-          @names.each_key {|name| yield name}
+        def locals
+          @locals.each_key {|name| yield name}
         end
 
         def reference( name)
-          @names[name] = :global unless @names[name]
+          @arguments[name] = true unless known?( name)
         end
 
         def spawn
-          Names.new( Hash.new {|h,k| h[k] = @names[k]})
+          Names.new( @arguments, Hash.new {|h,k| h[k] = @variables[k]})
         end
       end
 
@@ -60,7 +62,7 @@ module LiquidTranspiler
       def deduce_arguments
         Names.new().tap do |names|
           find_arguments( names)
-        end.globals
+        end.arguments
       end
     end
   end

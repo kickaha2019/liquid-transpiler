@@ -35,16 +35,11 @@ module LiquidTranspiler
     end
 
     def get
-      if @ungot
-        g, @ungot = @ungot, nil
-        return g
-      end
-
       skip_space
       return nil if eof?
 
       letter = @text[@offset..@offset]
-      if [',',']','[',':'].include?( letter)
+      if [',',']','[',':','|'].include?( letter)
         @offset += 1
         return letter
       elsif /[0-9]/ =~ letter
@@ -105,7 +100,13 @@ module LiquidTranspiler
     end
 
     def get_number
-      raise 'Dev'
+      origin = @offset
+      if m = @text.match( /[^0-9\.]/, @offset+1)
+        @offset = m.end(0) - 1
+      else
+        @offset = @text.size
+      end
+      @text[origin...@offset]
     end
 
     def get_single_quoted_string
@@ -135,6 +136,10 @@ module LiquidTranspiler
       else
         false
       end
+    end
+
+    def peek( n)
+      @text[@offset..(@offset+n-1)]
     end
 
     def remnant

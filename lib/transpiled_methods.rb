@@ -1,4 +1,17 @@
 module TranspiledMethods
+  def f_abs( value)
+    if value.nil?
+      return nil
+    elsif value.is_a?( String)
+      if /[\.]/ =~ value
+        value = value.to_f
+      else
+        value = value.to_i
+      end
+    end
+    value.abs
+  end
+
   def f_at_least( value, *args)
     (value < args[0]) ? args[0] : value
   end
