@@ -17,7 +17,7 @@ module LiquidTranspiler
       def generate( context)
         params = [@expression.generate(context)]
         @arguments.each do |argument|
-          params << ",#{argument.generate(context)}"
+          params << "#{argument.generate(context)}"
         end
         "f_#{@name}(#{params.join(',')})"
       end

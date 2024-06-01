@@ -9,7 +9,7 @@ module LiquidTranspiler
              ['#',  '\\#']]
 
       def initialize( offset, text)
-        super( offset)
+        super( offset, nil)
         @text = text
       end
 

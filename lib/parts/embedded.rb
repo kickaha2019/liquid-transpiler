@@ -4,7 +4,7 @@ module LiquidTranspiler
   module Parts
     class Embedded < Part
       def initialize( offset, expression)
-        super( offset)
+        super( offset, nil)
         @expression = expression
       end
 

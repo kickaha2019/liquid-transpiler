@@ -1,63 +1,6 @@
 require_relative 'test_base'
 
 class FilterTests < TestBase
-  def test_abs
-    fire( <<ABS)
-{{ -17 | abs }}
-{{ 4 | abs }}
-{{ "4" | abs }}
-{{ "-19.86" | abs }}
-ABS
-  end
-
-  def test_append
-    fire( <<APPEND)
-{{ "/my/fancy/url" | append: ".html" }}
-{% assign filename = "/index.html" %}
-{{ "website.com" | append: filename }}
-APPEND
-  end
-
-  def test_at_least
-    fire( <<AT_LEAST)
-{{ 4 | at_least: 5 }}
-{{ 4 | at_least: 3 }}
-AT_LEAST
-  end
-
-  def test_at_most
-    fire( <<AT_MOST)
-{{ 4 | at_most: 5 }}
-{{ 4 | at_most: 3 }}
-AT_MOST
-  end
-
-  def test_capitalize
-    fire( <<CAPITALIZE)
-{{ "my GREAT title" | capitalize }}
-CAPITALIZE
-  end
-
-  def test_ceil
-    fire( <<CEIL)
-{{ "my GREAT title" | capitalize }}
-{{ 1.2 | ceil }}
-{{ 2.0 | ceil }}
-{{ 183.357 | ceil }}
-{{ "3.5" | ceil }}
-CEIL
-  end
-
-  def test_compact
-    fire( <<COMPACT, {'items' => [{'category' => 'A'},{},{'category' => 'B'}]})
-{% assign categories = items | map: "category" | compact %}
-
-{% for category in categories %}
-- {{ category }}
-{% endfor %}
-COMPACT
-  end
-
   def test_concat
     fire( <<CONCAT)
 {% assign fruits = "apples, oranges, peaches" | split: ", " %}

@@ -3,7 +3,7 @@ module LiquidTranspiler
     def initialize( arguments)
       @variables = {}
       (0...arguments.size).each do |i|
-        @variables[args[i]] = "a#{i}"
+        @variables[arguments[i]] = "a#{i}"
       end
 
       @output = ['h']

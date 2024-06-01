@@ -6,6 +6,7 @@ require_relative '../lib/transpiled_methods'
 
 class TestBase < Minitest::Test
   @@transpiler  = LiquidTranspiler::Transpiler.new
+  @@test_number = 0
   @@dir         = ENV['TEMP_DIR'] ? ENV['TEMP_DIR'] : Dir.tmpdir
   Liquid::Template.file_system = Liquid::LocalFileSystem.new( @@dir,
                                                               pattern = "%s.liquid")
@@ -23,13 +24,14 @@ class TestBase < Minitest::Test
     liquid         =  Liquid::Template.parse(code)
     liquid_output  =  liquid.render( params)
     prepare( code, 'test.liquid')
-    clazz          =  "Temp"
-    path           = @@dir + '/' + clazz + '.rb'
+    @@test_number  += 1
+    clazz          =  "Temp#{@@test_number}"
+    path           = @@dir + '/Test.rb'
     if @@transpiler.transpile_dir( @@dir, clazz, path)
       load( path)
       transpiled_output = Object.const_get(clazz).new.render( 'test', params)
-      p ['liquid_output', liquid_output]
-      p ['transpiled_output', transpiled_output]
+      # p ['liquid_output', liquid_output]
+      # p ['transpiled_output', transpiled_output]
       assert_equal liquid_output, transpiled_output
     else
       @@transpiler.errors {|error| puts error}

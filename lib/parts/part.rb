@@ -1,10 +1,11 @@
 module LiquidTranspiler
   module Parts
     class Part
-      attr_reader :offset
+      attr_reader :offset, :parent
 
-      def initialize( offset)
+      def initialize( offset, parent)
         @offset   = offset
+        @parent   = parent
         @children = []
       end
 
@@ -60,7 +61,8 @@ module LiquidTranspiler
         elsif source.next( '{%')
           lstrip = source.next( '-')
           name   = source.expect_name
-          part   = Object.const_get( 'LiquidTranspiler::Parts::Tag' + name.capitalize).new( offset)
+          clazz  = Object.const_get( 'LiquidTranspiler::Parts::Tag' + name.capitalize)
+          part   = clazz.new( offset, self)
           term   = part.setup( source)
 
           unless term.nil?

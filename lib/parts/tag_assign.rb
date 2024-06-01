@@ -1,8 +1,8 @@
 module LiquidTranspiler
   module Parts
     class TagAssign < Part
-      def initialize( offset)
-        super( offset)
+      def initialize( offset, parent)
+        super( offset, parent)
       end
 
       def find_arguments( names)

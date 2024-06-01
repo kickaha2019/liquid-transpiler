@@ -8,6 +8,8 @@ require_relative 'operators/leaf'
 require_relative 'parts/embedded'
 require_relative 'parts/end_of_file'
 require_relative 'parts/tag_assign'
+require_relative 'parts/tag_endfor'
+require_relative 'parts/tag_for'
 require_relative 'parts/template'
 require_relative 'parts/text'
 

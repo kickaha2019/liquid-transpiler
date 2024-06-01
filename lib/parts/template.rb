@@ -40,7 +40,7 @@ module LiquidTranspiler
       end
 
       def initialize
-        super( 0)
+        super( 0, nil)
       end
 
       def add( part)
@@ -54,6 +54,8 @@ module LiquidTranspiler
           return self
         when 'TagAssign'
           return self
+        when 'TagFor'
+          return part
         else
           raise TranspilerError.new( part.offset, 'Unexpected tag')
         end

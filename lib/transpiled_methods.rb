@@ -12,12 +12,32 @@ module TranspiledMethods
     value.abs
   end
 
-  def f_at_least( value, *args)
-    (value < args[0]) ? args[0] : value
+  def f_append( value, postfix)
+    value.nil? ? postfix : (postfix.nil? ? value : (value.to_s + postfix.to_s))
   end
 
-  def f_at_most( value, *args)
-    (value < args[0]) ? value : args[0]
+  def f_at_least( value, limit)
+    return nil if value.nil?
+    (value < limit) ? limit : value
+  end
+
+  def f_at_most( value, limit)
+    return nil if value.nil?
+    (value < limit) ? value : limit
+  end
+
+  def f_capitalize( value)
+    value.nil? ? nil : value.capitalize
+  end
+
+  def f_ceil( value)
+    value.nil? ? nil : value.to_f.ceil
+  end
+
+  def f_compact( map)
+    [].tap do |result|
+      map.each {|entry| result << entry if entry}
+    end
   end
 
   def f_divided_by( value, *args)
@@ -33,6 +53,12 @@ module TranspiledMethods
       value = value.to_f
     end
     value.floor
+  end
+
+  def f_map( map, field)
+    [].tap do |result|
+      map.each {|entry| result << x(entry,field)}
+    end
   end
 
   def f_split( value, *args)
