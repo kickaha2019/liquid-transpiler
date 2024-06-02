@@ -30,8 +30,8 @@ class TestBase < Minitest::Test
     if @@transpiler.transpile_dir( @@dir, clazz, path)
       load( path)
       transpiled_output = Object.const_get(clazz).new.render( 'test', params)
-      # p ['liquid_output', liquid_output]
-      # p ['transpiled_output', transpiled_output]
+      p ['liquid_output', liquid_output]
+      p ['transpiled_output', transpiled_output]
       assert_equal liquid_output, transpiled_output
     else
       @@transpiler.errors {|error| puts error}

@@ -110,7 +110,20 @@ module LiquidTranspiler
     end
 
     def get_single_quoted_string
-      raise 'Dev'
+      i = @offset + 1
+
+      while m = @text.match( /[\\']/, i)
+        i = m.begin(0)
+        if @text[i..i] == '\\'
+          i += 2
+        else
+          string = @text[@offset..i]
+          @offset = i + 1
+          return string
+        end
+      end
+
+      raise TranspilerError.new( @offset, 'Unclosed quoted string')
     end
 
     def line_number( offset)

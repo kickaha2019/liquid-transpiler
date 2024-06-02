@@ -1,4 +1,5 @@
 require 'date'
+require 'uri'
 
 module TranspiledMethods
   EMPTY_METHOD = 'empty?'.to_sym
@@ -83,6 +84,42 @@ module TranspiledMethods
 
   def f_downcase( value)
     value.nil? ? nil : value.downcase
+  end
+
+  def f_escape( value)
+    return nil if value.nil?
+    value.gsub( /['&"<>]/) do |letter|
+      case letter
+      when '"'
+        '&quot;'
+      when '<'
+        '&lt;'
+      when '>'
+        '&gt;'
+      when "'"
+        '&#39;'
+      when '&'
+        '&amp;'
+      end
+    end
+  end
+
+  def f_escape_once( value)
+    return nil if value.nil?
+
+    fragments, offset = [], 0
+    while offset < value.size
+      if m = value.match( /(&([a-z]+|#\d+);)/i, offset)
+        fragments << f_escape( value[offset...m.begin(0)])
+        fragments << m[1]
+        offset    = m.end(0)
+      else
+        fragments << f_escape( value[offset..-1])
+        break
+      end
+    end
+
+    fragments.join('')
   end
 
   def f_floor( value)

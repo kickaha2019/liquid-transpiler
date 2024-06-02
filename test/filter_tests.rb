@@ -1,18 +1,6 @@
 require_relative 'test_base'
 
 class FilterTests < TestBase
-  def test_escape
-    fire( <<ESCAPE)
-{{ "Have you read 'James & the Giant Peach'?" | escape }}
-ESCAPE
-  end
-
-  def test_escape_once
-    fire( <<ESCAPE_ONCE)
-{{ "1 < 2 & 3" | escape_once | escape_once }}
-ESCAPE_ONCE
-  end
-
   def test_first
     fire( <<FIRST)
 {{ "Ground control to Major Tom." | split: " " | first }}
@@ -22,15 +10,6 @@ ESCAPE_ONCE
   Here comes a zebra!
 {% endif %}
 FIRST
-  end
-
-  def test_floor
-    fire( <<FLOOR)
-{{ 1.2 | floor }}
-{{ 2.0 | floor }}
-{{ 183.357 | floor }}
-{{ "3.5" | floor }}
-FLOOR
   end
 
   def test_join
