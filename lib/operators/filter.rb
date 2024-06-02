@@ -10,15 +10,30 @@ module LiquidTranspiler
       def find_arguments( names)
         @expression.find_arguments( names)
         @arguments.each do |argument|
-          argument.find_arguments( names)
+          if argument.is_a?( Parameter)
+            argument.value.find_arguments( names)
+          else
+            argument.find_arguments( names)
+          end
         end
       end
 
       def generate( context)
-        params = [@expression.generate(context)]
+        options = []
+        params  = [@expression.generate(context)]
+
         @arguments.each do |argument|
-          params << "#{argument.generate(context)}"
+          if argument.is_a?( Parameter)
+            options << "'#{argument.key}'=>#{argument.value.generate(context)}"
+          else
+            params << "#{argument.generate(context)}"
+          end
         end
+
+        unless options.empty?
+          params << "{#{options.join(',')}}"
+        end
+
         "f_#{@name}(#{params.join(',')})"
       end
     end

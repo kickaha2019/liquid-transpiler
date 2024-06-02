@@ -44,6 +44,24 @@ module LiquidTranspiler
     end
 
     def self.parse1( source)
+      expr, term = parse2( source)
+      if term == ':'
+        unless expr.is_a?( Operators::Leaf)
+          raise TranspilerError.new( source.offset, 'Unexpected :')
+        end
+
+        if /^[a-z]/i =~ expr.token
+          expr2, term = parse2( source)
+          return Operators::Parameter.new( expr.token, expr2), term
+        else
+          raise TranspilerError.new( source.offset, 'Unexpected :')
+        end
+      else
+        return expr, term
+      end
+    end
+
+    def self.parse2( source)
       elements = [check_literal_or_variable( source, source.get)]
       term     = nil
 

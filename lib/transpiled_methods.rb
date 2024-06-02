@@ -1,4 +1,8 @@
+require 'date'
+
 module TranspiledMethods
+  EMPTY_METHOD = 'empty?'.to_sym
+
   def f_abs( value)
     if value.nil?
       return nil
@@ -40,12 +44,45 @@ module TranspiledMethods
     end
   end
 
+  def f_concat( map1, map2)
+    [].tap do |result|
+      map1.each {|entry| result << entry}
+      map2.each {|entry| result << entry}
+    end
+  end
+
+  def f_date( date, format)
+    if date.is_a?( String)
+      case date
+      when 'now'
+        date = Date::today
+      when 'today'
+        date = Date::today
+      else
+        date = Date.parse( date)
+      end
+    end
+
+    date.strftime( format)
+  end
+
+  def f_default( value, defval, params={})
+    p ['DEBUG100', value, defval, params]
+    return value if params['allow_false'] && (value == false)
+    return defval if value.respond_to?( EMPTY_METHOD) && value.empty?
+    value ? value : defval
+  end
+
   def f_divided_by( value, *args)
     if args[0].is_a?( Integer)
       (value / args[0]).floor
     else
       value / args[0]
     end
+  end
+
+  def f_downcase( value)
+    value.nil? ? nil : value.downcase
   end
 
   def f_floor( value)

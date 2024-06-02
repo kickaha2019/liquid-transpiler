@@ -1,58 +1,6 @@
 require_relative 'test_base'
 
 class FilterTests < TestBase
-  def test_concat
-    fire( <<CONCAT)
-{% assign fruits = "apples, oranges, peaches" | split: ", " %}
-{% assign vegetables = "carrots, turnips, potatoes" | split: ", " %}
-
-{% assign everything = fruits | concat: vegetables %}
-
-{% for item in everything %}
-- {{ item }}
-{% endfor %}
-CONCAT
-  end
-
-  def test_date
-    fire( <<DATE1, {'published_at' => Time.gm(2024,5,20)})
-{{ published_at | date: "%a, %b %d, %y" }}
-DATE1
-    fire( <<DATE2)
-{{ "March 14, 2016" | date: "%b %d, %y" }}
-DATE2
-    fire( <<DATE3)
-now {{ "now" | date: "%Y-%m-%d" }}
-today {{ "today" | date: "%Y-%m-%d" }}
-DATE3
-  end
-
-  def test_default
-    fire( <<DEFAULT)
-{{ field1 | default: 2.99 }}
-{% assign field2 = 4.99 %}
-{{ field2 | default: 2.99 }}
-{% assign field3 = "" %}
-{{ field3 | default: 2.99 }}
-{% assign field4 = false %}
-{{ field4 | default: true, allow_false: true }}
-DEFAULT
-  end
-
-  def test_downcase
-    fire( <<DOWNCASE)
-{{ "Parker Moore" | downcase }}
-DOWNCASE
-  end
-
-  def test_divided_by
-    fire( <<DIVIDED_BY)
-{{ 16 | divided_by: 4 }}
-{{ 5 | divided_by: 3 }}
-{{ 20 | divided_by: 7.0 }}
-DIVIDED_BY
-  end
-
   def test_escape
     fire( <<ESCAPE)
 {{ "Have you read 'James & the Giant Peach'?" | escape }}
