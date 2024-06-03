@@ -3,7 +3,7 @@ module LiquidTranspiler
     OPERATORS = {
       'and' => [:eat_logical, 'o_and'],
       'or'  => [:eat_logical, 'o_or'],
-      '.'   => [:eat_dereference]
+      '=='   => ['Equals', false]
     }
 
     def self.check_literal_or_variable( source, element)
@@ -45,6 +45,7 @@ module LiquidTranspiler
 
     def self.parse1( source)
       expr, term = parse2( source)
+
       if term == ':'
         unless expr.is_a?( Operators::Leaf)
           raise TranspilerError.new( source.offset, 'Unexpected :')
@@ -74,7 +75,7 @@ module LiquidTranspiler
           end
           elements[-1] = Operators::Array( elements[-1], formula)
         when '.'
-          elements[-1] = Operators::Dereference( elements[-1], source.get_name)
+          elements[-1] = Operators::Dereference.new( elements[-1], source.get_name)
         when '|'
           term = token
           break
@@ -93,6 +94,18 @@ module LiquidTranspiler
     end
 
     def self.to_formula( elements)
+      i = 1
+      while i+1 < elements.size
+        if (op = OPERATORS[elements[i]]) && (! op[1])
+          elements.delete_at(i)
+          rhs = elements.delete_at(i)
+          clazz = Object.const_get( 'LiquidTranspiler::Operators::' + op[0])
+          elements[i-1] = clazz.new( elements[i-1], rhs)
+        else
+          i += 2
+        end
+      end
+
       raise 'Dev' if elements.size > 1
       elements[0]
     end

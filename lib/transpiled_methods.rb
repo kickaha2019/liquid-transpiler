@@ -68,7 +68,6 @@ module TranspiledMethods
   end
 
   def f_default( value, defval, params={})
-    p ['DEBUG100', value, defval, params]
     return value if params['allow_false'] && (value == false)
     return defval if value.respond_to?( EMPTY_METHOD) && value.empty?
     value ? value : defval
@@ -122,11 +121,34 @@ module TranspiledMethods
     fragments.join('')
   end
 
+  def f_first( list)
+    return list[0] if list.is_a?( Array)
+    list.each do |entry|
+      return entry
+    end
+    nil
+  end
+
   def f_floor( value)
     if value.is_a?( String)
       value = value.to_f
     end
     value.floor
+  end
+
+  def f_join( map, separator)
+    [].tap do |result|
+      map.each {|entry| result << entry}
+    end.join(separator)
+  end
+
+  def f_last( list)
+    return list[-1] if list.is_a?( Array)
+    last = nil
+    list.each do |entry|
+      last = entry
+    end
+    last
   end
 
   def f_map( map, field)
@@ -143,18 +165,20 @@ module TranspiledMethods
     value * args[0]
   end
 
+  def o_eq( left, right)
+    return false if left.nil? || right.nil?
+    left == right
+  end
+
   def t( thing)
     thing.to_s
   end
 
-  def x( context, *args)
-    args.each do |arg|
-      if context.is_a?( Hash)
-        context = context[arg]
-      else
-        context = context.send( arg.to_sym)
-      end
+  def x( thing, field)
+    if thing.is_a?( Hash)
+      thing[field]
+    else
+      thing.send( field.to_sym)
     end
-    context
   end
 end

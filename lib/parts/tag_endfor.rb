@@ -5,6 +5,10 @@ module LiquidTranspiler
         super( offset, parent)
       end
 
+      def add( part)
+        raise TranspilerError.new( @offset, 'Internal error')
+      end
+
       def setup( source)
       end
     end

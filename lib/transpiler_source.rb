@@ -67,6 +67,14 @@ module LiquidTranspiler
           @offset += 1
           return letter
         end
+      when '='
+        get_operator
+      when '<'
+        get_operator
+      when '>'
+        get_operator
+      when '!'
+        get_operator
       else
         nil
       end
@@ -102,6 +110,16 @@ module LiquidTranspiler
     def get_number
       origin = @offset
       if m = @text.match( /[^0-9\.]/, @offset+1)
+        @offset = m.end(0) - 1
+      else
+        @offset = @text.size
+      end
+      @text[origin...@offset]
+    end
+
+    def get_operator
+      origin = @offset
+      if m = @text.match( /[^=<>]/, @offset+1)
         @offset = m.end(0) - 1
       else
         @offset = @text.size

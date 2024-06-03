@@ -44,21 +44,10 @@ module LiquidTranspiler
       end
 
       def add( part)
-        @children << part
-        clazz = part.class.name.split('::')[-1]
-
-        case clazz
-        when 'Embedded'
+        if part.is_a?( EndOfFile)
           return self
-        when 'EndOfFile'
-          return self
-        when 'TagAssign'
-          return self
-        when 'TagFor'
-          return part
-        else
-          raise TranspilerError.new( part.offset, 'Unexpected tag')
         end
+        super( part)
       end
 
       def deduce_arguments

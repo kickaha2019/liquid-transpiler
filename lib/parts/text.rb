@@ -31,6 +31,10 @@ module LiquidTranspiler
 
         io.puts ' << "' + subbed + '"'
       end
+
+      def name
+        'text section'
+      end
     end
   end
 end

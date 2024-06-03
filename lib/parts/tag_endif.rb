@@ -1,16 +1,15 @@
 module LiquidTranspiler
   module Parts
-    class EndOfFile < Part
-      def initialize( offset)
-        super( offset, nil)
+    class TagEndif < Part
+      def initialize( offset, parent)
+        super( offset, parent)
       end
 
       def add( part)
         raise TranspilerError.new( @offset, 'Internal error')
       end
 
-      def name
-        'end of file'
+      def setup( source)
       end
     end
   end

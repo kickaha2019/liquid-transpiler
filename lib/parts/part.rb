@@ -9,12 +9,36 @@ module LiquidTranspiler
         @children = []
       end
 
+      def add( part)
+        @children << part
+
+        case part.class_name
+        when 'Embedded'
+          return self
+        when 'EndOfFile'
+          raise TranspilerError.new( part.offset, 'Unexpected EOF')
+        when 'TagAssign'
+          return self
+        when 'TagFor'
+          return part
+        when 'TagIf'
+          return part
+        else
+          raise TranspilerError.new( part.offset,
+                                     'Unexpected ' + part.name)
+        end
+      end
+
       def add_text( offset, text, rstrip, lstrip)
         text = text.lstrip if rstrip
         text = text.rstrip if lstrip
         if text.size > 0
           @children << Text.new( offset, text)
         end
+      end
+
+      def class_name
+        self.class.name.split('::')[-1]
       end
 
       def digest( source, rstrip)
@@ -41,6 +65,15 @@ module LiquidTranspiler
       def generate( context, indent, io)
         @children.each do |child|
           child.generate( context, indent, io)
+        end
+      end
+
+      def name
+        clazz = class_name
+        if m = /^Tag(.*)$/.match( clazz)
+          'tag ' + m[1].downcase
+        else
+          clazz
         end
       end
 

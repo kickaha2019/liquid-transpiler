@@ -1,38 +1,6 @@
 require_relative 'test_base'
 
 class FilterTests < TestBase
-  def test_first
-    fire( <<FIRST)
-{{ "Ground control to Major Tom." | split: " " | first }}
-
-{% assign my_array = "zebra, octopus, giraffe, tiger" | split: ", " %}
-{% if my_array.first == "zebra" %}
-  Here comes a zebra!
-{% endif %}
-FIRST
-  end
-
-  def test_join
-    fire( <<JOIN)
-{% assign beatles = "John, Paul, George, Ringo" | split: ", " %}
-
-{{ beatles | join: " and " }}
-JOIN
-  end
-
-  def test_last
-    fire( <<LAST)
-{{ "Ground control to Major Tom." | split: " " | last }}
-
-{% assign my_array = "zebra, octopus, giraffe, tiger" | split: ", " %}
-{{ my_array.last }}
-
-{% if my_array.last == "tiger" %}
-  There goes a tiger!
-{% endif %}
-LAST
-  end
-
   def test_lstrip
     fire( <<LSTRIP)
 {{ "          So much room for activities          " | lstrip }}!

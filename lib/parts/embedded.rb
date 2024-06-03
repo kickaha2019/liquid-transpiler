@@ -21,6 +21,10 @@ module LiquidTranspiler
         io.print context.output
         io.puts ' << t(' + @expression.generate(context) + ')'
       end
+
+      def name
+        '{{ ... }}'
+      end
     end
   end
 end
