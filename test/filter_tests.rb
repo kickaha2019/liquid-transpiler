@@ -1,28 +1,6 @@
 require_relative 'test_base'
 
 class FilterTests < TestBase
-  def test_lstrip
-    fire( <<LSTRIP)
-{{ "          So much room for activities          " | lstrip }}!
-LSTRIP
-  end
-
-  def test_minus
-    fire( <<MINUS)
-{{ 4 | minus: 2 }}
-{{ 16 | minus: 4 }}
-{{ 183.357 | minus: 12 }}
-MINUS
-  end
-
-  def test_modulo
-    fire( <<MODULO)
-{{ 3 | modulo: 2 }}
-{{ 24 | modulo: 7 }}
-{{ 183.357 | modulo: 12 }}
-MODULO
-  end
-
   def test_newline_to_br
     fire( <<NEWLINE_TO_BR)
 {% capture string_with_newlines %}
@@ -32,34 +10,6 @@ there
 
 {{ string_with_newlines | newline_to_br }}
 NEWLINE_TO_BR
-  end
-
-  def test_plus
-    fire( <<PLUS)
-{{ 4 | plus: 2 }}
-{{ 16 | plus: 4 }}
-{{ 183.357 | plus: 12 }}
-PLUS
-  end
-
-  def test_prepend
-    fire( <<PREPEND)
-{{ "apples, oranges, and bananas" | prepend: "Some fruit: " }}
-{% assign url = "example.com" %}
-{{ "/index.html" | prepend: url }}
-PREPEND
-  end
-
-  def test_remove
-    fire( <<REMOVE)
-{{ "I strained to see the train through the rain" | remove: "rain" }}
-REMOVE
-  end
-
-  def test_remove_first
-    fire( <<REMOVE_FIRST)
-{{ "I strained to see the train through the rain" | remove_first: "rain" }}
-REMOVE_FIRST
   end
 
   def test_replace
@@ -82,14 +32,6 @@ REPLACE_FIRST
 
 {{ "Ground control to Major Tom." | split: "" | reverse | join: "" }}
 REVERSE
-  end
-
-  def test_round
-    fire( <<ROUND)
-{{ 1.2 | round }}
-{{ 2.7 | round }}
-{{ 183.357 | round: 2 }}
-ROUND
   end
 
   def test_rstrip

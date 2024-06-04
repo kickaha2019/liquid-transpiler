@@ -151,10 +151,46 @@ module TranspiledMethods
     last
   end
 
+  def f_lstrip( value)
+    value.lstrip
+  end
+
+  def f_minus( left, right)
+    left - right
+  end
+
+  def f_modulo( left, right)
+    if left.is_a?( Float)
+      (left % right).round( 5)
+    else
+      left % right
+    end
+  end
+
   def f_map( map, field)
     [].tap do |result|
       map.each {|entry| result << x(entry,field)}
     end
+  end
+
+  def f_plus( left, right)
+    left + right
+  end
+
+  def f_prepend( value, prefix)
+    prefix.to_s + value
+  end
+
+  def f_remove( value, elide)
+    value.gsub( elide, '')
+  end
+
+  def f_remove_first( value, elide)
+    value.sub( elide, '')
+  end
+
+  def f_round( value, places=0)
+    value.round( places)
   end
 
   def f_split( value, *args)
