@@ -16,9 +16,7 @@ module LiquidTranspiler
         @expression.find_arguments( names)
         names = names.spawn
         names.assign( @variable)
-        @children.each do |child|
-          child.find_arguments( names)
-        end
+        super( names)
       end
 
       def generate( context, indent, io)

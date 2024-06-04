@@ -19,6 +19,8 @@ module LiquidTranspiler
           raise TranspilerError.new( part.offset, 'Unexpected EOF')
         when 'TagAssign'
           return self
+        when 'TagCapture'
+          return part
         when 'TagFor'
           return part
         when 'TagIf'

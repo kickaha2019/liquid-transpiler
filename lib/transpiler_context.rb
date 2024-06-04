@@ -14,6 +14,14 @@ module LiquidTranspiler
       @output[-1]
     end
 
+    def output_pop
+      @output.pop
+    end
+
+    def output_push
+      @output << "h#{@output.size+1}"
+    end
+
     def variable( name)
       unless @variables[name]
         @index += 1

@@ -173,6 +173,10 @@ module TranspiledMethods
     end
   end
 
+  def f_newline_to_br( value)
+    value.gsub( "\n", "<br />\n")
+  end
+
   def f_plus( left, right)
     left + right
   end
