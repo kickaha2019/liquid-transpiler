@@ -2,7 +2,7 @@ require_relative '../test_base'
 
 class TestAbs < TestBase
   def test_abs
-    fire( <<ABS)
+    compare(<<ABS)
 {{ -17 | abs }}
 {{ 4 | abs }}
 {{ "4" | abs }}

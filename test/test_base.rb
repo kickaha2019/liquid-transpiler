@@ -20,7 +20,7 @@ class TestBase < Minitest::Test
     end
   end
 
-  def fire( code, params = {})
+  def compare(code, params = {})
     liquid         =  Liquid::Template.parse(code)
     liquid_output  =  liquid.render( params)
     prepare( code, 'test.liquid')
@@ -33,6 +33,22 @@ class TestBase < Minitest::Test
       p ['liquid_output', liquid_output]
       p ['transpiled_output', transpiled_output]
       assert_equal liquid_output, transpiled_output
+    else
+      @@transpiler.errors {|error| puts error}
+      raise 'Transpiler errors'
+    end
+  end
+
+  def expect( code, params = {}, expected)
+    prepare( code, 'test.liquid')
+    @@test_number  += 1
+    clazz          =  "Temp#{@@test_number}"
+    path           = @@dir + '/Test.rb'
+    if @@transpiler.transpile_dir( @@dir, clazz, path)
+      load( path)
+      transpiled_output = Object.const_get(clazz).new.render( 'test', params)
+      p ['transpiled_output', transpiled_output]
+      assert_equal expected, transpiled_output.strip
     else
       @@transpiler.errors {|error| puts error}
       raise 'Transpiler errors'

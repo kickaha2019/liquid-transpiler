@@ -74,7 +74,7 @@ module LiquidTranspiler
           unless term1 == ']'
             raise TranspilerError.new( source.offset, 'Expected ]')
           end
-          elements[-1] = Operators::Array( elements[-1], formula)
+          elements[-1] = Operators::Array.new( elements[-1], formula)
         when '.'
           elements[-1] = Operators::Dereference.new( elements[-1], source.get_name)
         when '|'

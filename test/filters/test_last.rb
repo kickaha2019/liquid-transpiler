@@ -2,13 +2,13 @@ require_relative '../test_base'
 
 class TestLast < TestBase
   def test_last1
-    fire( <<LAST)
+    compare(<<LAST)
 {{ "Ground control to Major Tom." | split: " " | last }}
 LAST
   end
 
   def test_last2
-    fire( <<LAST)
+    compare(<<LAST)
 {% assign my_array = "zebra, octopus, giraffe, tiger" | split: ", " %}
 {{ my_array.last }}
 

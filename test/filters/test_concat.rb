@@ -2,7 +2,7 @@ require_relative '../test_base'
 
 class TestConcat < TestBase
   def test_concat
-    fire( <<CONCAT)
+    compare(<<CONCAT)
 {% assign fruits = "apples, oranges, peaches" | split: ", " %}
 {% assign vegetables = "carrots, turnips, potatoes" | split: ", " %}
 

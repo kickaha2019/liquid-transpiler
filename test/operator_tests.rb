@@ -2,7 +2,7 @@ require_relative 'test_base'
 
 class OperatorTests < TestBase
   def test_and_or1
-    fire( <<AND_OR1)
+    compare(<<AND_OR1)
 {% if true or false and false %}
   This evaluates to true, since the `and` condition is checked first.
 {% endif %}
@@ -10,7 +10,7 @@ AND_OR1
   end
 
   def test_and_or2
-    fire( <<AND_OR2)
+    compare(<<AND_OR2)
 {% if true and false and false or true %}
   This evaluates to false, since the tags are checked like this:
 
@@ -23,7 +23,7 @@ AND_OR2
   end
 
   def test_contains1
-    fire( <<CONTAINS1)
+    compare(<<CONTAINS1)
 {% assign title = "Gage Blackwood" %}
 {% if title contains "Gage" %}
   Agent 5
@@ -32,7 +32,7 @@ CONTAINS1
   end
 
   def test_contains2
-    fire( <<CONTAINS2)
+    compare(<<CONTAINS2)
 {% assign names = "Gage Blackwood" | split: ' ' %}
 {% if names contains "Gage" %}
   Agent 5
@@ -41,7 +41,7 @@ CONTAINS2
   end
 
   def test_empty
-    fire( <<EMPTY, {'array' => []})
+    compare(<<EMPTY, {'array' => []})
 {% if "" == empty %}
 Empty string
 {% endif %}
@@ -55,7 +55,7 @@ EMPTY
   end
 
   def test_nil
-    fire( <<NIL, {'hash' => {}})
+    compare(<<NIL, {'hash' => {}})
 {% if hash.missing %}
 Wasn't nil
 {% else %}
@@ -66,7 +66,7 @@ NIL
   end
 
   def test_operators
-    fire( <<OPERATORS)
+    compare(<<OPERATORS)
 {% false or 1 == 1 %}
 Correct 1
 {% endif %}

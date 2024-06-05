@@ -2,7 +2,7 @@ require_relative '../test_base'
 
 class TestCeil < TestBase
   def test_ceil
-    fire( <<CEIL)
+    compare(<<CEIL)
 {{ 1.2 | ceil }}
 {{ 2.0 | ceil }}
 {{ 183.357 | ceil }}

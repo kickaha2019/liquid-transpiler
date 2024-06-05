@@ -213,12 +213,53 @@ module TranspiledMethods
     list.size
   end
 
+  def f_slice( list, start, length=1)
+    start = list.size + start if start < 0
+    if list.is_a?( String)
+      list[start...(start+length)]
+    else
+      list[start...(start+length)].join('')
+    end
+  end
+
+  def f_sort( list, sort_by=nil)
+    if sort_by
+      list.sort_by {|entry| x(entry,sort_by)}
+    else
+      list.sort
+    end
+  end
+
+  def f_sort_natural( list, sort_by=nil)
+    if sort_by
+      list.sort_by {|entry| x(entry,sort_by).downcase}
+    else
+      list.sort_by {|entry| entry.downcase}
+    end
+  end
+
   def f_split( value, *args)
     value.split( args[0])
   end
 
   def f_strip( value)
     value.strip
+  end
+
+  def f_strip_html( value)
+    value.gsub( /<[^>]*>/, '')
+  end
+
+  def f_strip_newlines( value)
+    value.gsub( "\n", '')
+  end
+
+  def f_sum( list, sum_by=nil)
+    if sum_by
+      list.inject(0) {|r,e| r + x(e,sum_by)}
+    else
+      list.inject(:+)
+    end
   end
 
   def f_times( value, *args)

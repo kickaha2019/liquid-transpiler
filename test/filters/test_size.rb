@@ -2,13 +2,13 @@ require_relative '../test_base'
 
 class TestSize < TestBase
   def test_size1
-    fire( <<SIZE)
+    compare(<<SIZE)
 {{ "Ground control to Major Tom." | size }}
 SIZE
   end
 
   def test_size2
-    fire( <<SIZE)
+    compare(<<SIZE)
 {% assign my_array = "apples, oranges, peaches, plums" | split: ", " %}
 
 {{ my_array.size }} 
