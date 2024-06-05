@@ -160,11 +160,7 @@ module TranspiledMethods
   end
 
   def f_modulo( left, right)
-    if left.is_a?( Float)
-      (left % right).round( 5)
-    else
-      left % right
-    end
+    left % right
   end
 
   def f_map( map, field)
@@ -193,12 +189,36 @@ module TranspiledMethods
     value.sub( elide, '')
   end
 
+  def f_replace( value, was, now)
+    value.gsub( was, now)
+  end
+
+  def f_replace_first( value, was, now)
+    value.sub( was, now)
+  end
+
+  def f_reverse( list)
+    list.reverse
+  end
+
   def f_round( value, places=0)
     value.round( places)
   end
 
+  def f_rstrip( value)
+    value.rstrip
+  end
+
+  def f_size( list)
+    list.size
+  end
+
   def f_split( value, *args)
     value.split( args[0])
+  end
+
+  def f_strip( value)
+    value.strip
   end
 
   def f_times( value, *args)

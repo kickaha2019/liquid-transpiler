@@ -16,6 +16,8 @@ module LiquidTranspiler
           "f_first(#{@expression.generate(context)})"
         when 'last'
           "f_last(#{@expression.generate(context)})"
+        when 'size'
+          "f_size(#{@expression.generate(context)})"
         else
           "x(#{@expression.generate(context)},'#{@field}')"
         end

@@ -1,48 +1,6 @@
 require_relative 'test_base'
 
 class FilterTests < TestBase
-  def test_replace
-    fire( <<REPLACE)
-{{ "Take my protein pills and put my helmet on" | replace: "my", "your" }}
-REPLACE
-  end
-
-  def test_replace_first
-    fire( <<REPLACE_FIRST)
-{{ "Take my protein pills and put my helmet on" | replace_first: "my", "your" }}
-REPLACE_FIRST
-  end
-
-  def test_reverse
-    fire( <<REVERSE)
-{% assign my_array = "apples, oranges, peaches, plums" | split: ", " %}
-
-{{ my_array | reverse | join: ", " }}
-
-{{ "Ground control to Major Tom." | split: "" | reverse | join: "" }}
-REVERSE
-  end
-
-  def test_rstrip
-    fire( <<RSTRIP)
-{{ "          So much room for activities          " | rstrip }}!
-RSTRIP
-  end
-
-  def test_size
-    fire( <<SIZE)
-{{ "Ground control to Major Tom." | size }}
-  
-{% assign my_array = "apples, oranges, peaches, plums" | split: ", " %}
-
-{{ my_array.size }} 
-
-{% if my_array.size > 3 %}
-  Plenty of fruit!
-{% endif %}
-SIZE
-  end
-
   def test_slice
     fire( <<SLICE)
 {{ "Liquid" | slice: 0 }}

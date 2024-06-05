@@ -3,7 +3,8 @@ module LiquidTranspiler
     OPERATORS = {
       'and' => [:eat_logical, 'o_and'],
       'or'  => [:eat_logical, 'o_or'],
-      '=='   => ['Equals', false]
+      '=='   => ['Equals', false],
+      '>'    => ['GreaterThan', false]
     }
 
     def self.check_literal_or_variable( source, element)
