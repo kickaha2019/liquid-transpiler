@@ -1,5 +1,6 @@
 require 'date'
 require 'uri'
+require 'cgi'
 
 module TranspiledMethods
   EMPTY_METHOD = 'empty?'.to_sym
@@ -264,6 +265,33 @@ module TranspiledMethods
 
   def f_times( value, *args)
     value * args[0]
+  end
+
+  def f_truncate( text, limit, etc='...')
+    return text if text.size <= limit
+    text[0...(limit - etc.size)] + etc
+  end
+
+  def f_truncatewords( text, limit, etc='...')
+    words = text.split( ' ')
+    return text if words.size <= limit
+    words[0...limit].join( ' ') + etc
+  end
+
+  def f_uniq( list)
+    list.uniq
+  end
+
+  def f_upcase( value)
+    value.nil? ? nil : value.upcase
+  end
+
+  def f_url_decode( text)
+    CGI.unescape text
+  end
+
+  def f_url_encode( text)
+    CGI.escape text
   end
 
   def o_eq( left, right)
