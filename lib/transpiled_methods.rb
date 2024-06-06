@@ -294,9 +294,47 @@ module TranspiledMethods
     CGI.escape text
   end
 
+  def f_where( list, field, value=nil)
+    if value.nil?
+      [].tap do |results|
+        list.each do |entry|
+          results << entry if x(entry,field)
+        end
+      end
+    else
+      [].tap do |results|
+        list.each do |entry|
+          results << entry if x(entry,field) == value
+        end
+      end
+    end
+  end
+
+  def o_contains( text, search)
+    ! text.index( search).nil?
+  end
+
   def o_eq( left, right)
+    return true if left == right
     return false if left.nil? || right.nil?
-    left == right
+    if left == :empty
+      right.empty?
+    elsif right == :empty
+      left.empty?
+    else
+      false
+    end
+  end
+
+  def o_ne( left, right)
+    return false if left.nil? || right.nil?
+    if left == :empty
+      ! right.empty?
+    elsif right == :empty
+      ! left.empty?
+    else
+      left != right
+    end
   end
 
   def t( thing)

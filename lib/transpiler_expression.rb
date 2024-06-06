@@ -1,10 +1,12 @@
 module LiquidTranspiler
   class TranspilerExpression
     OPERATORS = {
-      'and' => [:eat_logical, 'o_and'],
-      'or'  => [:eat_logical, 'o_or'],
-      '=='   => ['Equals', false],
-      '>'    => ['GreaterThan', false]
+      'and'      => ['And',         true],
+      'contains' => ['Contains',    false],
+      'or'       => ['Or',          true],
+      '=='       => ['Equals',      false],
+      '!='       => ['NotEquals',   false],
+      '>'        => ['GreaterThan', false]
     }
 
     def self.check_literal_or_variable( source, element)
@@ -105,6 +107,19 @@ module LiquidTranspiler
         else
           i += 2
         end
+      end
+
+      i = elements.size - 2
+      while i > 0
+        if op = OPERATORS[elements[i]]
+          elements.delete_at(i)
+          rhs = elements.delete_at(i)
+          clazz = Object.const_get( 'LiquidTranspiler::Operators::' + op[0])
+          elements[i-1] = clazz.new( elements[i-1], rhs)
+        else
+          break
+        end
+        i -= 2
       end
 
       raise 'Dev' if elements.size > 1

@@ -9,6 +9,10 @@ module LiquidTranspiler
         if part.is_a?( TagEndif)
           return @parent
         end
+        if part.is_a?( TagElse)
+          @children << part
+          return part
+        end
         super( part)
       end
 
