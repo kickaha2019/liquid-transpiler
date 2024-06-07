@@ -1,7 +1,7 @@
 require_relative '../test_base'
 
 class TestEquals < TestBase
-  def test_equals
+  def test_equals1
     compare(<<EMPTY, {'array' => [], 'letter' => 'A'})
 {% if "" == empty %}
 Empty string
@@ -15,6 +15,14 @@ Was an A
 {% if letter == 'b' %}
 {% else %}
 Wasn't a b
+{% endif %}
+EMPTY
+  end
+
+  def test_equals2
+    compare(<<EMPTY, {'array' => [], 'letter' => 'A'})
+{% if false or 1 == 1 %}
+Correct 1
 {% endif %}
 EMPTY
   end

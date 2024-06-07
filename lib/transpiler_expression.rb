@@ -1,12 +1,15 @@
 module LiquidTranspiler
   class TranspilerExpression
     OPERATORS = {
-      'and'      => ['And',         true],
-      'contains' => ['Contains',    false],
-      'or'       => ['Or',          true],
-      '=='       => ['Equals',      false],
-      '!='       => ['NotEquals',   false],
-      '>'        => ['GreaterThan', false]
+      'and'      => ['And',                 true],
+      'contains' => ['Contains',            false],
+      'or'       => ['Or',                  true],
+      '=='       => ['Equals',              false],
+      '!='       => ['NotEquals',           false],
+      '>'        => ['GreaterThan',         false],
+      '>='       => ['GreaterThanOrEquals', false],
+      '<'        => ['LessThan',            false],
+      '<='       => ['LessThanOrEquals',    false]
     }
 
     def self.check_literal_or_variable( source, element)
