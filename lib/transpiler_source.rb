@@ -6,6 +6,7 @@ module LiquidTranspiler
       @path   = path
       @offset = 0
       @text   = IO.read( path)
+      @ungot  = nil
     end
 
     def eof?
@@ -35,11 +36,17 @@ module LiquidTranspiler
     end
 
     def get
+      if @ungot
+        token, @ungot = @ungot, nil
+        return token
+      end
+      
       skip_space
       return nil if eof?
 
       letter = @text[@offset..@offset]
-      if [',',']','[',':','|'].include?( letter)
+
+      if [',',']','[',':','|','(',')'].include?( letter)
         @offset += 1
         return letter
       elsif /[0-9]/ =~ letter
@@ -57,8 +64,12 @@ module LiquidTranspiler
         if /[0-9]/ =~ @text[@offset+1..@offset+1]
           get_number
         else
+          start   =  @offset
           @offset += 1
-          return letter
+          while (@offset < @text.size) && @text[@offset..@offset] == '.'
+            @offset += 1
+          end
+          return @text[start...@offset]
         end
       when '-'
         if /[\.0-9]/ =~ @text[@offset+1..@offset+1]
@@ -110,7 +121,12 @@ module LiquidTranspiler
     def get_number
       origin = @offset
       if m = @text.match( /[^0-9\.]/, @offset+1)
-        @offset = m.end(0) - 1
+        finish = m.end(0) - 1
+        if i = @text[origin...finish].index( '..')
+          @offset += i
+        else
+          @offset = finish
+        end
       else
         @offset = @text.size
       end
@@ -161,6 +177,15 @@ module LiquidTranspiler
     end
 
     def next( expected)
+      if @ungot
+        if @ungot == expected
+          @ungot = nil
+          return true
+        else
+          return false
+        end
+      end
+
       if @text[@offset...(@offset+expected.size)] == expected
         @offset += expected.size
         true
@@ -195,6 +220,10 @@ module LiquidTranspiler
           break
         end
       end
+    end
+
+    def unget( token)
+      @ungot = token
     end
   end
 end

@@ -1,25 +1,17 @@
 module LiquidTranspiler
   module Parts
-    class TagElse < Part
+    class TagBreak < Part
       def initialize( offset, parent)
         super( offset, parent)
       end
 
       def add( part)
-        if part.is_a?( TagBreak)
-          @children << part
-          return self
-        end
-        if part.is_a?( TagEndif)
-          return @parent.add( part)
-        end
-        super( part)
+        raise TranspilerError.new( @offset, 'Internal error')
       end
 
       def generate( context, indent, io)
         io.print ' ' * (indent - 2)
-        io.puts "else"
-        super( context, indent, io)
+        io.puts "break"
       end
 
       def setup( source)

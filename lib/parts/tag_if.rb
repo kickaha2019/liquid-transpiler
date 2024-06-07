@@ -6,12 +6,16 @@ module LiquidTranspiler
       end
 
       def add( part)
-        if part.is_a?( TagEndif)
-          return @parent
+        if part.is_a?( TagBreak)
+          @children << part
+          return self
         end
         if part.is_a?( TagElse)
           @children << part
           return part
+        end
+        if part.is_a?( TagEndif)
+          return @parent
         end
         super( part)
       end

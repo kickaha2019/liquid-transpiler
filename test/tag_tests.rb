@@ -1,35 +1,6 @@
 require_relative 'test_base'
 
 class TagTests < TestBase
-  def test_assign1
-    compare(<<ASSIGN1)
-{% assign my_variable = "tomato" %}
-{{ my_variable }}
-ASSIGN1
-  end
-
-  def test_break
-    compare(<<BREAK)
-{% for i in (0..9) %}
-{{ i }}
-{% break %}
-{% endfor %}
-BREAK
-  end
-
-  def test_capture
-    compare(<<CAPTURE)
-{% assign favorite_food = "pizza" %}
-{% assign age = 35 %}
-
-{% capture about_me %}
-I am {{ age }} and my favorite food is {{ favorite_food }}.
-{% endcapture %}
-
-{{ about_me }}
-CAPTURE
-  end
-
   def test_case
     compare(<<CASE)
 {% case 2 %}

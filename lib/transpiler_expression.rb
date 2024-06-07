@@ -45,7 +45,9 @@ module LiquidTranspiler
         formula = Operators::Filter.new( filter, formula, args)
       end
 
-      raise 'Dev' unless term.nil?
+      unless [nil,'..','...',')'].include?( term)
+        raise TranspilerError.new( source.offset, 'Unexpected ' + term)
+      end
       return formula, term
     end
 
