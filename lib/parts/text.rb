@@ -17,23 +17,37 @@ module LiquidTranspiler
         raise TranspilerError.new( part.offset, 'Internal error')
       end
 
+      def empty?
+        @text.empty?
+      end
+
       def find_arguments( names)
       end
 
       def generate( context, indent, io)
-        io.print(' ' * indent)
-        io.print context.output
-        subbed = @text
+        unless empty?
+          io.print(' ' * indent)
+          io.print context.output
+          subbed = @text
 
-        SUB.each do |sub|
-          subbed = subbed.gsub( * sub)
+          SUB.each do |sub|
+            subbed = subbed.gsub( * sub)
+          end
+
+          io.puts ' << "' + subbed + '"'
         end
-
-        io.puts ' << "' + subbed + '"'
       end
 
       def name
         'text section'
+      end
+
+      def strip
+        @text = @text.strip
+      end
+
+      def to_s
+        @text
       end
     end
   end

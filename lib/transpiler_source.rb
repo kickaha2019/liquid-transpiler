@@ -40,7 +40,7 @@ module LiquidTranspiler
         token, @ungot = @ungot, nil
         return token
       end
-      
+
       skip_space
       return nil if eof?
 

@@ -14,17 +14,23 @@ module LiquidTranspiler
 
         case part.class_name
         when 'Embedded'
-          return self
+          self
         when 'EndOfFile'
           raise TranspilerError.new( part.offset, 'Unexpected EOF')
         when 'TagAssign'
-          return self
+          self
         when 'TagCapture'
-          return part
+          part
+        when 'TagCase'
+          part
+        when 'TagComment'
+          self
         when 'TagFor'
-          return part
+          part
         when 'TagIf'
-          return part
+          part
+        when 'Text'
+          self
         else
           raise TranspilerError.new( part.offset,
                                      'Unexpected ' + part.name)
@@ -35,7 +41,7 @@ module LiquidTranspiler
         text = text.lstrip if rstrip
         text = text.rstrip if lstrip
         if text.size > 0
-          @children << Text.new( offset, text)
+          add( Text.new( offset, text))
         end
       end
 
@@ -109,6 +115,7 @@ module LiquidTranspiler
           if source.next( '%}')
             return lstrip, part, rstrip
           else
+            p ['DEBUG300', self.class_name, source.peek(20)]
             raise TranspilerError.new( offset, 'Expecting %}')
           end
         else

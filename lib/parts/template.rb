@@ -15,7 +15,10 @@ module LiquidTranspiler
         end
 
         def assign( name)
-          @variables[name] = true unless known?( name)
+          unless known?( name)
+            @variables[name] = true
+            @locals[name]    = true
+          end
         end
 
         def known?( name)

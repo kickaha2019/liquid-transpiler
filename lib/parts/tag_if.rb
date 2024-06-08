@@ -22,9 +22,21 @@ module LiquidTranspiler
 
       def find_arguments( names)
         @expression.find_arguments( names)
-        names = names.spawn
+        names_if, names_else = names.spawn, nil
+
         @children.each do |child|
-          child.find_arguments( names)
+          if child.is_a?( TagElse)
+            names_else = names.spawn
+            child.find_arguments( names_else)
+          else
+            child.find_arguments( names_if)
+          end
+        end
+
+        if names_else
+          names_if.locals do |local|
+            names.assign( local) if names_else.local?( local)
+          end
         end
       end
 

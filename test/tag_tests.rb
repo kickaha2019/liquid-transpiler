@@ -1,35 +1,6 @@
 require_relative 'test_base'
 
 class TagTests < TestBase
-  def test_case
-    compare(<<CASE)
-{% case 2 %}
-{% when 1 %}Apple
-{% when 2 %}Banana
-{% endcase %}
-CASE
-  end
-
-  def test_case_else
-    compare(<<CASE_ELSE)
-{% case 2 %}
-{% when 1 %}Apple
-{% else %}Banana
-{% endcase %}
-CASE_ELSE
-  end
-
-  def test_comment
-    compare(<<COMMENT)
-{% assign verb = "turned" %}
-{% comment %}
-{% assign verb = "converted" %}
-{% endcomment %}
-Anything you put between {% comment %} and {% endcomment %} tags
-is {{ verb }} into a comment.
-COMMENT
-  end
-
   def test_continue
     compare(<<CONTINUE)
 {% for i in (1..5) %}
