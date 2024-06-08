@@ -6,7 +6,7 @@ module LiquidTranspiler
       end
 
       def add( part)
-        if part.is_a?( TagBreak)
+        if part.is_a?( TagBreak) || part.is_a?( TagContinue)
           @children << part
           return self
         end

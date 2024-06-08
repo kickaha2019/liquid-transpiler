@@ -1,13 +1,25 @@
 module LiquidTranspiler
   class TranspilerContext
-    def initialize( arguments)
+    def initialize( names)
       @variables = {}
+      @cycles    = {}
+
+      arguments = names.arguments
       (0...arguments.size).each do |i|
         @variables[arguments[i]] = "a#{i}"
       end
 
+      cycles = names.cycles
+      (0...cycles.size).each do |i|
+        @cycles[cycles[i]] = "c#{i}"
+      end
+
       @output = ['h']
       @index  = 0
+    end
+
+    def cycle( name)
+      @cycles[name]
     end
 
     def output

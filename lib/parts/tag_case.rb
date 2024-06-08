@@ -11,7 +11,14 @@ module LiquidTranspiler
           part
         elsif part.is_a?( TagEndcase)
           @parent
+        elsif part.is_a?( Text)
+          part.strip
+          unless part.empty?
+            raise TranspilerError.new( part.offset,
+                                       'Unexpected ' + part.name)
+          end
         else
+          p ['DEBUG100', source.peek(10), part.to_s]
           raise TranspilerError.new( part.offset,
                                      'Unexpected ' + part.name)
         end

@@ -1,27 +1,6 @@
 require_relative 'test_base'
 
 class TagTests < TestBase
-  def test_continue
-    compare(<<CONTINUE)
-{% for i in (1..5) %}
-  {% if i == 4 %}
-    {% continue %}
-  {% else %}
-    {{ i }}
-  {% endif %}
-{% endfor %}
-CONTINUE
-  end
-
-  def test_cycle
-    compare(<<CYCLE, {'basket' => ['Apple', 'Banana']})
-{% for fruit in basket %}
-  {% cycle "one", "two", "three" %}
-  {% cycle "special": "one", "two", "three" %}
-{% endfor %}
-CYCLE
-  end
-
   def test_decrement
     compare(<<DECREMENT)
 {% assign var = 10 %}

@@ -13,6 +13,23 @@ module LiquidTranspiler
       @offset >= @text.size
     end
 
+    def expect_literal
+      skip_space
+      if token = get
+        if /^[a-z_0-9\-]/i =~ token
+          '"' + token + '"'
+        elsif (token[0..0] == '.') && (! /^\.+$/ =~ token)
+          '"' + token + '"'
+        elsif /^['"]/ =~ token
+          token
+        else
+          raise TranspilerError.new( @offset, 'Expected literal')
+        end
+      else
+        raise TranspilerError.new( @offset, 'Expected literal')
+      end
+    end
+
     def expect_name
       skip_space
       if token = get

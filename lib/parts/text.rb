@@ -3,11 +3,6 @@ require_relative 'part'
 module LiquidTranspiler
   module Parts
     class Text < Part
-      SUB = [['\\', '\\\\'],
-             ["\n", '\\n'],
-             ['"',  '\\"'],
-             ['#',  '\\#']]
-
       def initialize( offset, text)
         super( offset, nil)
         @text = text
@@ -28,13 +23,7 @@ module LiquidTranspiler
         unless empty?
           io.print(' ' * indent)
           io.print context.output
-          subbed = @text
-
-          SUB.each do |sub|
-            subbed = subbed.gsub( * sub)
-          end
-
-          io.puts ' << "' + subbed + '"'
+          io.puts ' << "' + html_encode( @text) + '"'
         end
       end
 

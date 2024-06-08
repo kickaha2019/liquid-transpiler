@@ -1,6 +1,11 @@
 module LiquidTranspiler
   module Parts
     class Part
+      SUB = [['\\', '\\\\'],
+             ["\n", '\\n'],
+             ['"',  '\\"'],
+             ['#',  '\\#']]
+
       attr_reader :offset, :parent
 
       def initialize( offset, parent)
@@ -25,6 +30,8 @@ module LiquidTranspiler
           part
         when 'TagComment'
           self
+        when 'TagCycle'
+          self
         when 'TagFor'
           part
         when 'TagIf'
@@ -32,6 +39,7 @@ module LiquidTranspiler
         when 'Text'
           self
         else
+          p ['DEBUG200', part.to_s]
           raise TranspilerError.new( part.offset,
                                      'Unexpected ' + part.name)
         end
@@ -74,6 +82,10 @@ module LiquidTranspiler
         @children.each do |child|
           child.generate( context, indent, io)
         end
+      end
+
+      def html_encode( text)
+        SUB.inject( text) {|r,e| r.gsub( * e)}
       end
 
       def name

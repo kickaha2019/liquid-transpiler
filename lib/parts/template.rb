@@ -4,8 +4,9 @@ module LiquidTranspiler
   module Parts
     class Template < Part
       class Names
-        def initialize( arguments = {}, variables = {})
+        def initialize( arguments = {}, cycles={}, variables = {})
           @arguments = arguments
+          @cycles    = cycles
           @variables = variables
           @locals    = {}
         end
@@ -19,6 +20,14 @@ module LiquidTranspiler
             @variables[name] = true
             @locals[name]    = true
           end
+        end
+
+        def cycle( name)
+          @cycles[name] = true
+        end
+
+        def cycles
+          @cycles.keys
         end
 
         def known?( name)
@@ -38,7 +47,9 @@ module LiquidTranspiler
         end
 
         def spawn
-          Names.new( @arguments, Hash.new {|h,k| h[k] = @variables[k]})
+          Names.new( @arguments,
+                     @cycles,
+                     Hash.new {|h,k| h[k] = @variables[k]})
         end
       end
 
@@ -53,10 +64,10 @@ module LiquidTranspiler
         super( part)
       end
 
-      def deduce_arguments
+      def deduce_names
         Names.new().tap do |names|
           find_arguments( names)
-        end.arguments
+        end
       end
     end
   end

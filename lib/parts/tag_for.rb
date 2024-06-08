@@ -25,7 +25,7 @@ module LiquidTranspiler
 
       def generate( context, indent, io)
         io.print ' ' * indent
-        io.puts "#{@expression.generate( context)}.each do |"
+        io.print "#{@expression.generate( context)}.each do |"
         io.print context.variable( @variable)
         io.puts '|'
         super( context, indent+2, io)

@@ -16,17 +16,17 @@ module LiquidTranspiler
       @errors = []
       parse_dir( source_dir)
       return false unless @errors.empty?
-      deduce_arguments
+      deduce_signatures
       generate_ruby( clazz, path)
       @errors.empty?
     end
 
     private
 
-    def deduce_arguments
+    def deduce_signatures
       index = 0
       @parsed.each_pair do |name, ast|
-        @signature[name] = [index, ast.deduce_arguments]
+        @signature[name] = [index, ast.deduce_names]
         index += 1
       end
     end
@@ -77,11 +77,16 @@ METHOD_END
     end
 
     def write_method_start( info, io)
-      args = (0...info[1].size).collect {|i| "a#{i}"}.join(',')
+      args = (0...info[1].arguments.size).collect {|i| "a#{i}"}.join(',')
+
       io.puts <<"METHOD_HEADER"
   def t#{info[0]}(#{args})
     h = []
 METHOD_HEADER
+
+      (0...info[1].cycles.size).each do |i|
+        io.puts "    c#{i} = -1"
+      end
     end
 
     def write_start( clazz, io)
@@ -91,7 +96,7 @@ class #{clazz}
   TEMPLATES = {
 START
       @signature.each_pair do |key, info|
-        args = info[1].collect {|arg| "'#{arg}'"}.join(',')
+        args = info[1].arguments.collect {|arg| "'#{arg}'"}.join(',')
         io.puts "  '#{key}' => [:t#{info[0]},[#{args}]],"
       end
       io.puts <<RENDER
