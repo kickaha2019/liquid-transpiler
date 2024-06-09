@@ -12,20 +12,6 @@ module LiquidTranspiler
       '<='       => ['LessThanOrEquals',    false]
     }
 
-    def self.check_literal_or_variable( source, element)
-      if element.nil?
-        raise TranspilerError.new( source.offset, 'Expected literal or variable')
-      end
-      if OPERATORS[element]
-        raise TranspilerError.new( source.offset, 'Unexpected operator')
-      end
-      unless (/^['"a-z0-9]/i =~ element) ||
-             ((/^[\.\-]/ =~ element) && (element.size > 1))
-        raise TranspilerError.new( source.offset, 'Expected literal or variable')
-      end
-      Operators::Leaf.new( element)
-    end
-
     def self.parse( source)
       formula, term = parse1( source)
 
@@ -71,7 +57,7 @@ module LiquidTranspiler
     end
 
     def self.parse2( source)
-      elements = [check_literal_or_variable( source, source.get)]
+      elements = [parse3( source)]
       term     = nil
 
       while token = source.get
@@ -90,7 +76,7 @@ module LiquidTranspiler
         else
           if OPERATORS[token]
             elements << token
-            elements << check_literal_or_variable( source, source.get)
+            elements << parse3( source)
           else
             term = token
             break
@@ -99,6 +85,31 @@ module LiquidTranspiler
       end
 
       return to_formula( elements), term
+    end
+
+    def self.parse3( source)
+      token = source.get
+
+      if /^([a-z0-9\-'"]|\.[0-9])/i =~ token
+        Operators::Leaf.new( token)
+
+      elsif token == '('
+        from, type = parse1( source)
+
+        unless ['..','...'].include? type
+          raise TranspilerError.new( @offset, 'Expecting .. or ...')
+        end
+
+        to, term = parse1( source)
+        unless term == ')'
+          raise TranspilerError.new( @offset, 'Expecting )')
+        end
+
+        Operators::Range.new( from, to, type)
+
+      else
+        raise TranspilerError.new( source.offset,'Bad syntax')
+      end
     end
 
     def self.to_formula( elements)

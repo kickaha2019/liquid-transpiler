@@ -5,6 +5,29 @@ require 'cgi'
 module TranspiledMethods
   EMPTY_METHOD = 'empty?'.to_sym
 
+  class Forloop
+    def initialize( parent, data)
+      @parent = parent
+      @data   = data
+    end
+
+    def each
+      @data.each {|entry| yield entry}
+    end
+
+    def empty?
+      @data.empty?
+    end
+  end
+
+  def f( list, old_forloop)
+    unless list.is_a?( Array)
+      list = list.to_a
+    end
+
+    Forloop.new( old_forloop, list)
+  end
+
   def f_abs( value)
     if value.nil?
       return nil

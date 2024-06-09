@@ -87,6 +87,10 @@ METHOD_HEADER
       (0...info[1].cycles.size).each do |i|
         io.puts "    c#{i} = -1"
       end
+
+      (0...info[1].decrements.size).each do |i|
+        io.puts "    d#{i} = 0"
+      end
     end
 
     def write_start( clazz, io)

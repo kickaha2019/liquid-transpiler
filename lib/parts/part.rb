@@ -32,6 +32,8 @@ module LiquidTranspiler
           self
         when 'TagCycle'
           self
+        when 'TagDecrement'
+          self
         when 'TagFor'
           part
         when 'TagIf'

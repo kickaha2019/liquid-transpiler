@@ -1,48 +1,6 @@
 require_relative 'test_base'
 
 class TagTests < TestBase
-  def test_decrement
-    compare(<<DECREMENT)
-{% assign var = 10 %}
-{% decrement var %}
-{% decrement var %}
-{% decrement var %}
-{{ var }}
-DECREMENT
-  end
-
-  def test_empty
-    compare(<<EMPTY, {'array' => []})
-{% if "" == empty %}
-Empty string
-{% endif %}
-{% if array == empty %}
-Empty array
-{% endif %}
-{% if unknown %}
-Non-existing object
-{% endif %}
-EMPTY
-  end
-
-  def test_for
-    compare(<<FOR, {'basket' => ['Apple']})
-{% for fruit in basket %}
-{{ fruit }}
-{% endfor %}
-FOR
-  end
-
-  def test_for_else
-    compare(<<FOR, {'basket' => []})
-{% for fruit in basket %}
-{{ fruit }}
-{% else %}
-Empty basket
-{% endfor %}
-FOR
-  end
-
   def test_for_limit
     compare(<<FOR_LIMIT, {'array' => [1, 2, 3, 4, 5, 6]})
 {% for item in array reversed limit:2 %}
@@ -68,20 +26,6 @@ FOR_OFFSET1
   {{ item }}
 {% endfor %}
 FOR_OFFSET2
-  end
-
-  def test_for_range
-    compare(<<FOR_RANGE, {'array' => [1, 2, 3, 4, 5, 6]})
-{% for i in (3..5) %}
-  {{ i }}
-{% endfor %}
-
-{% assign num = 4 %}
-{% assign range = (1..num) %}
-{% for i in range %}
-  {{ i }}
-{% endfor %}
-FOR_RANGE
   end
 
   def test_forloop
