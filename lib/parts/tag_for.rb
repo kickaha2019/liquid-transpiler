@@ -3,7 +3,10 @@ module LiquidTranspiler
     class TagFor < Part
       def initialize( offset, parent)
         super( offset, parent)
-        @else = nil
+        @else     = nil
+        @limit    = nil
+        @reversed = false
+        @start    = nil
       end
 
       def add( part)
@@ -23,6 +26,8 @@ module LiquidTranspiler
 
       def find_arguments( names)
         @expression.find_arguments( names)
+        @limit.find_arguments( names) if @limit
+        @start.find_arguments( names) if @start
         names = names.spawn
         names.assign( @variable)
         super( names)
@@ -32,6 +37,22 @@ module LiquidTranspiler
         io.print ' ' * indent
         for_name, old_for_loop = context.for( @variable)
         io.puts "#{for_name}l = f(#{@expression.generate( context)},#{old_for_loop})"
+
+        if @start
+          io.print ' ' * indent
+          io.puts "#{for_name}l.offset #{@start.generate( context)}"
+        end
+
+        if @limit
+          io.print ' ' * indent
+          io.puts "#{for_name}l.limit #{@limit.generate( context)}"
+        end
+
+        if @reversed
+          io.print ' ' * indent
+          io.puts "#{for_name}l.reverse"
+        end
+
         if @else
           io.print ' ' * indent
           io.puts "unless #{for_name}l.empty?"
@@ -63,6 +84,27 @@ module LiquidTranspiler
         end
 
         @expression, term = TranspilerExpression.parse( source)
+
+        while true
+          case term
+          when 'limit'
+            if source.get != ':'
+              raise TranspilerError.new( @offset, 'Expected : after limit')
+            end
+            @limit, term = TranspilerExpression.parse( source)
+          when 'reversed'
+            @reversed = true
+            term = source.get
+          when 'offset'
+            if source.get != ':'
+              raise TranspilerError.new( @offset, 'Expected : after offset')
+            end
+            @start, term = TranspilerExpression.parse( source)
+          else
+            break
+          end
+        end
+
         return term
       end
     end

@@ -31,7 +31,7 @@ module LiquidTranspiler
         formula = Operators::Filter.new( filter, formula, args)
       end
 
-      unless [nil,'..','...',')'].include?( term)
+      unless [nil,'limit','reversed','offset'].include?( term)
         raise TranspilerError.new( source.offset, 'Unexpected ' + term)
       end
       return formula, term

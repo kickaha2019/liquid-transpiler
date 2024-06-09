@@ -12,10 +12,10 @@ module LiquidTranspiler
 
       def generate( context)
         case @field
-        when 'first'
-          "f_first(#{@expression.generate(context)})"
-        when 'last'
-          "f_last(#{@expression.generate(context)})"
+        # when 'first'
+        #   "f_first(#{@expression.generate(context)})"
+        # when 'last'
+        #   "f_last(#{@expression.generate(context)})"
         when 'size'
           "f_size(#{@expression.generate(context)})"
         else

@@ -14,4 +14,10 @@ SUM1
 {{ ratings | sum }}
 SUM2
   end
+
+  def test_sum3
+    expect(<<SUM3, {}, '21')
+{{ (1..6) | sum }}
+SUM3
+  end
 end

@@ -9,14 +9,62 @@ module TranspiledMethods
     def initialize( parent, data)
       @parent = parent
       @data   = data
+      @index  = -1
     end
 
     def each
-      @data.each {|entry| yield entry}
+      @data.each do |entry|
+        @index += 1
+        yield entry
+      end
     end
 
     def empty?
       @data.empty?
+    end
+
+    def first
+      @index == 0
+    end
+
+    def index
+      1 + @index
+    end
+
+    def index0
+      @index
+    end
+
+    def last
+      @index == (@data.size - 1)
+    end
+
+    def length
+      @data.size
+    end
+
+    def limit( setting)
+      @data = @data[0...setting] if setting < @data.size
+    end
+
+    def offset( setting)
+      @data = @data[setting..-1]
+    end
+
+    def parentloop
+      @parent
+    end
+
+    def reverse
+      @data = @data.reverse
+    end
+
+    def rindex
+      @data.size - @index
+    end
+
+    def rindex0
+      @data.size - @index - 1
     end
   end
 

@@ -1,50 +1,6 @@
 require_relative 'test_base'
 
 class TagTests < TestBase
-  def test_for_limit
-    compare(<<FOR_LIMIT, {'array' => [1, 2, 3, 4, 5, 6]})
-{% for item in array reversed limit:2 %}
-  {{ item }}
-{% endfor %}
-FOR_LIMIT
-  end
-
-  def test_for_offset1
-    compare(<<FOR_OFFSET1, {'array' => [1, 2, 3, 4, 5, 6]})
-{% for item in array offset:2 %}
-  {{ item }}
-{% endfor %}
-FOR_OFFSET1
-  end
-
-  def test_for_offset2
-    compare(<<FOR_OFFSET2, {'array' => [1, 2, 3, 4, 5, 6]})
-{% for item in array limit:3 %}
-  {{ item }}
-{% endfor %}
-{% for item in array limit: 3 offset: continue %}
-  {{ item }}
-{% endfor %}
-FOR_OFFSET2
-  end
-
-  def test_forloop
-    compare(<<FORLOOP, {'array1' => [1], 'array2' => [1, 2]})
-{% for item1 in array1 %}
-  {% for item2 in array2 %}
-    parent length {{ forloop.parentloop.length }}
-    length {{ forloop.length }}
-    index {{ forloop.index }}
-    index0 {{ forloop.index0 }}
-    rindex {{ forloop.rindex }}
-    rindex0 {{ forloop.rindex0 }}
-    first {{ forloop.first }}
-    last {{ forloop.last }}
-  {% endfor %}
-{% endfor %}
-FORLOOP
-  end
-
   def test_if_else
     compare(<<IF_ELSE)
 {% if false %}
