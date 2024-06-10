@@ -24,6 +24,7 @@ module LiquidTranspiler
     private
 
     def deduce_signatures
+      @signature = {}
       index = 0
       @parsed.each_pair do |name, ast|
         @signature[name] = [index, ast.deduce_names]
@@ -36,7 +37,8 @@ module LiquidTranspiler
         write_start( clazz, io)
         @signature.each_pair do |name, info|
           write_method_start( info, io)
-          @parsed[name].generate( TranspilerContext.new( info[1]), 4, io)
+          context = TranspilerContext.new( @signature, info[1])
+          @parsed[name].generate( context, 4, io)
           write_method_end( io)
         end
         io.puts 'end'

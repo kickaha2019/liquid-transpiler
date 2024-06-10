@@ -44,6 +44,10 @@ module LiquidTranspiler
           self
         when 'TagLiquid'
           self
+        when 'TagRaw'
+          self
+        when 'TagRender'
+          self
         when 'Text'
           self
         else

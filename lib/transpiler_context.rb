@@ -1,6 +1,7 @@
 module LiquidTranspiler
   class TranspilerContext
-    def initialize( names)
+    def initialize( signatures, names)
+      @signatures = signatures
       @variables  = {}
       @cycles     = {}
       @increments = {}
@@ -56,6 +57,10 @@ module LiquidTranspiler
 
     def output_push
       @output << "h#{@output.size+1}"
+    end
+
+    def signature( name)
+      @signatures[name]
     end
 
     def variable( name)

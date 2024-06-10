@@ -32,6 +32,9 @@ module LiquidTranspiler
     def expect_name
       if token = get
         if /^[a-z_]/i =~ token
+          if ['true','false','empty'].include?( token)
+            raise TranspilerError.new( @offset, 'Reserved word: ' + token)
+          end
           token
         else
           raise TranspilerError.new( @offset, 'Expected name')
