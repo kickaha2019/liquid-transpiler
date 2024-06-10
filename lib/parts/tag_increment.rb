@@ -1,6 +1,6 @@
 module LiquidTranspiler
   module Parts
-    class TagDecrement < Part
+    class TagIncrement < Part
       def initialize( offset, parent)
         super( offset, parent)
         @name = nil
@@ -16,11 +16,11 @@ module LiquidTranspiler
 
       def generate( context, indent, io)
         variable = context.increment(@name)
-        io.print ' ' * indent
-        io.puts "#{variable} -= 1"
         io.print(' ' * indent)
         io.print context.output
         io.puts " << #{variable}.to_s"
+        io.print ' ' * indent
+        io.puts "#{variable} += 1"
       end
 
       def setup( source)

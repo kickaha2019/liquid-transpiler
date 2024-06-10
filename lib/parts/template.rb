@@ -4,10 +4,10 @@ module LiquidTranspiler
   module Parts
     class Template < Part
       class Names
-        def initialize( arguments = {}, cycles={}, decrements={}, variables = {})
+        def initialize( arguments = {}, cycles={}, increments={}, variables = {})
           @arguments  = arguments
           @cycles     = cycles
-          @decrements = decrements
+          @increments = increments
           @variables  = variables
           @locals     = {}
         end
@@ -31,12 +31,12 @@ module LiquidTranspiler
           @cycles.keys
         end
 
-        def decrement( name)
-          @decrements[name] = true
+        def increment(name)
+          @increments[name] = true
         end
 
-        def decrements
-          @decrements.keys
+        def increments
+          @increments.keys
         end
 
         def known?( name)
@@ -56,10 +56,10 @@ module LiquidTranspiler
         end
 
         def spawn
-          Names.new( @arguments,
-                     @cycles,
-                     @decrements,
-                     Hash.new {|h,k| h[k] = @variables[k]})
+          Names.new(@arguments,
+                    @cycles,
+                    @increments,
+                    Hash.new {|h,k| h[k] = @variables[k]})
         end
       end
 

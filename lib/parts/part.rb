@@ -34,14 +34,19 @@ module LiquidTranspiler
           self
         when 'TagDecrement'
           self
+        when 'TagEcho'
+          self
         when 'TagFor'
           part
         when 'TagIf'
           part
+        when 'TagIncrement'
+          self
+        when 'TagLiquid'
+          self
         when 'Text'
           self
         else
-          p ['DEBUG200', part.to_s]
           raise TranspilerError.new( part.offset,
                                      'Unexpected ' + part.name)
         end
@@ -102,6 +107,7 @@ module LiquidTranspiler
       def parse( source)
         source.skip_space
         offset = source.offset
+
         if source.next( '{{')
           lstrip = source.next( '-')
           expr, term = TranspilerExpression.parse( source)
@@ -115,26 +121,39 @@ module LiquidTranspiler
           end
         elsif source.next( '{%')
           lstrip = source.next( '-')
-          name   = source.expect_name
-          clazz  = Object.const_get( 'LiquidTranspiler::Parts::Tag' + name.capitalize)
-          part   = clazz.new( offset, self)
-          term   = part.setup( source)
+          token  = source.get
 
-          unless term.nil?
-            raise TranspilerError.new( offset, 'Unexpected ' + term.to_s)
+          if token
+            part, term = parse_tag( source, token)
+            unless term.nil?
+              raise TranspilerError.new( offset, 'Unexpected ' + term.to_s)
+            end
+            source.skip_space
+          else
+            part = nil
           end
 
-          source.skip_space
           rstrip = source.next( '-')
           if source.next( '%}')
             return lstrip, part, rstrip
           else
-            p ['DEBUG300', self.class_name, source.peek(20)]
             raise TranspilerError.new( offset, 'Expecting %}')
           end
         else
           raise TranspilerError.new( offset, 'Internal error')
         end
+      end
+
+      def parse_tag( source, token)
+        begin
+          clazz = Object.const_get( 'LiquidTranspiler::Parts::Tag' + token.capitalize)
+          part  = clazz.new( offset, self)
+        rescue
+          raise TranspilerError.new( offset, "Bad tag name: #{token}")
+        end
+
+        term = part.setup( source)
+        return part, term
       end
     end
   end

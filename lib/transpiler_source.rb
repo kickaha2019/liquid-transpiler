@@ -14,7 +14,6 @@ module LiquidTranspiler
     end
 
     def expect_literal
-      skip_space
       if token = get
         if /^[a-z_0-9\-]/i =~ token
           '"' + token + '"'
@@ -31,7 +30,6 @@ module LiquidTranspiler
     end
 
     def expect_name
-      skip_space
       if token = get
         if /^[a-z_]/i =~ token
           token
@@ -91,9 +89,9 @@ module LiquidTranspiler
       when '-'
         if /[\.0-9]/ =~ @text[@offset+1..@offset+1]
           get_number
-        else
-          @offset += 1
-          return letter
+        # else
+        #   @offset += 1
+        #   return letter
         end
       when '='
         get_operator
@@ -227,8 +225,11 @@ module LiquidTranspiler
         end
 
         if (! eof?) && (@text[@offset..@offset] == '#')
-          if i = @text.index( "\n", @offset+1)
-            @offset = i + 1
+          if m = /(\n|\-%\}|%\}|\}\})/.match( @text, @offset+1)
+            @offset = m.begin(0)
+            next( "\n")
+          #if i = @text.index( "\n", @offset+1)
+#            @offset = i + 1
           else
             @offset = @text.size
             break

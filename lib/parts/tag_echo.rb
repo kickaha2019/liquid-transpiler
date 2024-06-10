@@ -1,9 +1,8 @@
 module LiquidTranspiler
   module Parts
-    class TagDecrement < Part
+    class TagEcho < Part
       def initialize( offset, parent)
         super( offset, parent)
-        @name = nil
       end
 
       def add( part)
@@ -11,21 +10,18 @@ module LiquidTranspiler
       end
 
       def find_arguments( names)
-        names.increment(@name)
+        @expression.find_arguments( names)
       end
 
       def generate( context, indent, io)
-        variable = context.increment(@name)
-        io.print ' ' * indent
-        io.puts "#{variable} -= 1"
         io.print(' ' * indent)
         io.print context.output
-        io.puts " << #{variable}.to_s"
+        io.puts " << #{@expression.generate(context)}.to_s"
       end
 
       def setup( source)
-        @name = source.expect_name
-        source.get
+        @expression, term = TranspilerExpression.parse( source)
+        term
       end
     end
   end

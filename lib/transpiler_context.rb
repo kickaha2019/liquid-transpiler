@@ -3,7 +3,7 @@ module LiquidTranspiler
     def initialize( names)
       @variables  = {}
       @cycles     = {}
-      @decrements = {}
+      @increments = {}
 
       arguments = names.arguments
       (0...arguments.size).each do |i|
@@ -15,9 +15,9 @@ module LiquidTranspiler
         @cycles[cycles[i]] = "c#{i}"
       end
 
-      decrements = names.decrements
-      (0...decrements.size).each do |i|
-        @decrements[decrements[i]] = "d#{i}"
+      increments = names.increments
+      (0...increments.size).each do |i|
+        @increments[increments[i]] = "d#{i}"
       end
 
       @output = ['h']
@@ -27,10 +27,6 @@ module LiquidTranspiler
 
     def cycle( name)
       @cycles[name]
-    end
-
-    def decrement( name)
-      @decrements[name]
     end
 
     def endfor( name)
@@ -44,6 +40,10 @@ module LiquidTranspiler
       @variables[name]      = "f#{@fors.size}"
       @variables['forloop'] = "f#{@fors.size}l"
       return @variables[name], (@fors[-1][1] ? @fors[-1][1] : 'nil')
+    end
+
+    def increment(name)
+      @increments[name]
     end
 
     def output

@@ -18,7 +18,6 @@ module LiquidTranspiler
                                        'Unexpected ' + part.name)
           end
         else
-          p ['DEBUG100', source.peek(10), part.to_s]
           raise TranspilerError.new( part.offset,
                                      'Unexpected ' + part.name)
         end

@@ -51,7 +51,7 @@ module LiquidTranspiler
       begin
         until source.eof?
           part, rstrip = context.digest( source, rstrip)
-          context = context.add part
+          context = context.add part if part
         end
 
         context.add( Parts::EndOfFile.new( source.offset))
@@ -88,7 +88,7 @@ METHOD_HEADER
         io.puts "    c#{i} = -1"
       end
 
-      (0...info[1].decrements.size).each do |i|
+      (0...info[1].increments.size).each do |i|
         io.puts "    d#{i} = 0"
       end
     end
