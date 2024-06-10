@@ -12,7 +12,7 @@ module LiquidTranspiler
       end
 
       def generate( context)
-        "(#{@left.generate(context)} & #{@right.generate(context)})"
+        "(#{@left.generate(context)} && #{@right.generate(context)})"
       end
     end
   end
