@@ -48,6 +48,8 @@ module LiquidTranspiler
           self
         when 'TagRender'
           self
+        when 'TagTablerow'
+          part
         when 'Text'
           self
         else

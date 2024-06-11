@@ -21,9 +21,10 @@ module LiquidTranspiler
         @increments[increments[i]] = "d#{i}"
       end
 
-      @output = ['h']
-      @fors   = []
-      @index  = 0
+      @output    = ['h']
+      @fors      = []
+      @index     = 0
+      @tablerows = []
     end
 
     def cycle( name)
@@ -36,10 +37,16 @@ module LiquidTranspiler
       @variables['forloop'] = f[1]
     end
 
+    def endtablerow( name)
+      f = @tablerows.pop
+      @variables[name]           = f[0]
+      @variables['tablerowloop'] = f[1]
+    end
+
     def for( name)
       @fors << [@variables[name], @variables['forloop']]
-      @variables[name]      = "f#{@fors.size}"
-      @variables['forloop'] = "f#{@fors.size}l"
+      @variables[name]      = "for#{@fors.size}"
+      @variables['forloop'] = "for#{@fors.size}l"
       return @variables[name], (@fors[-1][1] ? @fors[-1][1] : 'nil')
     end
 
@@ -61,6 +68,13 @@ module LiquidTranspiler
 
     def signature( name)
       @signatures[name]
+    end
+
+    def tablerow( name)
+      @tablerows << [@variables[name], @variables['tablerowloop']]
+      @variables[name]           = "tablerow#{@tablerows.size}"
+      @variables['tablerowloop'] = "tablerow#{@tablerows.size}l"
+      @variables[name]
     end
 
     def variable( name)

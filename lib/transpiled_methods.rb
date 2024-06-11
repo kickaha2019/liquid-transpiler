@@ -68,6 +68,88 @@ module TranspiledMethods
     end
   end
 
+  class Tablerowloop
+    def initialize( data)
+      @data    = data
+      @column  = -1
+      @row     = -1
+      @index   = -1
+      @columns = 1000000000
+    end
+
+    def col
+      @column + 1
+    end
+
+    def col0
+      @column
+    end
+
+    def col_first
+      @column == 0
+    end
+
+    def col_last
+      ((@column + 1) >= @columns) # || last
+    end
+
+    def columns( setting)
+      @columns = setting
+    end
+
+    def each
+      @data.each do |entry|
+        @index += 1
+        @column += 1
+        @column = 0 if @column >= @columns
+        if @column == 0
+          @row += 1
+        end
+        yield entry
+      end
+    end
+
+    def first
+      @index == 0
+    end
+
+    def index
+      1 + @index
+    end
+
+    def index0
+      @index
+    end
+
+    def last
+      @index == (@data.size - 1)
+    end
+
+    def length
+      @data.size
+    end
+
+    def limit( setting)
+      @data = @data[0...setting] if setting < @data.size
+    end
+
+    def offset( setting)
+      @data = @data[setting..-1]
+    end
+
+    def rindex
+      @data.size - @index
+    end
+
+    def rindex0
+      @data.size - @index - 1
+    end
+
+    def row
+      @row + 1
+    end
+  end
+
   def f( list, old_forloop)
     unless list.is_a?( Array)
       list = list.to_a
@@ -410,6 +492,14 @@ module TranspiledMethods
 
   def t( thing)
     thing.to_s
+  end
+
+  def tablerow( list)
+    unless list.is_a?( Array)
+      list = list.to_a
+    end
+
+    Tablerowloop.new( list)
   end
 
   def x( thing, field)

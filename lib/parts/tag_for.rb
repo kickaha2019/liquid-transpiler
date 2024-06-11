@@ -30,6 +30,7 @@ module LiquidTranspiler
         @start.find_arguments( names) if @start
         names = names.spawn
         names.assign( @variable)
+        names.assign( 'forloop')
         super( names)
       end
 
