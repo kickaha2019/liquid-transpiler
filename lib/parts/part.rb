@@ -50,6 +50,8 @@ module LiquidTranspiler
           self
         when 'TagTablerow'
           part
+        when 'TagUnless'
+          part
         when 'Text'
           self
         else

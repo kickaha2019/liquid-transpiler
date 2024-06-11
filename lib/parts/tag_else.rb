@@ -10,7 +10,10 @@ module LiquidTranspiler
           @children << part
           return self
         end
-        if part.is_a?( TagEndcase) || part.is_a?( TagEndfor) || part.is_a?( TagEndif)
+        if part.is_a?( TagEndcase) ||
+            part.is_a?( TagEndfor) ||
+            part.is_a?( TagEndif) ||
+            part.is_a?( TagEndunless)
           return @parent.add( part)
         end
         super( part)
