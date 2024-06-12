@@ -155,7 +155,7 @@ module TranspiledMethods
       list = list.to_a
     end
 
-    Forloop.new( old_forloop, list)
+    Forloop.new( old_forloop, l(list))
   end
 
   def f_abs( value)
@@ -195,14 +195,14 @@ module TranspiledMethods
 
   def f_compact( map)
     [].tap do |result|
-      map.each {|entry| result << entry if entry}
+      l(map).each {|entry| result << entry if entry}
     end
   end
 
   def f_concat( map1, map2)
     [].tap do |result|
-      map1.each {|entry| result << entry}
-      map2.each {|entry| result << entry}
+      l(map1).each {|entry| result << entry}
+      l(map2).each {|entry| result << entry}
     end
   end
 
@@ -276,11 +276,12 @@ module TranspiledMethods
   end
 
   def f_first( list)
-    return list[0] if list.is_a?( Array)
-    list.each do |entry|
-      return entry
-    end
-    nil
+    l(list)[0]
+    # return list[0] if list.is_a?( Array)
+    # list.each do |entry|
+    #   return entry
+    # end
+    # nil
   end
 
   def f_floor( value)
@@ -292,17 +293,18 @@ module TranspiledMethods
 
   def f_join( map, separator)
     [].tap do |result|
-      map.each {|entry| result << entry}
+      l(map).each {|entry| result << entry}
     end.join(separator)
   end
 
   def f_last( list)
-    return list[-1] if list.is_a?( Array)
-    last = nil
-    list.each do |entry|
-      last = entry
-    end
-    last
+    l(list)[-1]
+    # return list[-1] if list.is_a?( Array)
+    # last = nil
+    # list.each do |entry|
+    #   last = entry
+    # end
+    # last
   end
 
   def f_lstrip( value)
@@ -319,7 +321,7 @@ module TranspiledMethods
 
   def f_map( map, field)
     [].tap do |result|
-      map.each {|entry| result << x(entry,field)}
+      l(map).each {|entry| result << x(entry,field)}
     end
   end
 
@@ -352,7 +354,7 @@ module TranspiledMethods
   end
 
   def f_reverse( list)
-    list.reverse
+    l(list).reverse
   end
 
   def f_round( value, places=0)
@@ -364,31 +366,40 @@ module TranspiledMethods
   end
 
   def f_size( list)
-    list.size
+    if list.is_a?( String)
+      list.size
+    else
+      l(list).size
+    end
   end
 
   def f_slice( list, start, length=1)
-    start = list.size + start if start < 0
     if list.is_a?( String)
-      list[start...(start+length)]
+      list.slice( start, length)
     else
-      list[start...(start+length)].join('')
+      l(list).slice( start, length).join('')
     end
+    # start = list.size + start if start < 0
+    # if list.is_a?( String)
+    #   list[start...(start+length)]
+    # else
+    #   list[start...(start+length)].join('')
+    # end
   end
 
   def f_sort( list, sort_by=nil)
     if sort_by
-      list.sort_by {|entry| x(entry,sort_by)}
+      l(list).sort_by {|entry| x(entry,sort_by)}
     else
-      list.sort
+      l(list).sort
     end
   end
 
   def f_sort_natural( list, sort_by=nil)
     if sort_by
-      list.sort_by {|entry| x(entry,sort_by).downcase}
+      l(list).sort_by {|entry| x(entry,sort_by).downcase}
     else
-      list.sort_by {|entry| entry.downcase}
+      l(list).sort_by {|entry| entry.downcase}
     end
   end
 
@@ -410,9 +421,9 @@ module TranspiledMethods
 
   def f_sum( list, sum_by=nil)
     if sum_by
-      list.inject(0) {|r,e| r + x(e,sum_by)}
+      l(list).inject(0) {|r,e| r + x(e,sum_by)}
     else
-      list.inject(:+)
+      l(list).inject(:+)
     end
   end
 
@@ -432,7 +443,7 @@ module TranspiledMethods
   end
 
   def f_uniq( list)
-    list.uniq
+    l(list).uniq
   end
 
   def f_upcase( value)
@@ -450,16 +461,24 @@ module TranspiledMethods
   def f_where( list, field, value=nil)
     if value.nil?
       [].tap do |results|
-        list.each do |entry|
+        l(list).each do |entry|
           results << entry if x(entry,field)
         end
       end
     else
       [].tap do |results|
-        list.each do |entry|
+        l(list).each do |entry|
           results << entry if x(entry,field) == value
         end
       end
+    end
+  end
+
+  def l(list)
+    if list.nil?
+      []
+    else
+      list.to_a
     end
   end
 
@@ -495,11 +514,11 @@ module TranspiledMethods
   end
 
   def tablerow( list)
-    unless list.is_a?( Array)
-      list = list.to_a
-    end
-
-    Tablerowloop.new( list)
+    # unless list.is_a?( Array)
+    #   list = list.to_a
+    # end
+    #
+    Tablerowloop.new( l(list))
   end
 
   def x( thing, field)
