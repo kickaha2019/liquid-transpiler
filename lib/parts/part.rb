@@ -136,7 +136,7 @@ module LiquidTranspiler
           if token
             part, term = parse_tag( source, token)
             unless term.nil?
-              raise TranspilerError.new( offset, 'Unexpected ' + term.to_s)
+              source.error( offset, 'Unexpected ' + term.to_s)
             end
             source.skip_space
           else
@@ -147,10 +147,10 @@ module LiquidTranspiler
           if source.next( '%}')
             return lstrip, part, rstrip
           else
-            raise TranspilerError.new( offset, 'Expecting %}')
+            source.error( offset, 'Expecting %}')
           end
         else
-          raise TranspilerError.new( offset, 'Internal error')
+          source.error( offset, 'Internal error')
         end
       end
 
@@ -159,11 +159,15 @@ module LiquidTranspiler
           clazz = Object.const_get( 'LiquidTranspiler::Parts::Tag' + token.to_s.capitalize)
           part  = clazz.new( offset, self)
         rescue
-          raise TranspilerError.new( offset, "Bad tag name: #{token}")
+          source.error( offset, "Bad tag name: #{token}")
         end
 
         term = part.setup( source)
         return part, term
+      end
+
+      def setup( source)
+        source.get
       end
     end
   end

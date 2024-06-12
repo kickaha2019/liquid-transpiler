@@ -24,9 +24,6 @@ module LiquidTranspiler
         io.puts "else"
         super( context, indent, io)
       end
-
-      def setup( source)
-      end
     end
   end
 end

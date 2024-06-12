@@ -90,7 +90,7 @@ class TestBase < Minitest::Test
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = @@dir + '/Test.rb'
-    if @@transpiler.transpile_dir( @@dir, clazz, path)
+    if @@transpiler.transpile_dir( @@dir, path, class:clazz)
       load( path)
       transpiled_output = Object.const_get(clazz).new.render( 'test', params)
       p ['liquid_output', liquid_output]
@@ -107,7 +107,7 @@ class TestBase < Minitest::Test
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = @@dir + '/Test.rb'
-    if @@transpiler.transpile_dir( @@dir, clazz, path)
+    if @@transpiler.transpile_dir( @@dir, path, class:clazz)
       load( path)
       transpiled_output = Object.const_get(clazz).new.render( 'test', params)
       p ['transpiled_output', transpiled_output]

@@ -47,5 +47,13 @@ RENDER5
     compare( "{% render 'included' for names as name %}",
            {'names' => ['Guybrush','Threepwood']})
   end
+
+  def test_render6
+    prepare( <<RENDER4, 'included.liquid')
+Passed {{ forename }} {{ surname }}
+RENDER4
+    compare( "{% render 'included', with forename:'Guybrush', surname:'Threepwood' %}",
+             {})
+  end
 end
 

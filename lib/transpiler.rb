@@ -12,12 +12,13 @@ module LiquidTranspiler
       @errors.each {|error| yield error}
     end
 
-    def transpile_dir( source_dir, clazz, path)
+    def transpile_dir( source_dir, path, options={})
+      process_options( options)
       @errors = []
       parse_dir( source_dir)
       return false unless @errors.empty?
       deduce_signatures
-      generate_ruby( clazz, path)
+      generate_ruby( path)
       @errors.empty?
     end
 
@@ -32,9 +33,9 @@ module LiquidTranspiler
       end
     end
 
-    def generate_ruby( clazz, path)
+    def generate_ruby( path)
       File.open( path, 'w') do |io|
-        write_start( clazz, io)
+        write_start( io)
         @signature.each_pair do |name, info|
           write_method_start( info, io)
           context = TranspilerContext.new( @signature, info[1])
@@ -71,6 +72,11 @@ module LiquidTranspiler
       end
     end
 
+    def process_options( options)
+      @clazz   = options[:class]   || 'Transpiled'
+      @include = options[:include] || 'TranspiledMethods'
+    end
+
     def write_method_end( io)
       io.puts <<"METHOD_END"
     h.join('')
@@ -95,10 +101,10 @@ METHOD_HEADER
       end
     end
 
-    def write_start( clazz, io)
+    def write_start( io)
       io.puts <<"START"
-class #{clazz}
-  include TranspiledMethods
+class #{@clazz}
+  include #{@include}
   TEMPLATES = {
 START
       @signature.each_pair do |key, info|

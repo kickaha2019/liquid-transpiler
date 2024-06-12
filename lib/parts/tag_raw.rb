@@ -10,19 +10,19 @@ module LiquidTranspiler
         source.next( '-')
 
         unless source.next( '%}')
-          raise TranspilerError.new( source.offset,'Expected %}')
+          source.error( source.offset,'Expected %}')
         end
 
         text = source.find( /{%(-|)\s*endraw[^a-zA-Z0-9_]/)
         unless text
-          raise TranspilerError.new( source.offset,'endraw tag not found')
+          source.error( source.offset,'endraw tag not found')
         end
         add( Text.new( @offset, text))
 
         source.next( '{%')
         source.next( '-')
         unless :endraw == source.expect_name
-          raise TranspilerError.new( source.offset, 'Internal error')
+          source.error( source.offset, 'Internal error')
         end
 
         part = TagEndraw.new( source.offset, self)

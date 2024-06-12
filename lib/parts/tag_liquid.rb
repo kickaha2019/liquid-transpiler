@@ -15,7 +15,7 @@ module LiquidTranspiler
         end
 
         if context != self
-          raise TranspilerError.new( @offset, 'Tags inside liquid tag not closed')
+          source.error( @offset, 'Tags inside liquid tag not closed')
         end
 
         nil

@@ -72,15 +72,15 @@ module LiquidTranspiler
         if m = /^['"]([a-z0-9_\-]+)['"]$/i.match( source.get)
           @target = m[1]
         else
-          raise TranspilerError.new( @offset, 'Expected render target')
+          source.error( @offset, 'Expected render target')
         end
 
         term = source.get
         case term
         when ','
-          setup_comma_list( source, term)
+          setup_parameters(source, term)
         when :with
-          setup_with( source)
+          setup_parameters(source, term)
         when :for
           @for = true
           setup_with( source)
@@ -89,14 +89,39 @@ module LiquidTranspiler
         end
       end
 
-      def setup_comma_list( source, term)
-        while term == ','
-          name = source.expect_name
-          if source.get != ':'
-            raise TranspilerError.new( @offset, 'Expected :')
+      def setup_more?( term)
+        (term == ',') || (term == :with)
+      end
+
+      def setup_parameters(source, term)
+
+        while setup_more?( term)
+          offset = source.offset
+          term   = source.get
+          if term == :with
+            offset = source.offset
+            term   = source.get
           end
-          @parameters[name], term = TranspilerExpression.parse( source)
+
+          term1 = source.get
+          source.unget( term1)
+          source.unget( term)
+
+          if term1 == ':'
+            name = source.expect_name
+            source.get
+            @parameters[name], term = TranspilerExpression.parse( source)
+          else
+            expr, term = TranspilerExpression.parse( source)
+            if term != :as
+              source.error( offset, 'Unsupported render syntax')
+            end
+            name = source.expect_name
+            @parameters[name] = expr
+            term = source.get
+          end
         end
+
         term
       end
 

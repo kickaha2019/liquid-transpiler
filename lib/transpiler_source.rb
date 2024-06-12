@@ -7,35 +7,43 @@ module LiquidTranspiler
       @path   = path
       @offset = 0
       @text   = IO.read( path)
-      @ungot  = nil
+      @ungot  = []
     end
 
     def eof?
       @offset >= @text.size
     end
 
+    def error( offset, msg)
+      puts "File:   #{@path}"
+      puts "Offset: #{@offset}"
+      puts "Text:   #{peek(20).strip}"
+      puts "Error:  #{msg}"
+      raise TranspilerError.new( offset, msg)
+    end
+
     def expect_literal
       if token = get
         if token.is_a?( Symbol)
-          raise TranspilerError.new( @offset, 'Expected literal')
+          error( @offset, 'Expected literal')
         elsif /^['"]/ =~ token
           token
         else
-          raise TranspilerError.new( @offset, 'Expected literal')
+          error( @offset, 'Expected literal')
         end
       else
-        raise TranspilerError.new( @offset, 'Expected literal')
+        error( @offset, 'Expected literal')
       end
     end
 
     def expect_name
       if token = get
         unless token.is_a?( Symbol) && (! RESERVED_WORDS.include?( token))
-          raise TranspilerError.new( @offset, 'Expected name')
+          error( @offset, 'Expected name')
         end
         token
       else
-        raise TranspilerError.new( @offset, 'Expected name')
+        error( @offset, 'Expected name')
       end
     end
 
@@ -49,9 +57,8 @@ module LiquidTranspiler
     end
 
     def get
-      if @ungot
-        token, @ungot = @ungot, nil
-        return token
+      unless @ungot.empty?
+        return @ungot.pop
       end
 
       skip_space
@@ -114,7 +121,7 @@ module LiquidTranspiler
         end
       end
 
-      raise TranspilerError.new( @offset, 'Unclosed quoted string')
+      error( @offset, 'Unclosed quoted string')
     end
 
     def get_name
@@ -127,7 +134,7 @@ module LiquidTranspiler
 
       name = @text[origin...@offset]
       if /^(\-|)\d+$/ =~ name
-        raise TranspilerError.new( origin, 'Syntax error')
+        error( origin, 'Syntax error')
       end
       name.to_sym
     end
@@ -175,7 +182,7 @@ module LiquidTranspiler
         end
       end
 
-      raise TranspilerError.new( @offset, 'Unclosed quoted string')
+      error( @offset, 'Unclosed quoted string')
     end
 
     def line_number( offset)
@@ -195,9 +202,9 @@ module LiquidTranspiler
     end
 
     def next( expected)
-      if @ungot
-        if @ungot == expected
-          @ungot = nil
+      unless @ungot.empty?
+        if @ungot[-1] == expected
+          @ungot.pop
           return true
         else
           return false
@@ -244,7 +251,7 @@ module LiquidTranspiler
     end
 
     def unget( token)
-      @ungot = token
+      @ungot << token if token
     end
   end
 end

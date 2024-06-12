@@ -24,5 +24,25 @@ when 3
 endcase %}
 LIQUID2
   end
+
+  def test_liquid3
+    compare(<<LIQUID3, {'content' => [{'type' => 'gallery'}]})
+{%
+  liquid
+  assign galleries = content | where: "type", "gallery"
+  if galleries.size > 0
+    assign overlays = true
+  else
+    assign insets    = content | where: "type", "inset"
+    if insets.size > 0
+        assign overlays = true
+    else
+        assign overlays = false
+    endif
+  endif
+%}
+{{ overlays }}
+LIQUID3
+  end
 end
 

@@ -94,7 +94,7 @@ module LiquidTranspiler
         token     = source.get
 
         unless token == :in
-          raise TranspilerError.new( @offset, 'Expecting in')
+          source.error( @offset, 'Expecting in')
         end
 
         @expression, term = TranspilerExpression.parse( source)
@@ -103,17 +103,17 @@ module LiquidTranspiler
           case term
           when :cols
             if source.get != ':'
-              raise TranspilerError.new( @offset, 'Expected : after cols')
+              source.error( @offset, 'Expected : after cols')
             end
             @columns, term = TranspilerExpression.parse( source)
           when :limit
             if source.get != ':'
-              raise TranspilerError.new( @offset, 'Expected : after limit')
+              source.error( @offset, 'Expected : after limit')
             end
             @limit, term = TranspilerExpression.parse( source)
           when :offset
             if source.get != ':'
-              raise TranspilerError.new( @offset, 'Expected : after offset')
+              source.error( @offset, 'Expected : after offset')
             end
             @start, term = TranspilerExpression.parse( source)
           else

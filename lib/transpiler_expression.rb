@@ -39,14 +39,14 @@ module LiquidTranspiler
 
       if term == ':'
         unless expr.is_a?( Operators::Leaf)
-          raise TranspilerError.new( source.offset, 'Unexpected :')
+          source.error( source.offset, 'Unexpected :')
         end
 
         if /^[a-z]/i =~ expr.token
           expr2, term = parse2( source)
           return Operators::Parameter.new( expr.token, expr2), term
         else
-          raise TranspilerError.new( source.offset, 'Unexpected :')
+          source.error( source.offset, 'Unexpected :')
         end
       else
         return expr, term
@@ -62,7 +62,7 @@ module LiquidTranspiler
         when '['
           formula, term1 = parse1( source)
           unless term1 == ']'
-            raise TranspilerError.new( source.offset, 'Expected ]')
+            source.error( source.offset, 'Expected ]')
           end
           elements[-1] = Operators::Array.new( elements[-1], formula)
         when '.'
@@ -97,18 +97,18 @@ module LiquidTranspiler
         from, type = parse1( source)
 
         unless ['..','...'].include? type
-          raise TranspilerError.new( @offset, 'Expecting .. or ...')
+          source.error( @offset, 'Expecting .. or ...')
         end
 
         to, term = parse1( source)
         unless term == ')'
-          raise TranspilerError.new( @offset, 'Expecting )')
+          source.error( @offset, 'Expecting )')
         end
 
         Operators::Range.new( from, to, type)
 
       else
-        raise TranspilerError.new( source.offset,'Bad syntax')
+        source.error( source.offset,'Bad syntax')
       end
     end
 

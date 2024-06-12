@@ -13,9 +13,6 @@ module LiquidTranspiler
         io.print ' ' * (indent - 2)
         io.puts "break"
       end
-
-      def setup( source)
-      end
     end
   end
 end

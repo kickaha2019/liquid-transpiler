@@ -24,7 +24,7 @@ module LiquidTranspiler
         @variable = source.expect_name
         source.skip_space
         unless source.next('=')
-          raise TranspilerError.new( @offset, 'Expecting =')
+          source.error( @offset, 'Expecting =')
         end
 
         @expression, term = TranspilerExpression.parse( source)
