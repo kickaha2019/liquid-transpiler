@@ -1,15 +1,15 @@
 module LiquidTranspiler
   class TranspilerExpression
     OPERATORS = {
-      'and'      => ['And',                 true],
-      'contains' => ['Contains',            false],
-      'or'       => ['Or',                  true],
-      '=='       => ['Equals',              false],
-      '!='       => ['NotEquals',           false],
-      '>'        => ['GreaterThan',         false],
-      '>='       => ['GreaterThanOrEquals', false],
-      '<'        => ['LessThan',            false],
-      '<='       => ['LessThanOrEquals',    false]
+      :and      => ['And',                 true],
+      :contains => ['Contains',            false],
+      :or       => ['Or',                  true],
+      '=='      => ['Equals',              false],
+      '!='      => ['NotEquals',           false],
+      '>'       => ['GreaterThan',         false],
+      '>='      => ['GreaterThanOrEquals', false],
+      '<'       => ['LessThan',            false],
+      '<='      => ['LessThanOrEquals',    false]
     }
 
     def self.parse( source)
@@ -88,6 +88,9 @@ module LiquidTranspiler
       token = source.get
 
       if /^([a-z0-9\-'"]|\.[0-9])/i =~ token
+        Operators::Leaf.new( token)
+
+      elsif token.is_a?( Symbol)
         Operators::Leaf.new( token)
 
       elsif token == '('

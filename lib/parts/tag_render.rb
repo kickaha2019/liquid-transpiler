@@ -29,8 +29,8 @@ module LiquidTranspiler
             argument = call_arguments.keys.first
             for_name, _ = context.for( argument)
             io.puts "#{for_name}l = f(#{call_arguments[argument]},nil)"
-            call_arguments['forloop'] = for_name + 'l'
-            call_arguments[argument]  = for_name
+            call_arguments[:forloop] = for_name + 'l'
+            call_arguments[argument] = for_name
 
             io.print ' ' * indent
             io.puts "#{for_name}l.each do |#{for_name}|"
@@ -79,9 +79,9 @@ module LiquidTranspiler
         case term
         when ','
           setup_comma_list( source, term)
-        when 'with'
+        when :with
           setup_with( source)
-        when 'for'
+        when :for
           @for = true
           setup_with( source)
         else
@@ -102,7 +102,7 @@ module LiquidTranspiler
 
       def setup_with( source)
         expr, term = TranspilerExpression.parse( source)
-        if term == 'as'
+        if term == :as
           name = source.expect_name
           term = source.get
         else

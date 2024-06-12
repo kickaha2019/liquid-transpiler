@@ -33,20 +33,20 @@ module LiquidTranspiler
 
     def endfor( name)
       f = @fors.pop
-      @variables[name]      = f[0]
-      @variables['forloop'] = f[1]
+      @variables[name]     = f[0]
+      @variables[:forloop] = f[1]
     end
 
     def endtablerow( name)
       f = @tablerows.pop
-      @variables[name]           = f[0]
-      @variables['tablerowloop'] = f[1]
+      @variables[name]          = f[0]
+      @variables[:tablerowloop] = f[1]
     end
 
     def for( name)
-      @fors << [@variables[name], @variables['forloop']]
-      @variables[name]      = "for#{@fors.size}"
-      @variables['forloop'] = "for#{@fors.size}l"
+      @fors << [@variables[name], @variables[:forloop]]
+      @variables[name]     = "for#{@fors.size}"
+      @variables[:forloop] = "for#{@fors.size}l"
       return @variables[name], (@fors[-1][1] ? @fors[-1][1] : 'nil')
     end
 
@@ -71,9 +71,9 @@ module LiquidTranspiler
     end
 
     def tablerow( name)
-      @tablerows << [@variables[name], @variables['tablerowloop']]
-      @variables[name]           = "tablerow#{@tablerows.size}"
-      @variables['tablerowloop'] = "tablerow#{@tablerows.size}l"
+      @tablerows << [@variables[name], @variables[:tablerowloop]]
+      @variables[name]          = "tablerow#{@tablerows.size}"
+      @variables[:tablerowloop] = "tablerow#{@tablerows.size}l"
       @variables[name]
     end
 

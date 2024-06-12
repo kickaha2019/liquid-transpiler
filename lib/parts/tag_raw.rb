@@ -21,7 +21,7 @@ module LiquidTranspiler
 
         source.next( '{%')
         source.next( '-')
-        unless 'endraw' == source.expect_name
+        unless :endraw == source.expect_name
           raise TranspilerError.new( source.offset, 'Internal error')
         end
 

@@ -36,5 +36,11 @@ CYCLE
 {% cycle 1, 2, 6 %}
 CYCLE
   end
+
+  def test_cycle5
+    compare(<<CYCLE, {'basket' => 'Apple'})
+{% cycle a: basket %}
+CYCLE
+  end
 end
 

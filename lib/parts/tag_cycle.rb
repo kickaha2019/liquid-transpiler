@@ -13,6 +13,9 @@ module LiquidTranspiler
 
       def find_arguments( names)
         names.cycle( @key)
+        @cycle.each do |cycle|
+          names.reference( cycle) if cycle.is_a?( Symbol)
+        end
       end
 
       def generate( context, indent, io)
@@ -24,26 +27,33 @@ module LiquidTranspiler
 
         io.print(' ' * indent)
         io.print context.output
-        io.puts " << [#{@cycle.join(',')}][#{variable}]"
+        values = @cycle.collect do |cycle|
+          if cycle.is_a?( Symbol)
+            context.variable(cycle)
+          else
+            cycle
+          end
+        end
+        io.puts " << [#{values.join(',')}][#{variable}]"
       end
 
       def setup( source)
-        @cycle << source.expect_literal
+        @cycle << source.get
 
         while token = source.get
           case token
           when ':'
-            @key = @cycle.delete_at(0)
+            @key = @cycle.delete_at(0).to_s
           when ','
           else
             break
           end
 
-          @cycle << source.expect_literal
+          @cycle << source.get
         end
 
         if @key.nil?
-          @key = '[' + @cycle.join(',') + ']'
+          @key = '[' + @cycle.collect {|c| c.to_s}.join(',') + ']'
         end
 
         token

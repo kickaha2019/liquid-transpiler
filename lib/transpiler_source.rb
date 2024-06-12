@@ -1,6 +1,7 @@
 module LiquidTranspiler
   class TranspilerSource
     attr_reader :offset
+    RESERVED_WORDS = [:true, :false, :empty]
 
     def initialize( path)
       @path   = path
@@ -15,10 +16,8 @@ module LiquidTranspiler
 
     def expect_literal
       if token = get
-        if /^[a-z_0-9\-]/i =~ token
-          '"' + token + '"'
-        elsif (token[0..0] == '.') && (! /^\.+$/ =~ token)
-          '"' + token + '"'
+        if token.is_a?( Symbol)
+          raise TranspilerError.new( @offset, 'Expected literal')
         elsif /^['"]/ =~ token
           token
         else
@@ -31,14 +30,10 @@ module LiquidTranspiler
 
     def expect_name
       if token = get
-        if /^[a-z_]/i =~ token
-          if ['true','false','empty'].include?( token)
-            raise TranspilerError.new( @offset, 'Reserved word: ' + token)
-          end
-          token
-        else
+        unless token.is_a?( Symbol) && (! RESERVED_WORDS.include?( token))
           raise TranspilerError.new( @offset, 'Expected name')
         end
+        token
       else
         raise TranspilerError.new( @offset, 'Expected name')
       end
@@ -90,12 +85,8 @@ module LiquidTranspiler
           return @text[start...@offset]
         end
       when '-'
-        if /[\.0-9]/ =~ @text[@offset+1..@offset+1]
-          get_number
-        # else
-        #   @offset += 1
-        #   return letter
-        end
+        return nil if ['%','}'].include?( @text[@offset+1..@offset+1])
+        get_number
       when '='
         get_operator
       when '<'
@@ -128,25 +119,34 @@ module LiquidTranspiler
 
     def get_name
       origin = @offset
-      if m = @text.match( /[^a-z0-9_]/, @offset)
+      if m = @text.match( /[^a-z0-9_\-]/, @offset)
         @offset = m.end(0) - 1
       else
         @offset = @text.size
       end
-      @text[origin...@offset]
+
+      name = @text[origin...@offset]
+      if /^(\-|)\d+$/ =~ name
+        raise TranspilerError.new( origin, 'Syntax error')
+      end
+      name.to_sym
     end
 
     def get_number
       origin = @offset
-      if m = @text.match( /[^0-9\.]/, @offset+1)
+      if m = @text.match( /[^0-9\-a-z_\.]/i, @offset)
         finish = m.end(0) - 1
+
         if i = @text[origin...finish].index( '..')
-          @offset += i
+          @offset = i + origin
         else
           @offset = finish
         end
+
+        number = @text[origin...@offset]
+        return get_name if /[a-z_]|^\-.*\-/i =~ number
       else
-        @offset = @text.size
+        @offset = origin + 1
       end
       @text[origin...@offset]
     end

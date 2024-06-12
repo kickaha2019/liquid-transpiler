@@ -80,7 +80,7 @@ module LiquidTranspiler
         @variable = source.expect_name
         token     = source.get
 
-        unless token == 'in'
+        unless token == :in
           raise TranspilerError.new( @offset, 'Expecting in')
         end
 
@@ -88,15 +88,15 @@ module LiquidTranspiler
 
         while true
           case term
-          when 'limit'
+          when :limit
             if source.get != ':'
               raise TranspilerError.new( @offset, 'Expected : after limit')
             end
             @limit, term = TranspilerExpression.parse( source)
-          when 'reversed'
+          when :reversed
             @reversed = true
             term = source.get
-          when 'offset'
+          when :offset
             if source.get != ':'
               raise TranspilerError.new( @offset, 'Expected : after offset')
             end

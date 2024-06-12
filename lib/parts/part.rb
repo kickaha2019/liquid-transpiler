@@ -103,27 +103,6 @@ module LiquidTranspiler
         return text.gsub( /[\\\n"#]/) do |block|
           (block == "\n") ? '\\n' : '\\' + block
         end
-        #
-        # encoded = []
-        # offset  = 0
-        # while offset < text.size
-        #   m = text.match( /([\\\n"#])/, offset)
-        #   if m
-        #     encoded << text[offset...m.begin(0)]
-        #     encoded << '\\'
-        #     encoded << m[1]
-        #     offset  = m.end(0)
-        #   else
-        #     encoded << text[offset..-1]
-        #     offset = text.size
-        #   end
-        # end
-
-        #encoded.join('')
-        # p ['DEBUG200', text]
-        # p ['DEBUG201', encoded.join('')]
-        #
-        # SUB.inject( text) {|r,e| r.gsub( * e)}
       end
 
       def name
@@ -177,7 +156,7 @@ module LiquidTranspiler
 
       def parse_tag( source, token)
         begin
-          clazz = Object.const_get( 'LiquidTranspiler::Parts::Tag' + token.capitalize)
+          clazz = Object.const_get( 'LiquidTranspiler::Parts::Tag' + token.to_s.capitalize)
           part  = clazz.new( offset, self)
         rescue
           raise TranspilerError.new( offset, "Bad tag name: #{token}")

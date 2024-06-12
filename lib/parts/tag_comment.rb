@@ -23,7 +23,7 @@ module LiquidTranspiler
 
         source.next( '{%')
         source.next( '-')
-        unless 'endcomment' == source.expect_name
+        unless :endcomment == source.expect_name
           raise TranspilerError.new( source.offset, 'Internal error')
         end
 

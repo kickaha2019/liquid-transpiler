@@ -22,7 +22,7 @@ module LiquidTranspiler
         @start.find_arguments( names)   if @start
         names = names.spawn
         names.assign( @variable)
-        names.assign( 'tablerowloop')
+        names.assign( :tablerowloop)
         super( names)
       end
 
@@ -93,7 +93,7 @@ module LiquidTranspiler
         @variable = source.expect_name
         token     = source.get
 
-        unless token == 'in'
+        unless token == :in
           raise TranspilerError.new( @offset, 'Expecting in')
         end
 
@@ -101,17 +101,17 @@ module LiquidTranspiler
 
         while true
           case term
-          when 'cols'
+          when :cols
             if source.get != ':'
               raise TranspilerError.new( @offset, 'Expected : after cols')
             end
             @columns, term = TranspilerExpression.parse( source)
-          when 'limit'
+          when :limit
             if source.get != ':'
               raise TranspilerError.new( @offset, 'Expected : after limit')
             end
             @limit, term = TranspilerExpression.parse( source)
-          when 'offset'
+          when :offset
             if source.get != ':'
               raise TranspilerError.new( @offset, 'Expected : after offset')
             end
