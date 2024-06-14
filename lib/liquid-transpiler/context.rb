@@ -1,5 +1,5 @@
 module LiquidTranspiler
-  class TranspilerContext
+  class Context
     def initialize( signatures, names)
       @signatures = signatures
       @variables  = {}

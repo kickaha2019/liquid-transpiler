@@ -20,7 +20,7 @@ module LiquidTranspiler
       end
 
       def setup( source)
-        @expression, term = TranspilerExpression.parse( source)
+        @expression, term = Expression.parse( source)
         term
       end
     end

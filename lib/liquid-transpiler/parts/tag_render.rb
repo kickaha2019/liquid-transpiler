@@ -110,9 +110,9 @@ module LiquidTranspiler
           if term1 == ':'
             name = source.expect_name
             source.get
-            @parameters[name], term = TranspilerExpression.parse( source)
+            @parameters[name], term = Expression.parse( source)
           else
-            expr, term = TranspilerExpression.parse( source)
+            expr, term = Expression.parse( source)
             if term != :as
               source.error( offset, 'Unsupported render syntax')
             end
@@ -126,7 +126,7 @@ module LiquidTranspiler
       end
 
       def setup_with( source)
-        expr, term = TranspilerExpression.parse( source)
+        expr, term = Expression.parse( source)
         if term == :as
           name = source.expect_name
           term = source.get

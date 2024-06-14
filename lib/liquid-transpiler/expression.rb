@@ -1,5 +1,5 @@
 module LiquidTranspiler
-  class TranspilerExpression
+  class Expression
     OPERATORS = {
       :and      => ['And',                 true],
       :contains => ['Contains',            false],

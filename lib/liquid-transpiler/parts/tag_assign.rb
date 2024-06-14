@@ -27,7 +27,7 @@ module LiquidTranspiler
           source.error( @offset, 'Expecting =')
         end
 
-        @expression, term = TranspilerExpression.parse( source)
+        @expression, term = Expression.parse( source)
         term
       end
     end

@@ -1,5 +1,5 @@
 module LiquidTranspiler
-  class TranspilerSource
+  class Source
     attr_reader :offset
     RESERVED_WORDS = [:true, :false, :empty]
 

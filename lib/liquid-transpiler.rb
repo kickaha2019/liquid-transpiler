@@ -1,7 +1,7 @@
-require_relative 'transpiler_requires'
+require_relative 'liquid-transpiler/requires'
 
 module LiquidTranspiler
-  class Transpiler
+  class LiquidTranspiler
     def initialize
       @signature = {}
       @parsed    = {}
@@ -38,7 +38,7 @@ module LiquidTranspiler
         write_start( io)
         @signature.each_pair do |name, info|
           write_method_start( info, io)
-          context = TranspilerContext.new( @signature, info[1])
+          context = Context.new( @signature, info[1])
           @parsed[name].generate( context, 4, io)
           write_method_end( io)
         end
@@ -47,7 +47,7 @@ module LiquidTranspiler
     end
 
     def parse( path)
-      source  = TranspilerSource.new( path)
+      source  = Source.new( path)
       context = Parts::Template.new
       rstrip  = false
 

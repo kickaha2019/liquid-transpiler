@@ -120,7 +120,7 @@ module LiquidTranspiler
 
         if source.next( '{{')
           lstrip = source.next( '-')
-          expr, term = TranspilerExpression.parse( source)
+          expr, term = Expression.parse( source)
 
           source.skip_space
           rstrip = source.next( '-')
