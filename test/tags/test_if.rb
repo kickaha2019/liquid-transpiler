@@ -26,5 +26,13 @@ Apple
 {% endif %}
 IF2
   end
+
+  def test_if3
+    expect_error( <<IF3, {}, /Unexpected tag endunless/)
+{% if true %}
+Bad syntax
+{% endunless %}
+IF3
+  end
 end
 

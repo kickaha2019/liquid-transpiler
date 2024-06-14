@@ -15,10 +15,6 @@ module LiquidTranspiler
     end
 
     def error( offset, msg)
-      puts "File:   #{@path}"
-      puts "Offset: #{@offset}"
-      puts "Text:   #{peek(20).strip}"
-      puts "Error:  #{msg}"
       raise TranspilerError.new( offset, msg)
     end
 
@@ -185,22 +181,6 @@ module LiquidTranspiler
       error( @offset, 'Unclosed quoted string')
     end
 
-    def line_number( offset)
-      lines = 1
-      index = 0
-
-      while (index < offset)
-        if (index1 = @text.index( "\n", index)) && (index1 < offset)
-          index = index1 + 1
-          lines += 1
-        else
-          break
-        end
-      end
-
-      lines
-    end
-
     def next( expected)
       unless @ungot.empty?
         if @ungot[-1] == expected
@@ -221,6 +201,22 @@ module LiquidTranspiler
 
     def peek( n)
       @text[@offset..(@offset+n-1)]
+    end
+
+    def position( offset)
+      lines = 1
+      index = 0
+
+      while (index < offset)
+        if (index1 = @text.index( "\n", index)) && (index1 < offset)
+          index = index1 + 1
+          lines += 1
+        else
+          break
+        end
+      end
+
+      return lines, (offset - index + 1), @text[offset...(offset+50)].gsub( "\n", ' ')
     end
 
     def remnant

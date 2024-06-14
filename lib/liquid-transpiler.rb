@@ -59,7 +59,14 @@ module LiquidTranspiler
 
         context.add( Parts::EndOfFile.new( source, source.offset, nil))
       rescue TranspilerError => bang
-        @errors << "#{bang.message} [#{path}:#{source.line_number( bang.offset)}]"
+        line, column, peek = * source.position( bang.offset)
+        @errors << <<ERROR
+File:   #{path.split('/')[-1]}
+Line:   #{line}
+Column: #{column}
+Text:   #{peek}
+Error:  #{bang.message}
+ERROR
       end
     end
 

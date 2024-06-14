@@ -119,6 +119,22 @@ class TestBase < Minitest::Test
     end
   end
 
+  def expect_error( code, params = {}, expected_error)
+    prepare( code, 'test.liquid')
+    @@test_number  += 1
+    clazz          =  "Temp#{@@test_number}"
+    path           = @@dir + '/Test.rb'
+    if @@transpiler.transpile_dir( @@dir, path, class:clazz)
+      raise 'Expected error not raised'
+    else
+      errors = []
+      @@transpiler.errors {|error| errors << error}
+      puts errors[0]
+      assert_equal 1, errors.size
+      assert expected_error =~ errors[0]
+    end
+  end
+
   def prepare( code, path)
     File.open( @@dir + '/' + path, 'w') do |io|
       io.print code

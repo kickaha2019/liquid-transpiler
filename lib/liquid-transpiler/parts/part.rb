@@ -138,7 +138,7 @@ module LiquidTranspiler
           token  = source.get
 
           if token
-            part, term = parse_tag( source, token)
+            part, term = parse_tag( source, offset, token)
             unless term.nil?
               source.error( offset, 'Unexpected ' + term.to_s)
             end
@@ -158,7 +158,7 @@ module LiquidTranspiler
         end
       end
 
-      def parse_tag( source, token)
+      def parse_tag( source, offset, token)
         begin
           clazz = Object.const_get( 'LiquidTranspiler::Parts::Tag' + token.to_s.capitalize)
           part  = clazz.new( source, offset, self)
