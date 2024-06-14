@@ -8,7 +8,8 @@ module LiquidTranspiler
 
       attr_reader :offset, :parent
 
-      def initialize( offset, parent)
+      def initialize( source, offset, parent)
+        @source   = source
         @offset   = offset
         @parent   = parent
         @children = []
@@ -21,7 +22,7 @@ module LiquidTranspiler
         when 'Embedded'
           self
         when 'EndOfFile'
-          raise TranspilerError.new( part.offset, 'Unexpected EOF')
+          error( part.offset, 'Unexpected EOF')
         when 'TagAssign'
           self
         when 'TagCapture'
@@ -55,8 +56,7 @@ module LiquidTranspiler
         when 'Text'
           self
         else
-          raise TranspilerError.new( part.offset,
-                                     'Unexpected ' + part.name)
+          error( part.offset, 'Unexpected ' + part.name)
         end
       end
 
@@ -64,7 +64,7 @@ module LiquidTranspiler
         text = text.lstrip if rstrip
         text = text.rstrip if lstrip
         if text.size > 0
-          add( Text.new( offset, text))
+          add( Text.new( @source, offset, text))
         end
       end
 
@@ -79,12 +79,16 @@ module LiquidTranspiler
           return part, rstrip1
         else
           add_text( source.offset, source.remnant, rstrip, false)
-          return Parts::EndOfFile.new( source.offset), false
+          return Parts::EndOfFile.new( source, source.offset, nil), false
         end
       end
 
       def digest_find
         /({{|{%)/
+      end
+
+      def error( offset, msg)
+        @source.error( offset, msg)
       end
 
       def find_arguments( names)
@@ -125,9 +129,9 @@ module LiquidTranspiler
           source.skip_space
           rstrip = source.next( '-')
           if term.nil? && source.next( '}}')
-            return lstrip, Parts::Embedded.new( offset, expr), rstrip
+            return lstrip, Parts::Embedded.new( source, offset, expr), rstrip
           else
-            raise TranspilerError.new( offset, 'Expecting }}')
+            error( offset, 'Expecting }}')
           end
         elsif source.next( '{%')
           lstrip = source.next( '-')
@@ -157,7 +161,7 @@ module LiquidTranspiler
       def parse_tag( source, token)
         begin
           clazz = Object.const_get( 'LiquidTranspiler::Parts::Tag' + token.to_s.capitalize)
-          part  = clazz.new( offset, self)
+          part  = clazz.new( source, offset, self)
         rescue
           source.error( offset, "Bad tag name: #{token}")
         end

@@ -1,10 +1,6 @@
 module LiquidTranspiler
   module Parts
     class TagUnless < Part
-      def initialize( offset, parent)
-        super( offset, parent)
-      end
-
       def add( part)
         if part.is_a?( TagBreak) || part.is_a?( TagContinue)
           @children << part

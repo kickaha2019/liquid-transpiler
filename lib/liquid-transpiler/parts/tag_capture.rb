@@ -1,10 +1,6 @@
 module LiquidTranspiler
   module Parts
     class TagCapture < Part
-      def initialize( offset, parent)
-        super( offset, parent)
-      end
-
       def add( part)
         if part.is_a?( TagEndcapture)
           return @parent

@@ -48,7 +48,7 @@ module LiquidTranspiler
 
     def parse( path)
       source  = Source.new( path)
-      context = Parts::Template.new
+      context = Parts::Template.new( source, 0, nil)
       rstrip  = false
 
       begin
@@ -57,7 +57,7 @@ module LiquidTranspiler
           context = context.add part if part
         end
 
-        context.add( Parts::EndOfFile.new( source.offset))
+        context.add( Parts::EndOfFile.new( source, source.offset, nil))
       rescue TranspilerError => bang
         @errors << "#{bang.message} [#{path}:#{source.line_number( bang.offset)}]"
       end

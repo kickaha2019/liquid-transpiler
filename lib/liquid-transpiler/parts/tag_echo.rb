@@ -1,12 +1,8 @@
 module LiquidTranspiler
   module Parts
     class TagEcho < Part
-      def initialize( offset, parent)
-        super( offset, parent)
-      end
-
       def add( part)
-        raise TranspilerError.new( part.offset, 'Internal error')
+        error( part.offset, 'Internal error')
       end
 
       def find_arguments( names)

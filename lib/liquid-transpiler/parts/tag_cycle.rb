@@ -1,14 +1,8 @@
 module LiquidTranspiler
   module Parts
     class TagCycle < Part
-      def initialize( offset, parent)
-        super( offset, parent)
-        @key   = nil
-        @cycle = []
-      end
-
       def add( part)
-        raise TranspilerError.new( part.offset, 'Internal error')
+        error( part.offset, 'Internal error')
       end
 
       def find_arguments( names)
@@ -38,6 +32,8 @@ module LiquidTranspiler
       end
 
       def setup( source)
+        @key   = nil
+        @cycle = []
         @cycle << source.get
 
         while token = source.get

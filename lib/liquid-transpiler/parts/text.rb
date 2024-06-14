@@ -3,13 +3,13 @@ require_relative 'part'
 module LiquidTranspiler
   module Parts
     class Text < Part
-      def initialize( offset, text)
-        super( offset, nil)
+      def initialize( source, offset, text)
+        super( source, offset, nil)
         @text = text
       end
 
       def add( part)
-        raise TranspilerError.new( part.offset, 'Internal error')
+        error( part.offset, 'Internal error')
       end
 
       def empty?

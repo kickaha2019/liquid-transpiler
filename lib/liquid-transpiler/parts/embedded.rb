@@ -3,13 +3,13 @@ require_relative 'part'
 module LiquidTranspiler
   module Parts
     class Embedded < Part
-      def initialize( offset, expression)
-        super( offset, nil)
+      def initialize( source, offset, expression)
+        super( source, offset, nil)
         @expression = expression
       end
 
       def add( part)
-        raise TranspilerError.new( part.offset, 'Internal error')
+        error( part.offset, 'Internal error')
       end
 
       def find_arguments( names)

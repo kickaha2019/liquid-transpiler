@@ -1,10 +1,6 @@
 module LiquidTranspiler
   module Parts
     class TagWhen < Part
-      def initialize( offset, parent)
-        super( offset, parent)
-      end
-
       def add( part)
         if part.is_a?( TagWhen) || part.is_a?( TagElse) || part.is_a?( TagEndcase)
           return @parent.add( part)

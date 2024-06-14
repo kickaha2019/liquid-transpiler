@@ -1,13 +1,6 @@
 module LiquidTranspiler
   module Parts
     class TagTablerow < Part
-      def initialize( offset, parent)
-        super( offset, parent)
-        @columns = nil
-        @limit   = nil
-        @start   = nil
-      end
-
       def add( part)
         if part.is_a?( TagEndtablerow)
           return @parent
@@ -90,6 +83,9 @@ module LiquidTranspiler
       end
 
       def setup( source)
+        @columns  = nil
+        @limit    = nil
+        @start    = nil
         @variable = source.expect_name
         token     = source.get
 

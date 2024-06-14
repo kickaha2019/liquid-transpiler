@@ -1,10 +1,6 @@
 module LiquidTranspiler
   module Parts
     class TagLiquid < Part
-      def initialize( offset, parent)
-        super( offset, parent)
-      end
-
       def setup( source)
         term    = source.get
         context = self

@@ -86,6 +86,7 @@ class TestBase < Minitest::Test
   def compare(code, params = {})
     liquid         =  Liquid::Template.parse(code)
     liquid_output  =  liquid.render( params)
+    p ['liquid_output', liquid_output]
     prepare( code, 'test.liquid')
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"

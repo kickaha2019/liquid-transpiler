@@ -1,10 +1,6 @@
 module LiquidTranspiler
   module Parts
     class TagCase < Part
-      def initialize( offset, parent)
-        super( offset, parent)
-      end
-
       def add( part)
         if part.is_a?( TagWhen) || part.is_a?( TagElse)
           @children << part
@@ -14,12 +10,10 @@ module LiquidTranspiler
         elsif part.is_a?( Text)
           part.strip
           unless part.empty?
-            raise TranspilerError.new( part.offset,
-                                       'Unexpected ' + part.name)
+            error( part.offset, 'Unexpected ' + part.name)
           end
         else
-          raise TranspilerError.new( part.offset,
-                                     'Unexpected ' + part.name)
+          error( part.offset, 'Unexpected ' + part.name)
         end
       end
 
@@ -34,12 +28,10 @@ module LiquidTranspiler
           elsif child.is_a?( Text)
             child.strip
             unless child.empty?
-              raise TranspilerError.new( part.offset,
-                                         'Unexpected text after case tag')
+              error( part.offset,'Unexpected text after case tag')
             end
           else
-            raise TranspilerError.new( child.offset,
-                                       'Unexpected ' + child.name)
+            error( child.offset, 'Unexpected ' + child.name)
           end
         end
 

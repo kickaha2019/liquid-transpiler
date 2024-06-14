@@ -1,14 +1,6 @@
 module LiquidTranspiler
   module Parts
     class TagFor < Part
-      def initialize( offset, parent)
-        super( offset, parent)
-        @else     = nil
-        @limit    = nil
-        @reversed = false
-        @start    = nil
-      end
-
       def add( part)
         if part.is_a?( TagBreak)
           @children << part
@@ -77,6 +69,10 @@ module LiquidTranspiler
       end
 
       def setup( source)
+        @else     = nil
+        @limit    = nil
+        @reversed = false
+        @start    = nil
         @variable = source.expect_name
         token     = source.get
 

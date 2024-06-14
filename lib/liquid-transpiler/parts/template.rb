@@ -63,10 +63,6 @@ module LiquidTranspiler
         end
       end
 
-      def initialize
-        super( 0, nil)
-      end
-
       def add( part)
         if part.is_a?( EndOfFile)
           return self

@@ -1,13 +1,8 @@
 module LiquidTranspiler
   module Parts
     class TagDecrement < Part
-      def initialize( offset, parent)
-        super( offset, parent)
-        @name = nil
-      end
-
       def add( part)
-        raise TranspilerError.new( part.offset, 'Internal error')
+        error( part.offset, 'Internal error')
       end
 
       def find_arguments( names)

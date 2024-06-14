@@ -1,15 +1,8 @@
 module LiquidTranspiler
   module Parts
     class TagRender < Part
-      def initialize( offset, parent)
-        super( offset, parent)
-        @target     = nil
-        @parameters = {}
-        @for        = false
-      end
-
       def add( part)
-        raise TranspilerError.new( @offset, 'Internal error')
+        error( @offset, 'Internal error')
       end
 
       def find_arguments( names)
@@ -43,8 +36,7 @@ module LiquidTranspiler
             generate_call( info, call_arguments, context, indent, io)
           end
         else
-          raise TranspilerError.new( @offset,
-                                     "Undefined render target: #{@target}")
+          error( @offset,"Undefined render target: #{@target}")
         end
       end
 
@@ -69,6 +61,10 @@ module LiquidTranspiler
       end
 
       def setup( source)
+        @target     = nil
+        @parameters = {}
+        @for        = false
+
         if m = /^['"]([a-z0-9_\-]+)['"]$/i.match( source.get)
           @target = m[1]
         else
@@ -94,7 +90,6 @@ module LiquidTranspiler
       end
 
       def setup_parameters(source, term)
-
         while setup_more?( term)
           offset = source.offset
           term   = source.get
@@ -113,12 +108,13 @@ module LiquidTranspiler
             @parameters[name], term = Expression.parse( source)
           else
             expr, term = Expression.parse( source)
-            if term != :as
-              source.error( offset, 'Unsupported render syntax')
+            if term == :as
+              name = source.expect_name
+              @parameters[name] = expr
+              term = source.get
+            else
+              @parameters[@target.to_sym] = expr
             end
-            name = source.expect_name
-            @parameters[name] = expr
-            term = source.get
           end
         end
 
@@ -131,7 +127,7 @@ module LiquidTranspiler
           name = source.expect_name
           term = source.get
         else
-          name = @target
+          name = @target.to_sym
         end
 
         @parameters[name] = expr

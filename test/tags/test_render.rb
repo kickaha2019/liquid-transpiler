@@ -49,11 +49,27 @@ RENDER5
   end
 
   def test_render6
-    prepare( <<RENDER4, 'included.liquid')
+    prepare( <<RENDER6, 'included.liquid')
 Passed {{ forename }} {{ surname }}
-RENDER4
+RENDER6
     compare( "{% render 'included', with forename:'Guybrush', surname:'Threepwood' %}",
              {})
+  end
+
+  def test_render7
+    prepare( <<RENDER7, 'included.liquid')
+Passed {{ included.forename }} {{ included.surname }}
+RENDER7
+    compare( "{% render 'included' with map %}",
+             {'map' => {'forename' => 'Guybrush', 'surname'=>'Threepwood'}})
+  end
+
+  def test_render8
+    prepare( <<RENDER8, 'included.liquid')
+Passed {{ included.name }}
+RENDER8
+    compare( "{% render 'included' for names %}",
+             {'names' => [{'name' => 'Guybrush'},{'name' => 'Threepwood'}]})
   end
 end
 
