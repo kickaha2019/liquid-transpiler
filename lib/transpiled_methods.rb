@@ -159,38 +159,31 @@ module TranspiledMethods
   end
 
   def f_abs( value)
-    if value.nil?
-      return nil
-    elsif value.is_a?( String)
-      if /[\.]/ =~ value
-        value = value.to_f
-      else
-        value = value.to_i
-      end
-    end
-    value.abs
+    n(value).abs
   end
 
   def f_append( value, postfix)
-    value.nil? ? postfix : (postfix.nil? ? value : (value.to_s + postfix.to_s))
+    value.to_s + postfix.to_s
   end
 
   def f_at_least( value, limit)
-    return nil if value.nil?
+    value = n(value)
+    limit = n(limit)
     (value < limit) ? limit : value
   end
 
   def f_at_most( value, limit)
-    return nil if value.nil?
+    value = n(value)
+    limit = n(limit)
     (value < limit) ? value : limit
   end
 
   def f_capitalize( value)
-    value.nil? ? nil : value.capitalize
+    value.to_s.capitalize
   end
 
   def f_ceil( value)
-    value.nil? ? nil : value.to_f.ceil
+    n(value).ceil
   end
 
   def f_compact( map)
@@ -227,20 +220,23 @@ module TranspiledMethods
     value ? value : defval
   end
 
-  def f_divided_by( value, *args)
-    if args[0].is_a?( Integer)
-      (value / args[0]).floor
+  def f_divided_by( value, divisor)
+    value = n(value)
+    divisor = n(divisor)
+
+    if divisor.is_a?( Integer)
+      (value / divisor).floor
     else
-      value / args[0]
+      value / divisor
     end
   end
 
   def f_downcase( value)
-    value.nil? ? nil : value.downcase
+    value.to_s.downcase
   end
 
   def f_escape( value)
-    return nil if value.nil?
+    value = value.to_s
     value.gsub( /['&"<>]/) do |letter|
       case letter
       when '"'
@@ -258,7 +254,7 @@ module TranspiledMethods
   end
 
   def f_escape_once( value)
-    return nil if value.nil?
+    value = value.to_s
 
     fragments, offset = [], 0
     while offset < value.size
@@ -285,10 +281,7 @@ module TranspiledMethods
   end
 
   def f_floor( value)
-    if value.is_a?( String)
-      value = value.to_f
-    end
-    value.floor
+    n(value).floor
   end
 
   def f_join( map, separator)
@@ -299,24 +292,18 @@ module TranspiledMethods
 
   def f_last( list)
     l(list)[-1]
-    # return list[-1] if list.is_a?( Array)
-    # last = nil
-    # list.each do |entry|
-    #   last = entry
-    # end
-    # last
   end
 
   def f_lstrip( value)
-    value.lstrip
+    value.to_s.lstrip
   end
 
   def f_minus( left, right)
-    left - right
+    n(left) - n(right)
   end
 
   def f_modulo( left, right)
-    left % right
+    n(left) % n(right)
   end
 
   def f_map( map, field)
@@ -326,31 +313,31 @@ module TranspiledMethods
   end
 
   def f_newline_to_br( value)
-    value.gsub( "\n", "<br />\n")
+    value.to_s.gsub( "\n", "<br />\n")
   end
 
   def f_plus( left, right)
-    left + right
+    n(left) + n(right)
   end
 
   def f_prepend( value, prefix)
-    prefix.to_s + value
+    prefix.to_s + value.to_s
   end
 
   def f_remove( value, elide)
-    value.gsub( elide, '')
+    value.to_s.gsub( elide.to_s, '')
   end
 
   def f_remove_first( value, elide)
-    value.sub( elide, '')
+    value.to_s.sub( elide.to_s, '')
   end
 
   def f_replace( value, was, now)
-    value.gsub( was, now)
+    value.to_s.gsub( was.to_s, now.to_s)
   end
 
   def f_replace_first( value, was, now)
-    value.sub( was, now)
+    value.to_s.sub( was.to_s, now.to_s)
   end
 
   def f_reverse( list)
@@ -358,11 +345,11 @@ module TranspiledMethods
   end
 
   def f_round( value, places=0)
-    value.round( places)
+    n(value).round( places)
   end
 
   def f_rstrip( value)
-    value.rstrip
+    value.to_s.rstrip
   end
 
   def f_size( list)
@@ -403,20 +390,20 @@ module TranspiledMethods
     end
   end
 
-  def f_split( value, *args)
-    value.split( args[0])
+  def f_split( value, separator)
+    value.to_s.split( separator.to_s)
   end
 
   def f_strip( value)
-    value.strip
+    value.to_s.strip
   end
 
   def f_strip_html( value)
-    value.gsub( /<[^>]*>/, '')
+    value.to_s.gsub( /<[^>]*>/, '')
   end
 
   def f_strip_newlines( value)
-    value.gsub( "\n", '')
+    value.to_s.gsub( "\n", '')
   end
 
   def f_sum( list, sum_by=nil)
@@ -427,8 +414,8 @@ module TranspiledMethods
     end
   end
 
-  def f_times( value, *args)
-    value * args[0]
+  def f_times( value, mult)
+    n(value) * n(mult)
   end
 
   def f_truncate( text, limit, etc='...')
@@ -447,7 +434,7 @@ module TranspiledMethods
   end
 
   def f_upcase( value)
-    value.nil? ? nil : value.upcase
+    value.to_s.upcase
   end
 
   def f_url_decode( text)
@@ -475,10 +462,18 @@ module TranspiledMethods
   end
 
   def l(list)
-    if list.nil?
-      []
+    list.to_a
+  end
+
+  def n( value)
+    if value.is_a?( String)
+      if value.index('.').nil?
+        value.to_i
+      else
+        value.to_f
+      end
     else
-      list.to_a
+      value
     end
   end
 
@@ -488,7 +483,6 @@ module TranspiledMethods
 
   def o_eq( left, right)
     return true if left == right
-    return false if left.nil? || right.nil?
     if left == :empty
       right.empty?
     elsif right == :empty
@@ -499,7 +493,6 @@ module TranspiledMethods
   end
 
   def o_ne( left, right)
-    return false if left.nil? || right.nil?
     if left == :empty
       ! right.empty?
     elsif right == :empty

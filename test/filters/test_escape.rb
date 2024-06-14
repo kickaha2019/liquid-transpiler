@@ -8,5 +8,8 @@ ESCAPE
     compare(<<ESCAPE)
 {{ 'Special characters " < >' | escape }}
 ESCAPE
+    compare(<<ESCAPE)
+{{ 123 | escape }}
+ESCAPE
   end
 end

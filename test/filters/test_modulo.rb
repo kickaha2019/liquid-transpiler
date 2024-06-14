@@ -6,6 +6,7 @@ class TestModulo < TestBase
 {{ 3 | modulo: 2 }}
 {{ 24 | modulo: 7 }}
 {{ 183.357 | modulo: 12 | round: 3 }}
+{{ "183.357" | modulo: "12" | round: 3 }}
 MODULO
   end
 end

@@ -6,6 +6,7 @@ class TestTimes < TestBase
 {{ 3 | times: 2 }}    
 {{ 24 | times: 7 }}    
 {{ 183.357 | times: 12 }}
+{{ "183.357" | times: "12" }}
 TIMES
   end
 end

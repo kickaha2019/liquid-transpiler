@@ -9,11 +9,47 @@ the [Liquid Ruby gem](https://rubygems.org/gems/liquid/).
 This *transpiler* is not suitable for a server context
 which **Liquid** was
 designed for. There are tests but there will be 
-incompatibities with real use of **Liquid**.
+incompatibities with real use of **Liquid** which is
+very forgiving as regards syntax and execution. Sometimes
+what one might consider errors inside **Liquid** 
+just result in empty text.
 
 ## Using the transpiler
+```
+# Get an instance of the transpiler
+require 'liquid-transpiler'
+transpiler = LiquidTranspiler::LiquidTranspiler.new
+
+# Transpiler Liquid templates in *template_dir*
+# to a Ruby source file at *generated_file* 
+# with options passed in a *options* has
+status = transpiler.transpile_dir( template_dir, 
+                                   generated_file,
+                                   options)
+                                  
+# Check for errors transpiling          
+unless status        
+  transpiler.errors {|error| puts error}
+  raise '*** Error transpiling'
+end
+
+# Load the generated Ruby code
+load generated_file
+generated = Transpiled.new
+
+# Render a template *template* with options
+# in a *data* hash
+html = generated.render( template, data)
+```
 
 ## Transpiler options
+The options are expressed as a hash with symbol
+keys.
+
+|Option|Default|Description|
+|-|-|-|
+|:class|Transpiled|Name of class to generate|
+|:include|LiquidTranspiledMethods|Module to include into generated class|
 
 ## Error handling
 

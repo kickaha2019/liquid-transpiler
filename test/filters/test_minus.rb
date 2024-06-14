@@ -6,6 +6,7 @@ class TestMinus < TestBase
 {{ 4 | minus: 2 }}
 {{ 16 | minus: 4 }}
 {{ 183.357 | minus: 12 }}
+{{ "183.357" | minus: "12" }}
 MINUS
   end
 end

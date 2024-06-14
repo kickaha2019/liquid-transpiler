@@ -6,6 +6,7 @@ class TestPlus < TestBase
 {{ 4 | plus: 2 }}
 {{ 16 | plus: 4 }}
 {{ 183.357 | plus: 12 }}
+{{ "183.357" | plus: "12" }}
 PLUS
   end
 
