@@ -1,6 +1,44 @@
 module LiquidTranspiler
   module Parts
     class TagFor < Part
+      def initialize( source, offset, parent)
+        super
+        @else     = nil
+        @limit    = nil
+        @reversed = false
+        @start    = nil
+        @variable = source.expect_name
+        token     = source.get
+
+        unless token == :in
+          source.error( @offset, 'Expecting in')
+        end
+
+        @expression, term = Expression.parse( source)
+
+        while true
+          case term
+          when :limit
+            if source.get != ':'
+              source.error( @offset, 'Expected : after limit')
+            end
+            @limit, term = Expression.parse( source)
+          when :reversed
+            @reversed = true
+            term = source.get
+          when :offset
+            if source.get != ':'
+              source.error( @offset, 'Expected : after offset')
+            end
+            @start, term = Expression.parse( source)
+          else
+            break
+          end
+        end
+
+        source.unget term
+      end
+
       def add( part)
         if part.is_a?( TagBreak)
           @children << part
@@ -66,43 +104,6 @@ module LiquidTranspiler
         end
 
         context.endfor( @variable)
-      end
-
-      def setup( source)
-        @else     = nil
-        @limit    = nil
-        @reversed = false
-        @start    = nil
-        @variable = source.expect_name
-        token     = source.get
-
-        unless token == :in
-          source.error( @offset, 'Expecting in')
-        end
-
-        @expression, term = Expression.parse( source)
-
-        while true
-          case term
-          when :limit
-            if source.get != ':'
-              source.error( @offset, 'Expected : after limit')
-            end
-            @limit, term = Expression.parse( source)
-          when :reversed
-            @reversed = true
-            term = source.get
-          when :offset
-            if source.get != ':'
-              source.error( @offset, 'Expected : after offset')
-            end
-            @start, term = Expression.parse( source)
-          else
-            break
-          end
-        end
-
-        return term
       end
     end
   end

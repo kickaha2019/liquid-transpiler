@@ -1,7 +1,8 @@
 module LiquidTranspiler
   module Parts
     class TagComment < Part
-      def setup( source)
+      def initialize( source, offset, parent)
+        super
         source.skip_space
         source.next( '-')
 
@@ -19,8 +20,7 @@ module LiquidTranspiler
           source.error( source.offset, 'Internal error')
         end
 
-        part = TagEndcomment.new( source, source.offset, self)
-        part.setup( source)
+        TagEndcomment.new( source, source.offset, self)
       end
     end
   end

@@ -1,7 +1,8 @@
 module LiquidTranspiler
   module Parts
     class TagRaw < Part
-      def setup( source)
+      def initialize( source, offset, parent)
+        super
         source.skip_space
         source.next( '-')
 
@@ -21,8 +22,7 @@ module LiquidTranspiler
           source.error( source.offset, 'Internal error')
         end
 
-        part = TagEndraw.new( source, source.offset, self)
-        part.setup( source)
+        TagEndraw.new( source, source.offset, self)
       end
     end
   end

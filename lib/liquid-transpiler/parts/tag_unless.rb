@@ -1,7 +1,16 @@
 module LiquidTranspiler
   module Parts
     class TagUnless < Part
+      def initialize( source, offset, parent)
+        super
+        @expression, term = Expression.parse( source)
+        source.unget term
+      end
+
       def add( part)
+        if part.is_a?( TagEndunless)
+          return @parent
+        end
         if part.is_a?( TagBreak) || part.is_a?( TagContinue)
           @children << part
           return self
@@ -10,27 +19,24 @@ module LiquidTranspiler
           @children << part
           return part
         end
-        if part.is_a?( TagEndunless)
-          return @parent
-        end
         super( part)
       end
 
       def find_arguments( names)
         @expression.find_arguments( names)
-        names_if, names_else = names.spawn, nil
+        names_unless, names_else = names.spawn, nil
 
         @children.each do |child|
           if child.is_a?( TagElse)
             names_else = names.spawn
             child.find_arguments( names_else)
           else
-            child.find_arguments( names_if)
+            child.find_arguments( names_unless)
           end
         end
 
         if names_else
-          names_if.locals do |local|
+          names_unless.locals do |local|
             names.assign( local) if names_else.local?( local)
           end
         end
@@ -42,11 +48,6 @@ module LiquidTranspiler
         super( context, indent+2, io)
         io.print ' ' * indent
         io.puts 'end'
-      end
-
-      def setup( source)
-        @expression, term = Expression.parse( source)
-        term
       end
     end
   end

@@ -1,6 +1,33 @@
 module LiquidTranspiler
   module Parts
     class TagRender < Part
+      def initialize( source, offset, parent)
+        super
+        @target     = nil
+        @parameters = {}
+        @for        = false
+
+        m = /^['"]([a-z0-9_\-]+)['"]$/i.match( source.get)
+        if m
+          @target = m[1]
+        else
+          source.error( @offset, 'Expected render target')
+        end
+
+        term = source.get
+        source.unget case term
+        when ','
+          setup_parameters(source, term)
+        when :with
+          setup_parameters(source, term)
+        when :for
+          @for = true
+          setup_with( source)
+        else
+          term
+        end
+      end
+
       def add( part)
         error( @offset, 'Internal error')
       end
@@ -12,7 +39,8 @@ module LiquidTranspiler
       end
 
       def generate( context, indent, io)
-        if info = context.signature( @target)
+        info = context.signature( @target)
+        if info
           call_arguments = {}
           @parameters.each_pair do |key, value|
             call_arguments[key] = value.generate( context)
@@ -60,41 +88,14 @@ module LiquidTranspiler
         io.puts
       end
 
-      def setup( source)
-        @target     = nil
-        @parameters = {}
-        @for        = false
-
-        if m = /^['"]([a-z0-9_\-]+)['"]$/i.match( source.get)
-          @target = m[1]
-        else
-          source.error( @offset, 'Expected render target')
-        end
-
-        term = source.get
-        case term
-        when ','
-          setup_parameters(source, term)
-        when :with
-          setup_parameters(source, term)
-        when :for
-          @for = true
-          setup_with( source)
-        else
-          term
-        end
-      end
-
       def setup_more?( term)
         (term == ',') || (term == :with)
       end
 
       def setup_parameters(source, term)
         while setup_more?( term)
-          offset = source.offset
           term   = source.get
           if term == :with
-            offset = source.offset
             term   = source.get
           end
 

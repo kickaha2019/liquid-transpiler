@@ -1,6 +1,18 @@
 module LiquidTranspiler
   module Parts
     class TagAssign < Part
+      def initialize( source, offset, parent)
+        super
+        @variable = source.expect_name
+        source.skip_space
+        unless source.next('=')
+          source.error( @offset, 'Expecting =')
+        end
+
+        @expression, term = Expression.parse( source)
+        source.unget term
+      end
+
       def add( part)
         error( @offset, 'Internal error')
       end
@@ -14,17 +26,6 @@ module LiquidTranspiler
         io.print ' ' * indent
         io.print context.variable( @variable)
         io.puts " = #{@expression.generate( context)}"
-      end
-
-      def setup( source)
-        @variable = source.expect_name
-        source.skip_space
-        unless source.next('=')
-          source.error( @offset, 'Expecting =')
-        end
-
-        @expression, term = Expression.parse( source)
-        term
       end
     end
   end

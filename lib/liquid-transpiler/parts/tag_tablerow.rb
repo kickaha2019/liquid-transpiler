@@ -1,6 +1,45 @@
 module LiquidTranspiler
   module Parts
     class TagTablerow < Part
+      def initialize( source, offset, parent)
+        super
+        @columns  = nil
+        @limit    = nil
+        @start    = nil
+        @variable = source.expect_name
+        token     = source.get
+
+        unless token == :in
+          source.error( @offset, 'Expecting in')
+        end
+
+        @expression, term = Expression.parse( source)
+
+        while true
+          case term
+          when :cols
+            if source.get != ':'
+              source.error( @offset, 'Expected : after cols')
+            end
+            @columns, term = Expression.parse( source)
+          when :limit
+            if source.get != ':'
+              source.error( @offset, 'Expected : after limit')
+            end
+            @limit, term = Expression.parse( source)
+          when :offset
+            if source.get != ':'
+              source.error( @offset, 'Expected : after offset')
+            end
+            @start, term = Expression.parse( source)
+          else
+            break
+          end
+        end
+
+        source.unget term
+      end
+
       def add( part)
         if part.is_a?( TagEndtablerow)
           return @parent
@@ -80,44 +119,6 @@ module LiquidTranspiler
         io.puts 'end'
 
         context.endtablerow( @variable)
-      end
-
-      def setup( source)
-        @columns  = nil
-        @limit    = nil
-        @start    = nil
-        @variable = source.expect_name
-        token     = source.get
-
-        unless token == :in
-          source.error( @offset, 'Expecting in')
-        end
-
-        @expression, term = Expression.parse( source)
-
-        while true
-          case term
-          when :cols
-            if source.get != ':'
-              source.error( @offset, 'Expected : after cols')
-            end
-            @columns, term = Expression.parse( source)
-          when :limit
-            if source.get != ':'
-              source.error( @offset, 'Expected : after limit')
-            end
-            @limit, term = Expression.parse( source)
-          when :offset
-            if source.get != ':'
-              source.error( @offset, 'Expected : after offset')
-            end
-            @start, term = Expression.parse( source)
-          else
-            break
-          end
-        end
-
-        return term
       end
     end
   end

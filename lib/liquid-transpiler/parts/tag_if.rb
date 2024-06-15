@@ -1,6 +1,12 @@
 module LiquidTranspiler
   module Parts
     class TagIf < Part
+      def initialize( source, offset, parent)
+        super
+        @expression, term = Expression.parse( source)
+        source.unget term
+      end
+
       def add( part)
         if part.is_a?( TagBreak) || part.is_a?( TagContinue)
           @children << part
@@ -42,11 +48,6 @@ module LiquidTranspiler
         super( context, indent+2, io)
         io.print ' ' * indent
         io.puts 'end'
-      end
-
-      def setup( source)
-        @expression, term = Expression.parse( source)
-        term
       end
     end
   end

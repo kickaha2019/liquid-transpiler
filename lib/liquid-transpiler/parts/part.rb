@@ -73,13 +73,14 @@ module LiquidTranspiler
       end
 
       def digest( source, rstrip)
-        if text = source.find( digest_find)
+        text = source.find( digest_find)
+        if text
           lstrip, part, rstrip1 = parse( source)
           add_text( source.offset, text, rstrip, lstrip)
-          return part, rstrip1
+          [part, rstrip1]
         else
           add_text( source.offset, source.remnant, rstrip, false)
-          return Parts::EndOfFile.new( source, source.offset, nil), false
+          [Parts::EndOfFile.new(source, source.offset, nil), false]
         end
       end
 
@@ -104,14 +105,15 @@ module LiquidTranspiler
       end
 
       def html_encode( text)
-        return text.gsub( /[\\\n"#]/) do |block|
+        text.gsub( /[\\\n"#]/) do |block|
           (block == "\n") ? '\\n' : '\\' + block
         end
       end
 
       def name
         clazz = class_name
-        if m = /^Tag(.*)$/.match( clazz)
+        m = /^Tag(.*)$/.match( clazz)
+        if m
           'tag ' + m[1].downcase
         else
           clazz
@@ -159,20 +161,12 @@ module LiquidTranspiler
       end
 
       def parse_tag( source, offset, token)
-        begin
-          clazz = Object.const_get( 'LiquidTranspiler::Parts::Tag' + token.to_s.capitalize)
-          part  = clazz.new( source, offset, self)
-        rescue
+        clazz = Object.const_get( 'LiquidTranspiler::Parts::Tag' + token.to_s.capitalize)
+        if clazz
+          clazz.new( source, offset, self)
+        else
           source.error( offset, "Bad tag name: #{token}")
         end
-
-        term = part.setup( source)
-        source.unget( term)
-        part
-      end
-
-      def setup( source)
-        source.get
       end
     end
   end

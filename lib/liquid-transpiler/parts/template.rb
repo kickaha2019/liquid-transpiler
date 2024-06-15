@@ -71,7 +71,7 @@ module LiquidTranspiler
       end
 
       def deduce_names
-        Names.new().tap do |names|
+        Names.new.tap do |names|
           find_arguments( names)
         end
       end

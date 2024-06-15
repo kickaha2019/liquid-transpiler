@@ -1,6 +1,33 @@
 module LiquidTranspiler
   module Parts
     class TagCycle < Part
+      def initialize( source, offset, parent)
+        super
+        @key   = nil
+        @cycle = []
+        @cycle << source.get
+
+        token = source.get
+        while token
+          case token
+          when ':'
+            @key = @cycle.delete_at(0).to_s
+          when ','
+          else
+            break
+          end
+
+          @cycle << source.get
+          token = source.get
+        end
+
+        if @key.nil?
+          @key = '[' + @cycle.collect {|c| c.to_s}.join(',') + ']'
+        end
+
+        source.unget token
+      end
+
       def add( part)
         error( part.offset, 'Internal error')
       end
@@ -29,30 +56,6 @@ module LiquidTranspiler
           end
         end
         io.puts " << [#{values.join(',')}][#{variable}]"
-      end
-
-      def setup( source)
-        @key   = nil
-        @cycle = []
-        @cycle << source.get
-
-        while token = source.get
-          case token
-          when ':'
-            @key = @cycle.delete_at(0).to_s
-          when ','
-          else
-            break
-          end
-
-          @cycle << source.get
-        end
-
-        if @key.nil?
-          @key = '[' + @cycle.collect {|c| c.to_s}.join(',') + ']'
-        end
-
-        token
       end
     end
   end

@@ -1,6 +1,12 @@
 module LiquidTranspiler
   module Parts
     class TagCase < Part
+      def initialize( source, offset, parent)
+        super
+        @expression, term = Expression.parse( source)
+        source.unget term
+      end
+
       def add( part)
         if part.is_a?( TagWhen) || part.is_a?( TagElse)
           @children << part
@@ -28,7 +34,7 @@ module LiquidTranspiler
           elsif child.is_a?( Text)
             child.strip
             unless child.empty?
-              error( part.offset,'Unexpected text after case tag')
+              error( offset,'Unexpected text after case tag')
             end
           else
             error( child.offset, 'Unexpected ' + child.name)
@@ -41,7 +47,7 @@ module LiquidTranspiler
           sub_names[0].locals {|name| possible << name}
           sub_names[1..-1].each do |child|
             last, possible = possible, []
-            possible.each do |name|
+            last.each do |name|
               possible << name if child.local?( name)
             end
           end
@@ -58,11 +64,6 @@ module LiquidTranspiler
         super( context, indent, io)
         io.print ' ' * indent
         io.puts 'end'
-      end
-
-      def setup( source)
-        @expression, term = Expression.parse( source)
-        term
       end
     end
   end

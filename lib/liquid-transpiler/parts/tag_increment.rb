@@ -1,6 +1,11 @@
 module LiquidTranspiler
   module Parts
     class TagIncrement < Part
+      def initialize( source, offset, parent)
+        super
+        @name = source.expect_name
+      end
+
       def add( part)
         error( part.offset, 'Internal error')
       end
@@ -16,11 +21,6 @@ module LiquidTranspiler
         io.puts " << #{variable}.to_s"
         io.print ' ' * indent
         io.puts "#{variable} += 1"
-      end
-
-      def setup( source)
-        @name = source.expect_name
-        source.get
       end
     end
   end
