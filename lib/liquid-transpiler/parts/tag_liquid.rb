@@ -2,11 +2,10 @@ module LiquidTranspiler
   module Parts
     class TagLiquid < Part
       def setup( source)
-        term    = source.get
         context = self
 
-        while term
-          part, term = context.parse_tag( source, term)
+        while source.token?
+          part = context.parse_tag( source, @offset, source.get)
           context = context.add( part)
         end
 

@@ -138,9 +138,9 @@ module LiquidTranspiler
           token  = source.get
 
           if token
-            part, term = parse_tag( source, offset, token)
-            unless term.nil?
-              source.error( offset, 'Unexpected ' + term.to_s)
+            part = parse_tag( source, offset, token)
+            if source.token?
+              source.error( offset, 'Unexpected ' + source.get)
             end
             source.skip_space
           else
@@ -167,7 +167,8 @@ module LiquidTranspiler
         end
 
         term = part.setup( source)
-        return part, term
+        source.unget( term)
+        part
       end
 
       def setup( source)

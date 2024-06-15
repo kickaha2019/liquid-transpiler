@@ -15,7 +15,15 @@ module LiquidTranspiler
     end
 
     def error( offset, msg)
-      raise TranspilerError.new( offset, msg)
+      line, column, peek = position( offset)
+      details = <<ERROR
+File:   #{@path.split('/')[-1]}
+Line:   #{line}
+Column: #{column}
+Text:   #{peek}
+Error:  #{msg}
+ERROR
+      raise TranspilerError.new( details)
     end
 
     def expect_literal
@@ -243,6 +251,15 @@ module LiquidTranspiler
         else
           break
         end
+      end
+    end
+
+    def token?
+      if term = get
+        unget( term)
+        true
+      else
+        false
       end
     end
 

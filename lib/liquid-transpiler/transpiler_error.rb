@@ -1,9 +1,8 @@
 module LiquidTranspiler
   class TranspilerError < Exception
-    attr_reader :offset, :message
+    attr_reader :message
 
-    def initialize( offset, message)
-      @offset  = offset
+    def initialize( message)
       @message = message
     end
   end

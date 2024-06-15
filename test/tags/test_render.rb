@@ -71,5 +71,10 @@ RENDER8
     compare( "{% render 'included' for names %}",
              {'names' => [{'name' => 'Guybrush'},{'name' => 'Threepwood'}]})
   end
+
+  def test_render9
+    expect_error( "{% render 'included' for names %}",
+             {'names' => []}, /Undefined render target/)
+  end
 end
 

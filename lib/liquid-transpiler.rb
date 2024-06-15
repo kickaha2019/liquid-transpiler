@@ -39,7 +39,11 @@ module LiquidTranspiler
         @signature.each_pair do |name, info|
           write_method_start( info, io)
           context = Context.new( @signature, info[1])
-          @parsed[name].generate( context, 4, io)
+          begin
+            @parsed[name].generate( context, 4, io)
+          rescue TranspilerError => bang
+            errors << bang.message
+          end
           write_method_end( io)
         end
         io.puts 'end'
@@ -59,14 +63,7 @@ module LiquidTranspiler
 
         context.add( Parts::EndOfFile.new( source, source.offset, nil))
       rescue TranspilerError => bang
-        line, column, peek = * source.position( bang.offset)
-        @errors << <<ERROR
-File:   #{path.split('/')[-1]}
-Line:   #{line}
-Column: #{column}
-Text:   #{peek}
-Error:  #{bang.message}
-ERROR
+        errors << bang.message
       end
     end
 
