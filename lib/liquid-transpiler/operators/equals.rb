@@ -1,17 +1,17 @@
 module LiquidTranspiler
   module Operators
     class Equals
-      def initialize( left, right)
+      def initialize(left, right)
         @left  = left
         @right = right
       end
 
-      def find_arguments( names)
-        @left.find_arguments( names)
-        @right.find_arguments( names)
+      def find_arguments(names)
+        @left.find_arguments(names)
+        @right.find_arguments(names)
       end
 
-      def generate( context)
+      def generate(context)
         "o_eq(#{@left.generate(context)},#{@right.generate(context)})"
       end
     end

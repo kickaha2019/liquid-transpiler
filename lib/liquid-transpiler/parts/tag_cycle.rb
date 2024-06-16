@@ -1,7 +1,7 @@
 module LiquidTranspiler
   module Parts
     class TagCycle < Part
-      def initialize( source, offset, parent)
+      def initialize(source, offset, parent)
         super
         @key   = nil
         @cycle = []
@@ -22,25 +22,25 @@ module LiquidTranspiler
         end
 
         if @key.nil?
-          @key = '[' + @cycle.collect {|c| c.to_s}.join(',') + ']'
+          @key = '[' + @cycle.collect { |c| c.to_s }.join(',') + ']'
         end
 
         source.unget token
       end
 
-      def add( part)
-        error( part.offset, 'Internal error')
+      def add(part)
+        error(part.offset, 'Internal error')
       end
 
-      def find_arguments( names)
-        names.cycle( @key)
+      def find_arguments(names)
+        names.cycle(@key)
         @cycle.each do |cycle|
-          names.reference( cycle) if cycle.is_a?( Symbol)
+          names.reference(cycle) if cycle.is_a?(Symbol)
         end
       end
 
-      def generate( context, indent, io)
-        variable = context.cycle( @key)
+      def generate(context, indent, io)
+        variable = context.cycle(@key)
         io.print ' ' * indent
         io.puts "#{variable} += 1"
         io.print ' ' * indent
@@ -49,7 +49,7 @@ module LiquidTranspiler
         io.print(' ' * indent)
         io.print context.output
         values = @cycle.collect do |cycle|
-          if cycle.is_a?( Symbol)
+          if cycle.is_a?(Symbol)
             context.variable(cycle)
           else
             cycle

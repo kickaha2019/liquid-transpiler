@@ -1,7 +1,7 @@
 module LiquidTranspiler
   module Parts
     class TagTablerow < Part
-      def initialize( source, offset, parent)
+      def initialize(source, offset, parent)
         super
         @columns  = nil
         @limit    = nil
@@ -10,28 +10,28 @@ module LiquidTranspiler
         token     = source.get
 
         unless token == :in
-          source.error( @offset, 'Expecting in')
+          source.error(@offset, 'Expecting in')
         end
 
-        @expression, term = Expression.parse( source)
+        @expression, term = Expression.parse(source)
 
         while true
           case term
           when :cols
             if source.get != ':'
-              source.error( @offset, 'Expected : after cols')
+              source.error(@offset, 'Expected : after cols')
             end
-            @columns, term = Expression.parse( source)
+            @columns, term = Expression.parse(source)
           when :limit
             if source.get != ':'
-              source.error( @offset, 'Expected : after limit')
+              source.error(@offset, 'Expected : after limit')
             end
-            @limit, term = Expression.parse( source)
+            @limit, term = Expression.parse(source)
           when :offset
             if source.get != ':'
-              source.error( @offset, 'Expected : after offset')
+              source.error(@offset, 'Expected : after offset')
             end
-            @start, term = Expression.parse( source)
+            @start, term = Expression.parse(source)
           else
             break
           end
@@ -40,42 +40,43 @@ module LiquidTranspiler
         source.unget term
       end
 
-      def add( part)
-        if part.is_a?( TagEndtablerow)
+      def add(part)
+        if part.is_a?(TagEndtablerow)
           return @parent
         end
-        super( part)
+
+        super(part)
       end
 
-      def find_arguments( names)
-        @expression.find_arguments( names)
-        @columns.find_arguments( names) if @columns
-        @limit.find_arguments( names)   if @limit
-        @start.find_arguments( names)   if @start
+      def find_arguments(names)
+        @expression.find_arguments(names)
+        @columns.find_arguments(names) if @columns
+        @limit.find_arguments(names)   if @limit
+        @start.find_arguments(names)   if @start
         names = names.spawn
-        names.assign( @variable)
-        names.assign( :tablerowloop)
-        super( names)
+        names.assign(@variable)
+        names.assign(:tablerowloop)
+        super(names)
       end
 
-      def generate( context, indent, io)
+      def generate(context, indent, io)
         io.print ' ' * indent
-        for_name = context.tablerow( @variable)
-        io.puts "#{for_name}l = tablerow(#{@expression.generate( context)})"
+        for_name = context.tablerow(@variable)
+        io.puts "#{for_name}l = tablerow(#{@expression.generate(context)})"
 
         if @columns
           io.print ' ' * indent
-          io.puts "#{for_name}l.columns #{@columns.generate( context)}"
+          io.puts "#{for_name}l.columns #{@columns.generate(context)}"
         end
 
         if @start
           io.print ' ' * indent
-          io.puts "#{for_name}l.offset #{@start.generate( context)}"
+          io.puts "#{for_name}l.offset #{@start.generate(context)}"
         end
 
         if @limit
           io.print ' ' * indent
-          io.puts "#{for_name}l.limit #{@limit.generate( context)}"
+          io.puts "#{for_name}l.limit #{@limit.generate(context)}"
         end
 
         io.print ' ' * indent
@@ -83,33 +84,33 @@ module LiquidTranspiler
 
         io.print ' ' * indent
         io.puts "  if #{for_name}l.col_first"
-        io.print ' ' * (indent+4)
+        io.print ' ' * (indent + 4)
         io.print context.output
         io.print ' << "<tr class=\\"row#{'
         io.print "#{for_name}l.row}"
         io.puts '\\">"'
-        io.print ' ' * (indent+4)
+        io.print ' ' * (indent + 4)
         io.print context.output
         io.print ' << "\\n"'
         io.puts "  if #{for_name}l.row == 1"
         io.print ' ' * indent
         io.puts '  end'
 
-        io.print ' ' * (indent+2)
+        io.print ' ' * (indent + 2)
         io.print context.output
         io.print ' << "<td class=\\"col#{'
         io.print "#{for_name}l.col}"
         io.puts '\\">"'
 
-        super( context, indent+2, io)
+        super(context, indent + 2, io)
 
-        io.print ' ' * (indent+2)
+        io.print ' ' * (indent + 2)
         io.print context.output
         io.puts " << '</td>'"
 
         io.print ' ' * indent
         io.puts "  if #{for_name}l.col_last || #{for_name}l.last"
-        io.print ' ' * (indent+4)
+        io.print ' ' * (indent + 4)
         io.print context.output
         io.puts ' << "</tr>\\n"'
         io.print ' ' * indent
@@ -118,7 +119,7 @@ module LiquidTranspiler
         io.print ' ' * indent
         io.puts 'end'
 
-        context.endtablerow( @variable)
+        context.endtablerow(@variable)
       end
     end
   end

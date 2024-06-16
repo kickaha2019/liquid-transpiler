@@ -1,74 +1,74 @@
 module LiquidTranspiler
   module Parts
     class TagRender < Part
-      def initialize( source, offset, parent)
+      def initialize(source, offset, parent)
         super
         @target     = nil
         @parameters = {}
         @for        = false
 
-        m = /^['"]([a-z0-9_\-]+)['"]$/i.match( source.get)
+        m = /^['"]([a-z0-9_\-]+)['"]$/i.match(source.get)
         if m
           @target = m[1]
         else
-          source.error( @offset, 'Expected render target')
+          source.error(@offset, 'Expected render target')
         end
 
         term = source.get
         source.unget case term
-        when ','
-          setup_parameters(source, term)
-        when :with
-          setup_parameters(source, term)
-        when :for
-          @for = true
-          setup_with( source)
-        else
-          term
-        end
+                     when ','
+                       setup_parameters(source, term)
+                     when :with
+                       setup_parameters(source, term)
+                     when :for
+                       @for = true
+                       setup_with(source)
+                     else
+                       term
+                     end
       end
 
-      def add( part)
-        error( @offset, 'Internal error')
+      def add(part)
+        error(@offset, 'Internal error')
       end
 
-      def find_arguments( names)
+      def find_arguments(names)
         @parameters.each_value do |expr|
-          expr.find_arguments( names)
+          expr.find_arguments(names)
         end
       end
 
-      def generate( context, indent, io)
-        info = context.signature( @target)
+      def generate(context, indent, io)
+        info = context.signature(@target)
         if info
           call_arguments = {}
           @parameters.each_pair do |key, value|
-            call_arguments[key] = value.generate( context)
+            call_arguments[key] = value.generate(context)
           end
 
           if @for
             argument = call_arguments.keys.first
-            for_name, _ = context.for( argument)
+            for_name, _ = context.for(argument)
             io.puts "#{for_name}l = f(#{call_arguments[argument]},nil)"
             call_arguments[:forloop] = for_name + 'l'
             call_arguments[argument] = for_name
 
             io.print ' ' * indent
             io.puts "#{for_name}l.each do |#{for_name}|"
-            generate_call( info, call_arguments, context, indent+2, io)
+            generate_call(info, call_arguments, context, indent + 2, io)
             io.print ' ' * indent
             io.puts 'end'
 
-            context.endfor( argument)
+            context.endfor(argument)
           else
-            generate_call( info, call_arguments, context, indent, io)
+            generate_call(info, call_arguments, context, indent, io)
           end
         else
-          error( @offset,"Undefined render target: #{@target}")
+          error(@offset, "Undefined render target: #{@target}")
         end
       end
 
-      def generate_call( info, parameters, context, indent, io)
+      def generate_call(info, parameters, context, indent, io)
         io.print ' ' * indent
         io.print context.output
         io.print "<< t#{info[0]}"
@@ -88,27 +88,27 @@ module LiquidTranspiler
         io.puts
       end
 
-      def setup_more?( term)
+      def setup_more?(term)
         (term == ',') || (term == :with)
       end
 
       def setup_parameters(source, term)
-        while setup_more?( term)
-          term   = source.get
+        while setup_more?(term)
+          term = source.get
           if term == :with
             term   = source.get
           end
 
           term1 = source.get
-          source.unget( term1)
-          source.unget( term)
+          source.unget(term1)
+          source.unget(term)
 
           if term1 == ':'
             name = source.expect_name
             source.get
-            @parameters[name], term = Expression.parse( source)
+            @parameters[name], term = Expression.parse(source)
           else
-            expr, term = Expression.parse( source)
+            expr, term = Expression.parse(source)
             if term == :as
               name = source.expect_name
               @parameters[name] = expr
@@ -122,8 +122,8 @@ module LiquidTranspiler
         term
       end
 
-      def setup_with( source)
-        expr, term = Expression.parse( source)
+      def setup_with(source)
+        expr, term = Expression.parse(source)
         if term == :as
           name = source.expect_name
           term = source.get

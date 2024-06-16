@@ -1,7 +1,7 @@
 module LiquidTranspiler
   module Parts
     class TagFor < Part
-      def initialize( source, offset, parent)
+      def initialize(source, offset, parent)
         super
         @else     = nil
         @limit    = nil
@@ -11,26 +11,26 @@ module LiquidTranspiler
         token     = source.get
 
         unless token == :in
-          source.error( @offset, 'Expecting in')
+          source.error(@offset, 'Expecting in')
         end
 
-        @expression, term = Expression.parse( source)
+        @expression, term = Expression.parse(source)
 
         while true
           case term
           when :limit
             if source.get != ':'
-              source.error( @offset, 'Expected : after limit')
+              source.error(@offset, 'Expected : after limit')
             end
-            @limit, term = Expression.parse( source)
+            @limit, term = Expression.parse(source)
           when :reversed
             @reversed = true
             term = source.get
           when :offset
             if source.get != ':'
-              source.error( @offset, 'Expected : after offset')
+              source.error(@offset, 'Expected : after offset')
             end
-            @start, term = Expression.parse( source)
+            @start, term = Expression.parse(source)
           else
             break
           end
@@ -39,44 +39,45 @@ module LiquidTranspiler
         source.unget term
       end
 
-      def add( part)
-        if part.is_a?( TagBreak)
+      def add(part)
+        if part.is_a?(TagBreak)
           @children << part
           return self
         end
-        if part.is_a?( TagElse)
+        if part.is_a?(TagElse)
           @else = part
           return part
         end
-        if part.is_a?( TagEndfor)
+        if part.is_a?(TagEndfor)
           return @parent
         end
-        super( part)
+
+        super(part)
       end
 
-      def find_arguments( names)
-        @expression.find_arguments( names)
-        @limit.find_arguments( names) if @limit
-        @start.find_arguments( names) if @start
+      def find_arguments(names)
+        @expression.find_arguments(names)
+        @limit.find_arguments(names) if @limit
+        @start.find_arguments(names) if @start
         names = names.spawn
-        names.assign( @variable)
-        names.assign( 'forloop')
-        super( names)
+        names.assign(@variable)
+        names.assign('forloop')
+        super(names)
       end
 
-      def generate( context, indent, io)
+      def generate(context, indent, io)
         io.print ' ' * indent
-        for_name, old_for_loop = context.for( @variable)
-        io.puts "#{for_name}l = f(#{@expression.generate( context)},#{old_for_loop})"
+        for_name, old_for_loop = context.for(@variable)
+        io.puts "#{for_name}l = f(#{@expression.generate(context)},#{old_for_loop})"
 
         if @start
           io.print ' ' * indent
-          io.puts "#{for_name}l.offset #{@start.generate( context)}"
+          io.puts "#{for_name}l.offset #{@start.generate(context)}"
         end
 
         if @limit
           io.print ' ' * indent
-          io.puts "#{for_name}l.limit #{@limit.generate( context)}"
+          io.puts "#{for_name}l.limit #{@limit.generate(context)}"
         end
 
         if @reversed
@@ -92,18 +93,18 @@ module LiquidTranspiler
 
         io.print ' ' * indent
         io.puts "#{for_name}l.each do |#{for_name}|"
-        super( context, indent+2, io)
+        super(context, indent + 2, io)
         io.print ' ' * indent
         io.puts 'end'
 
         if @else
           indent -= 2
-          @else.generate( context, indent+2, io)
+          @else.generate(context, indent + 2, io)
           io.print ' ' * indent
           io.puts "end"
         end
 
-        context.endfor( @variable)
+        context.endfor(@variable)
       end
     end
   end

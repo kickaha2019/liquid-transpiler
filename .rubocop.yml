@@ -1,0 +1,9 @@
+require: rubocop-minitest
+
+AllCops:
+  SuggestExtensions: false
+
+Naming/MethodName:
+  Exclude:
+    - 'lib/liquid-transpiled-methods.rb'
+

@@ -1,12 +1,13 @@
 module LiquidTranspiler
   class Source
     attr_reader :offset
+
     RESERVED_WORDS = [:true, :false, :empty]
 
-    def initialize( path)
+    def initialize(path)
       @path   = path
       @offset = 0
-      @text   = IO.read( path)
+      @text   = IO.read(path)
       @ungot  = []
     end
 
@@ -14,46 +15,46 @@ module LiquidTranspiler
       @offset >= @text.size
     end
 
-    def error( offset, msg)
-      line, column, peek = position( offset)
-      details = <<ERROR
-File:   #{@path.split('/')[-1]}
-Line:   #{line}
-Column: #{column}
-Text:   #{peek}
-Error:  #{msg}
-ERROR
-      raise TranspilerError.new( details)
+    def error(offset, msg)
+      line, column, peek = position(offset)
+      details = <<~ERROR
+        File:   #{@path.split('/')[-1]}
+        Line:   #{line}
+        Column: #{column}
+        Text:   #{peek}
+        Error:  #{msg}
+      ERROR
+      raise TranspilerError.new(details)
     end
 
     def expect_literal
       if token = get
-        if token.is_a?( Symbol)
-          error( @offset, 'Expected literal')
+        if token.is_a?(Symbol)
+          error(@offset, 'Expected literal')
         elsif /^['"]/ =~ token
           token
         else
-          error( @offset, 'Expected literal')
+          error(@offset, 'Expected literal')
         end
       else
-        error( @offset, 'Expected literal')
+        error(@offset, 'Expected literal')
       end
     end
 
     def expect_name
       if token = get
-        unless token.is_a?( Symbol) && (! RESERVED_WORDS.include?( token))
-          error( @offset, 'Expected name')
+        unless token.is_a?(Symbol) && (!RESERVED_WORDS.include?(token))
+          error(@offset, 'Expected name')
         end
         token
       else
-        error( @offset, 'Expected name')
+        error(@offset, 'Expected name')
       end
     end
 
-    def find( re)
+    def find(re)
       prefix = nil
-      @text.match( re, @offset) do |m|
+      @text.match(re, @offset) do |m|
         was, @offset = @offset, m.begin(0)
         prefix = @text[was...@offset]
       end
@@ -70,7 +71,7 @@ ERROR
 
       letter = @text[@offset..@offset]
 
-      if [',',']','[',':','|','(',')'].include?( letter)
+      if [',', ']', '[', ':', '|', '(', ')'].include?(letter)
         @offset += 1
         return letter
       elsif /[0-9]/ =~ letter
@@ -85,10 +86,10 @@ ERROR
       when "'"
         get_single_quoted_string
       when '.'
-        if /[0-9]/ =~ @text[@offset+1..@offset+1]
+        if /[0-9]/ =~ @text[@offset + 1..@offset + 1]
           get_number
         else
-          start   =  @offset
+          start = @offset
           @offset += 1
           while (@offset < @text.size) && @text[@offset..@offset] == '.'
             @offset += 1
@@ -96,7 +97,8 @@ ERROR
           return @text[start...@offset]
         end
       when '-'
-        return nil if ['%','}'].include?( @text[@offset+1..@offset+1])
+        return nil if ['%', '}'].include?(@text[@offset + 1..@offset + 1])
+
         get_number
       when '='
         get_operator
@@ -114,7 +116,7 @@ ERROR
     def get_double_quoted_string
       i = @offset + 1
 
-      while m = @text.match( /[\\"]/, i)
+      while m = @text.match(/[\\"]/, i)
         i = m.begin(0)
         if @text[i..i] == '\\'
           i += 2
@@ -125,12 +127,12 @@ ERROR
         end
       end
 
-      error( @offset, 'Unclosed quoted string')
+      error(@offset, 'Unclosed quoted string')
     end
 
     def get_name
       origin = @offset
-      if m = @text.match( /[^a-z0-9_\-]/, @offset)
+      if m = @text.match(/[^a-z0-9_\-]/, @offset)
         @offset = m.end(0) - 1
       else
         @offset = @text.size
@@ -138,17 +140,17 @@ ERROR
 
       name = @text[origin...@offset]
       if /^(\-|)\d+$/ =~ name
-        error( origin, 'Syntax error')
+        error(origin, 'Syntax error')
       end
       name.to_sym
     end
 
     def get_number
       origin = @offset
-      if m = @text.match( /[^0-9\-a-z_\.]/i, @offset)
+      if m = @text.match(/[^0-9\-a-z_\.]/i, @offset)
         finish = m.end(0) - 1
 
-        if i = @text[origin...finish].index( '..')
+        if i = @text[origin...finish].index('..')
           @offset = i + origin
         else
           @offset = finish
@@ -164,7 +166,7 @@ ERROR
 
     def get_operator
       origin = @offset
-      if m = @text.match( /[^=<>]/, @offset+1)
+      if m = @text.match(/[^=<>]/, @offset + 1)
         @offset = m.end(0) - 1
       else
         @offset = @text.size
@@ -175,7 +177,7 @@ ERROR
     def get_single_quoted_string
       i = @offset + 1
 
-      while m = @text.match( /[\\']/, i)
+      while m = @text.match(/[\\']/, i)
         i = m.begin(0)
         if @text[i..i] == '\\'
           i += 2
@@ -186,10 +188,10 @@ ERROR
         end
       end
 
-      error( @offset, 'Unclosed quoted string')
+      error(@offset, 'Unclosed quoted string')
     end
 
-    def next( expected)
+    def next(expected)
       unless @ungot.empty?
         if @ungot[-1] == expected
           @ungot.pop
@@ -199,7 +201,7 @@ ERROR
         end
       end
 
-      if @text[@offset...(@offset+expected.size)] == expected
+      if @text[@offset...(@offset + expected.size)] == expected
         @offset += expected.size
         true
       else
@@ -207,16 +209,16 @@ ERROR
       end
     end
 
-    def peek( n)
-      @text[@offset..(@offset+n-1)]
+    def peek(n)
+      @text[@offset..(@offset + n - 1)]
     end
 
-    def position( offset)
+    def position(offset)
       lines = 1
       index = 0
 
       while (index < offset)
-        if (index1 = @text.index( "\n", index)) && (index1 < offset)
+        if (index1 = @text.index("\n", index)) && (index1 < offset)
           index = index1 + 1
           lines += 1
         else
@@ -224,7 +226,7 @@ ERROR
         end
       end
 
-      return lines, (offset - index + 1), @text[offset...(offset+50)].gsub( "\n", ' ')
+      return lines, (offset - index + 1), @text[offset...(offset + 50)].gsub("\n", ' ')
     end
 
     def remnant
@@ -234,16 +236,16 @@ ERROR
 
     def skip_space
       until eof?
-        @text.match( /\S/, @offset) do |m|
+        @text.match(/\S/, @offset) do |m|
           @offset = m.begin(0)
         end
 
-        if (! eof?) && (@text[@offset..@offset] == '#')
-          if m = /(\n|\-%\}|%\}|\}\})/.match( @text, @offset+1)
+        if (!eof?) && (@text[@offset..@offset] == '#')
+          if m = /(\n|\-%\}|%\}|\}\})/.match(@text, @offset + 1)
             @offset = m.begin(0)
-            next( "\n")
-          #if i = @text.index( "\n", @offset+1)
-#            @offset = i + 1
+            next("\n")
+          # if i = @text.index( "\n", @offset+1)
+          #            @offset = i + 1
           else
             @offset = @text.size
             break
@@ -256,14 +258,14 @@ ERROR
 
     def token?
       if term = get
-        unget( term)
+        unget(term)
         true
       else
         false
       end
     end
 
-    def unget( token)
+    def unget(token)
       @ungot << token if token
     end
   end

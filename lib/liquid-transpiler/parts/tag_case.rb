@@ -1,67 +1,67 @@
 module LiquidTranspiler
   module Parts
     class TagCase < Part
-      def initialize( source, offset, parent)
+      def initialize(source, offset, parent)
         super
-        @expression, term = Expression.parse( source)
+        @expression, term = Expression.parse(source)
         source.unget term
       end
 
-      def add( part)
-        if part.is_a?( TagWhen) || part.is_a?( TagElse)
+      def add(part)
+        if part.is_a?(TagWhen) || part.is_a?(TagElse)
           @children << part
           part
-        elsif part.is_a?( TagEndcase)
+        elsif part.is_a?(TagEndcase)
           @parent
-        elsif part.is_a?( Text)
+        elsif part.is_a?(Text)
           part.strip
           unless part.empty?
-            error( part.offset, 'Unexpected ' + part.name)
+            error(part.offset, 'Unexpected ' + part.name)
           end
         else
-          error( part.offset, 'Unexpected ' + part.name)
+          error(part.offset, 'Unexpected ' + part.name)
         end
       end
 
-      def find_arguments( names)
-        @expression.find_arguments( names)
+      def find_arguments(names)
+        @expression.find_arguments(names)
         sub_names = []
 
         @children.each do |child|
-          if child.is_a?( TagWhen) || child.is_a?( TagElse)
+          if child.is_a?(TagWhen) || child.is_a?(TagElse)
             sub_names << names.spawn
-            child.find_arguments( sub_names[-1])
-          elsif child.is_a?( Text)
+            child.find_arguments(sub_names[-1])
+          elsif child.is_a?(Text)
             child.strip
             unless child.empty?
-              error( offset,'Unexpected text after case tag')
+              error(offset, 'Unexpected text after case tag')
             end
           else
-            error( child.offset, 'Unexpected ' + child.name)
+            error(child.offset, 'Unexpected ' + child.name)
           end
         end
 
-        if @children[-1].is_a?( TagElse)
+        if @children[-1].is_a?(TagElse)
           possible = []
 
-          sub_names[0].locals {|name| possible << name}
+          sub_names[0].locals { |name| possible << name }
           sub_names[1..-1].each do |child|
             last, possible = possible, []
             last.each do |name|
-              possible << name if child.local?( name)
+              possible << name if child.local?(name)
             end
           end
 
           possible.each do |name|
-            names.assign( name)
+            names.assign(name)
           end
         end
       end
 
-      def generate( context, indent, io)
+      def generate(context, indent, io)
         io.print ' ' * indent
-        io.puts "case #{@expression.generate( context)}"
-        super( context, indent, io)
+        io.puts "case #{@expression.generate(context)}"
+        super(context, indent, io)
         io.print ' ' * indent
         io.puts 'end'
       end

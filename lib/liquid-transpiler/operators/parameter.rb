@@ -3,7 +3,7 @@ module LiquidTranspiler
     class Parameter
       attr_reader :key, :value
 
-      def initialize( key, value)
+      def initialize(key, value)
         @key    = key
         @value  = value
       end

@@ -1,8 +1,8 @@
 module LiquidTranspiler
   module Parts
     class EndOfFile < Part
-      def add( part)
-        error( @offset, 'Internal error')
+      def add(part)
+        error(@offset, 'Internal error')
       end
 
       def name

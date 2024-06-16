@@ -9,16 +9,17 @@ module LiquidTranspiler
     end
 
     def errors
-      @errors.each {|error| yield error}
+      @errors.each { |error| yield error }
     end
 
-    def transpile_dir( source_dir, path, options={})
-      process_options( options)
+    def transpile_dir(source_dir, path, options = {})
+      process_options(options)
       @errors = []
-      parse_dir( source_dir)
+      parse_dir(source_dir)
       return false unless @errors.empty?
+
       deduce_signatures
-      generate_ruby( path)
+      generate_ruby(path)
       @errors.empty?
     end
 
@@ -33,63 +34,63 @@ module LiquidTranspiler
       end
     end
 
-    def generate_ruby( path)
-      File.open( path, 'w') do |io|
-        write_start( io)
+    def generate_ruby(path)
+      File.open(path, 'w') do |io|
+        write_start(io)
         @signature.each_pair do |name, info|
-          write_method_start( info, io)
-          context = Context.new( @signature, info[1])
+          write_method_start(info, io)
+          context = Context.new(@signature, info[1])
           begin
-            @parsed[name].generate( context, 4, io)
+            @parsed[name].generate(context, 4, io)
           rescue TranspilerError => bang
             errors << bang.message
           end
-          write_method_end( io)
+          write_method_end(io)
         end
         io.puts 'end'
       end
     end
 
-    def parse( path)
-      source  = Source.new( path)
-      context = Parts::Template.new( source, 0, nil)
+    def parse(path)
+      source  = Source.new(path)
+      context = Parts::Template.new(source, 0, nil)
       rstrip  = false
 
       begin
         until source.eof?
-          part, rstrip = context.digest( source, rstrip)
+          part, rstrip = context.digest(source, rstrip)
           context = context.add part if part
         end
 
-        context.add( Parts::EndOfFile.new( source, source.offset, nil))
+        context.add(Parts::EndOfFile.new(source, source.offset, nil))
       rescue TranspilerError => bang
         errors << bang.message
       end
     end
 
-    def parse_dir( source_dir)
+    def parse_dir(source_dir)
       @parsed = {}
-      Dir.entries( source_dir).each do |f|
-        if m = /^(.*)\.liquid$/.match( f)
-          @parsed[m[1]] = parse( source_dir + '/' + f)
+      Dir.entries(source_dir).each do |f|
+        if m = /^(.*)\.liquid$/.match(f)
+          @parsed[m[1]] = parse(source_dir + '/' + f)
         end
       end
     end
 
-    def process_options( options)
+    def process_options(options)
       @clazz   = options[:class]   || 'Transpiled'
       @include = options[:include] || 'TranspiledMethods'
     end
 
-    def write_method_end( io)
+    def write_method_end(io)
       io.puts <<"METHOD_END"
     h.join('')
   end
 METHOD_END
     end
 
-    def write_method_start( info, io)
-      args = (0...info[1].arguments.size).collect {|i| "a#{i}"}.join(',')
+    def write_method_start(info, io)
+      args = (0...info[1].arguments.size).collect { |i| "a#{i}" }.join(',')
 
       io.puts <<"METHOD_HEADER"
   def t#{info[0]}(#{args})
@@ -105,21 +106,21 @@ METHOD_HEADER
       end
     end
 
-    def write_start( io)
-      io.puts <<"START"
-class #{@clazz}
-  include #{@include}
-  TEMPLATES = {
-START
+    def write_start(io)
+      io.puts <<~"START"
+        class #{@clazz}
+          include #{@include}
+          TEMPLATES = {
+      START
       @signature.each_pair do |key, info|
-        args = info[1].arguments.collect {|arg| "'#{arg}'"}.join(',')
+        args = info[1].arguments.collect { |arg| "'#{arg}'" }.join(',')
         io.puts "  '#{key}' => [:t#{info[0]},[#{args}]],"
       end
       io.puts <<RENDER
   }
   def render( name, params={})
     if info = TEMPLATES[name]
-      send( info[0], * info[1].collect {|arg| params[arg]})  
+      send( info[0], * info[1].collect {|arg| params[arg]})#{'  '}
     else
       raise( 'Unknown template: ' + name)
     end

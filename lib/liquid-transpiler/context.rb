@@ -1,6 +1,6 @@
 module LiquidTranspiler
   class Context
-    def initialize( signatures, names)
+    def initialize(signatures, names)
       @signatures = signatures
       @variables  = {}
       @cycles     = {}
@@ -27,23 +27,23 @@ module LiquidTranspiler
       @tablerows = []
     end
 
-    def cycle( name)
+    def cycle(name)
       @cycles[name]
     end
 
-    def endfor( name)
+    def endfor(name)
       f = @fors.pop
       @variables[name]     = f[0]
       @variables[:forloop] = f[1]
     end
 
-    def endtablerow( name)
+    def endtablerow(name)
       f = @tablerows.pop
       @variables[name]          = f[0]
       @variables[:tablerowloop] = f[1]
     end
 
-    def for( name)
+    def for(name)
       @fors << [@variables[name], @variables[:forloop]]
       @variables[name]     = "for#{@fors.size}"
       @variables[:forloop] = "for#{@fors.size}l"
@@ -63,21 +63,21 @@ module LiquidTranspiler
     end
 
     def output_push
-      @output << "h#{@output.size+1}"
+      @output << "h#{@output.size + 1}"
     end
 
-    def signature( name)
+    def signature(name)
       @signatures[name]
     end
 
-    def tablerow( name)
+    def tablerow(name)
       @tablerows << [@variables[name], @variables[:tablerowloop]]
       @variables[name]          = "tablerow#{@tablerows.size}"
       @variables[:tablerowloop] = "tablerow#{@tablerows.size}l"
       @variables[name]
     end
 
-    def variable( name)
+    def variable(name)
       unless @variables[name]
         @index += 1
         @variables[name] = "v#{@index}"

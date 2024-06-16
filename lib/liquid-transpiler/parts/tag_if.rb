@@ -1,51 +1,52 @@
 module LiquidTranspiler
   module Parts
     class TagIf < Part
-      def initialize( source, offset, parent)
+      def initialize(source, offset, parent)
         super
-        @expression, term = Expression.parse( source)
+        @expression, term = Expression.parse(source)
         source.unget term
       end
 
-      def add( part)
-        if part.is_a?( TagBreak) || part.is_a?( TagContinue)
+      def add(part)
+        if part.is_a?(TagBreak) || part.is_a?(TagContinue)
           @children << part
           return self
         end
-        if part.is_a?( TagElse)
+        if part.is_a?(TagElse)
           @children << part
           return part
         end
-        if part.is_a?( TagEndif)
+        if part.is_a?(TagEndif)
           return @parent
         end
-        super( part)
+
+        super(part)
       end
 
-      def find_arguments( names)
-        @expression.find_arguments( names)
+      def find_arguments(names)
+        @expression.find_arguments(names)
         names_if, names_else = names.spawn, nil
 
         @children.each do |child|
-          if child.is_a?( TagElse)
+          if child.is_a?(TagElse)
             names_else = names.spawn
-            child.find_arguments( names_else)
+            child.find_arguments(names_else)
           else
-            child.find_arguments( names_if)
+            child.find_arguments(names_if)
           end
         end
 
         if names_else
           names_if.locals do |local|
-            names.assign( local) if names_else.local?( local)
+            names.assign(local) if names_else.local?(local)
           end
         end
       end
 
-      def generate( context, indent, io)
+      def generate(context, indent, io)
         io.print ' ' * indent
-        io.puts "if #{@expression.generate( context)}"
-        super( context, indent+2, io)
+        io.puts "if #{@expression.generate(context)}"
+        super(context, indent + 2, io)
         io.print ' ' * indent
         io.puts 'end'
       end

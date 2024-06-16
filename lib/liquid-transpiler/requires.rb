@@ -48,5 +48,3 @@ require_relative 'parts/tag_unless'
 require_relative 'parts/tag_when'
 require_relative 'parts/template'
 require_relative 'parts/text'
-
-

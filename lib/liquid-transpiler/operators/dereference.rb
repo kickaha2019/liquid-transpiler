@@ -1,16 +1,16 @@
 module LiquidTranspiler
   module Operators
     class Dereference
-      def initialize( expression, field)
+      def initialize(expression, field)
         @expression = expression
         @field      = field
       end
 
-      def find_arguments( names)
-        @expression.find_arguments( names)
+      def find_arguments(names)
+        @expression.find_arguments(names)
       end
 
-      def generate( context)
+      def generate(context)
         case @field
         # when 'first'
         #   "f_first(#{@expression.generate(context)})"

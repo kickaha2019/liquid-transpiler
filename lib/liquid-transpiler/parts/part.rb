@@ -8,21 +8,21 @@ module LiquidTranspiler
 
       attr_reader :offset, :parent
 
-      def initialize( source, offset, parent)
+      def initialize(source, offset, parent)
         @source   = source
         @offset   = offset
         @parent   = parent
         @children = []
       end
 
-      def add( part)
+      def add(part)
         @children << part
 
         case part.class_name
         when 'Embedded'
           self
         when 'EndOfFile'
-          error( part.offset, 'Unexpected EOF')
+          error(part.offset, 'Unexpected EOF')
         when 'TagAssign'
           self
         when 'TagCapture'
@@ -56,15 +56,15 @@ module LiquidTranspiler
         when 'Text'
           self
         else
-          error( part.offset, 'Unexpected ' + part.name)
+          error(part.offset, 'Unexpected ' + part.name)
         end
       end
 
-      def add_text( offset, text, rstrip, lstrip)
+      def add_text(offset, text, rstrip, lstrip)
         text = text.lstrip if rstrip
         text = text.rstrip if lstrip
         if text.size > 0
-          add( Text.new( @source, offset, text))
+          add(Text.new(@source, offset, text))
         end
       end
 
@@ -72,14 +72,14 @@ module LiquidTranspiler
         self.class.name.split('::')[-1]
       end
 
-      def digest( source, rstrip)
-        text = source.find( digest_find)
+      def digest(source, rstrip)
+        text = source.find(digest_find)
         if text
-          lstrip, part, rstrip1 = parse( source)
-          add_text( source.offset, text, rstrip, lstrip)
+          lstrip, part, rstrip1 = parse(source)
+          add_text(source.offset, text, rstrip, lstrip)
           [part, rstrip1]
         else
-          add_text( source.offset, source.remnant, rstrip, false)
+          add_text(source.offset, source.remnant, rstrip, false)
           [Parts::EndOfFile.new(source, source.offset, nil), false]
         end
       end
@@ -88,31 +88,31 @@ module LiquidTranspiler
         /({{|{%)/
       end
 
-      def error( offset, msg)
-        @source.error( offset, msg)
+      def error(offset, msg)
+        @source.error(offset, msg)
       end
 
-      def find_arguments( names)
+      def find_arguments(names)
         @children.each do |child|
-          child.find_arguments( names)
+          child.find_arguments(names)
         end
       end
 
-      def generate( context, indent, io)
+      def generate(context, indent, io)
         @children.each do |child|
-          child.generate( context, indent, io)
+          child.generate(context, indent, io)
         end
       end
 
-      def html_encode( text)
-        text.gsub( /[\\\n"#]/) do |block|
+      def html_encode(text)
+        text.gsub(/[\\\n"#]/) do |block|
           (block == "\n") ? '\\n' : '\\' + block
         end
       end
 
       def name
         clazz = class_name
-        m = /^Tag(.*)$/.match( clazz)
+        m = /^Tag(.*)$/.match(clazz)
         if m
           'tag ' + m[1].downcase
         else
@@ -120,52 +120,52 @@ module LiquidTranspiler
         end
       end
 
-      def parse( source)
+      def parse(source)
         source.skip_space
         offset = source.offset
 
-        if source.next( '{{')
-          lstrip = source.next( '-')
-          expr, term = Expression.parse( source)
+        if source.next('{{')
+          lstrip = source.next('-')
+          expr, term = Expression.parse(source)
 
           source.skip_space
-          rstrip = source.next( '-')
-          if term.nil? && source.next( '}}')
-            return lstrip, Parts::Embedded.new( source, offset, expr), rstrip
+          rstrip = source.next('-')
+          if term.nil? && source.next('}}')
+            return lstrip, Parts::Embedded.new(source, offset, expr), rstrip
           else
-            error( offset, 'Expecting }}')
+            error(offset, 'Expecting }}')
           end
-        elsif source.next( '{%')
-          lstrip = source.next( '-')
+        elsif source.next('{%')
+          lstrip = source.next('-')
           token  = source.get
 
           if token
-            part = parse_tag( source, offset, token)
+            part = parse_tag(source, offset, token)
             if source.token?
-              source.error( offset, 'Unexpected ' + source.get)
+              source.error(offset, 'Unexpected ' + source.get)
             end
             source.skip_space
           else
             part = nil
           end
 
-          rstrip = source.next( '-')
-          if source.next( '%}')
+          rstrip = source.next('-')
+          if source.next('%}')
             return lstrip, part, rstrip
           else
-            source.error( offset, 'Expecting %}')
+            source.error(offset, 'Expecting %}')
           end
         else
-          source.error( offset, 'Internal error')
+          source.error(offset, 'Internal error')
         end
       end
 
-      def parse_tag( source, offset, token)
-        clazz = Object.const_get( 'LiquidTranspiler::Parts::Tag' + token.to_s.capitalize)
+      def parse_tag(source, offset, token)
+        clazz = Object.const_get('LiquidTranspiler::Parts::Tag' + token.to_s.capitalize)
         if clazz
-          clazz.new( source, offset, self)
+          clazz.new(source, offset, self)
         else
-          source.error( offset, "Bad tag name: #{token}")
+          source.error(offset, "Bad tag name: #{token}")
         end
       end
     end
