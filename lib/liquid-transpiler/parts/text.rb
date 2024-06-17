@@ -16,9 +16,6 @@ module LiquidTranspiler
         @text.empty?
       end
 
-      def find_arguments(names)
-      end
-
       def generate(context, indent, io)
         unless empty?
           io.print(' ' * indent)

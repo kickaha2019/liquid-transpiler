@@ -1,5 +1,7 @@
-source "https://rubygems.org"
-ruby "3.2.1"
+# frozen_string_literal: true
 
-gem "liquid"
-gem "minitest"
+source 'https://rubygems.org'
+ruby '3.2.1'
+
+gem 'liquid'
+gem 'minitest'

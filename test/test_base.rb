@@ -41,26 +41,26 @@ class TestBase < Minitest::Test
       @product["type"]
     end
 
-    def liquid_method_missing( method)
+    def liquid_method_missing(method)
       if method == :title
         @product['title']
       else
-        super( method)
+        super(method)
       end
     end
 
     def available
-      BooleanDrop.new( @product["available"])
+      BooleanDrop.new(@product["available"])
     end
   end
 
   class ProductsDrop < Liquid::Drop
-    def initialize( products)
+    def initialize(products)
       @products = products
     end
 
-    def []( index)
-      ProductDrop.new( @products[index])
+    def [](index)
+      ProductDrop.new(@products[index])
     end
 
     def size
@@ -71,72 +71,72 @@ class TestBase < Minitest::Test
   @@transpiler  = LiquidTranspiler::LiquidTranspiler.new
   @@test_number = 0
   @@dir         = ENV['TEMP_DIR'] ? ENV['TEMP_DIR'] : Dir.tmpdir
-  Liquid::Template.file_system = Liquid::LocalFileSystem.new( @@dir,
+  Liquid::Template.file_system = Liquid::LocalFileSystem.new(@@dir,
                                                               pattern = "%s.liquid")
   Liquid.cache_classes = false
 
   def setup
-    Dir.entries( @@dir).each do |f|
+    Dir.entries(@@dir).each do |f|
       if /\.liquid$/ =~ f
-        File.delete( @@dir + '/' + f)
+        File.delete(@@dir + '/' + f)
       end
     end
   end
 
   def compare(code, params = {})
     liquid         =  Liquid::Template.parse(code)
-    liquid_output  =  liquid.render( params)
+    liquid_output  =  liquid.render(params)
     p ['liquid_output', liquid_output]
-    prepare( code, 'test.liquid')
+    prepare(code, 'test.liquid')
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = @@dir + '/Test.rb'
-    if @@transpiler.transpile_dir( @@dir, path, class:clazz)
-      load( path)
-      transpiled_output = Object.const_get(clazz).new.render( 'test', params)
+    if @@transpiler.transpile_dir(@@dir, path, class:clazz)
+      load(path)
+      transpiled_output = Object.const_get(clazz).new.render('test', params)
       p ['liquid_output', liquid_output]
       p ['transpiled_output', transpiled_output]
       assert_equal liquid_output, transpiled_output
     else
-      @@transpiler.errors {|error| puts error}
+      @@transpiler.errors { |error| puts error }
       raise 'Transpiler errors'
     end
   end
 
-  def expect( code, params = {}, expected)
-    prepare( code, 'test.liquid')
+  def expect(code, params = {}, expected)
+    prepare(code, 'test.liquid')
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = @@dir + '/Test.rb'
-    if @@transpiler.transpile_dir( @@dir, path, class:clazz)
-      load( path)
-      transpiled_output = Object.const_get(clazz).new.render( 'test', params)
+    if @@transpiler.transpile_dir(@@dir, path, class:clazz)
+      load(path)
+      transpiled_output = Object.const_get(clazz).new.render('test', params)
       p ['transpiled_output', transpiled_output]
       assert_equal expected, transpiled_output.strip
     else
-      @@transpiler.errors {|error| puts error}
+      @@transpiler.errors { |error| puts error }
       raise 'Transpiler errors'
     end
   end
 
-  def expect_error( code, params = {}, expected_error)
-    prepare( code, 'test.liquid')
+  def expect_error(code, params = {}, expected_error)
+    prepare(code, 'test.liquid')
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = @@dir + '/Test.rb'
-    if @@transpiler.transpile_dir( @@dir, path, class:clazz)
+    if @@transpiler.transpile_dir(@@dir, path, class:clazz)
       raise 'Expected error not raised'
     else
       errors = []
-      @@transpiler.errors {|error| errors << error}
+      @@transpiler.errors { |error| errors << error }
       puts errors[0]
       assert_equal 1, errors.size
-      assert expected_error =~ errors[0]
+      assert_match expected_error, errors[0]
     end
   end
 
-  def prepare( code, path)
-    File.open( @@dir + '/' + path, 'w') do |io|
+  def prepare(code, path)
+    File.open(@@dir + '/' + path, 'w') do |io|
       io.print code
     end
   end

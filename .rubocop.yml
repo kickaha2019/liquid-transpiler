@@ -2,8 +2,16 @@ require: rubocop-minitest
 
 AllCops:
   SuggestExtensions: false
+  Exclude:
+    - 'temp/*.rb'
 
 Naming/MethodName:
   Exclude:
+    - 'lib/liquid-transpiler.rb'
     - 'lib/liquid-transpiled-methods.rb'
 
+Metrics/MethodLength:
+  Max: 30
+
+Layout/SpaceInsideBlockBraces:
+  AutoCorrect: true
