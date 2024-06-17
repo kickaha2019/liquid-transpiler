@@ -77,11 +77,7 @@ module LiquidTranspiler
         info[1].arguments.each do |arg|
           io.print separ
           separ = ','
-          if parameters[arg]
-            io.print parameters[arg]
-          else
-            io.print 'nil'
-          end
+          io.print parameters[arg] || 'nil'
         end
 
         io.print ')' if separ != '('

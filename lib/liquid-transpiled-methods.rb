@@ -218,7 +218,7 @@ module TranspiledMethods
     return value if params['allow_false'] && (value == false)
     return defval if value.respond_to?(EMPTY_METHOD) && value.empty?
 
-    value ? value : defval
+    value || defval
   end
 
   def f_divided_by(value, divisor)

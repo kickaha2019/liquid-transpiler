@@ -20,6 +20,7 @@ class TestBase < Minitest::Test
 
   class BooleanDrop < Liquid::Drop
     def initialize(value)
+      super()
       @value = value
     end
 
@@ -34,6 +35,7 @@ class TestBase < Minitest::Test
 
   class ProductDrop < Liquid::Drop
     def initialize(product)
+      super()
       @product = product
     end
 
@@ -56,6 +58,7 @@ class TestBase < Minitest::Test
 
   class ProductsDrop < Liquid::Drop
     def initialize(products)
+      super()
       @products = products
     end
 
@@ -70,9 +73,9 @@ class TestBase < Minitest::Test
 
   @@transpiler  = LiquidTranspiler::LiquidTranspiler.new
   @@test_number = 0
-  @@dir         = ENV['TEMP_DIR'] ? ENV['TEMP_DIR'] : Dir.tmpdir
+  @@dir         = ENV['TEMP_DIR'] || Dir.tmpdir
   Liquid::Template.file_system = Liquid::LocalFileSystem.new(@@dir,
-                                                              pattern = '%s.liquid')
+                                                             '%s.liquid')
   Liquid.cache_classes = false
 
   def setup

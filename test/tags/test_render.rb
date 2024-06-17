@@ -6,7 +6,7 @@ class TestRender < TestBase
 Passed {{ threepwood }}
 RENDER1
     compare("{% render 'included', threepwood:guybrush %}",
-           {'guybrush' => 'Mighty pirate'})
+            {'guybrush' => 'Mighty pirate'})
   end
 
   def test_render2
@@ -14,7 +14,7 @@ RENDER1
 Passed {{ count }} {{ fruit }}
 RENDER2
     compare("{% render 'included', count:3, fruit:'apples' %}",
-           {})
+            {})
   end
 
   def test_render3
@@ -22,7 +22,7 @@ RENDER2
 Passed {{ count }} {{ fruit }}
 RENDER3
     compare("{% render 'included', count:counts[0],fruit:'apples' %}",
-           {'counts' => [3]})
+            {'counts' => [3]})
   end
 
   def test_render4
@@ -30,7 +30,7 @@ RENDER3
 Passed {{ threepwood }}
 RENDER4
     compare("{% render 'included' with guybrush as threepwood %}",
-           {'guybrush' => 'Mighty pirate'})
+            {'guybrush' => 'Mighty pirate'})
   end
 
   def test_render5
@@ -45,7 +45,7 @@ first {{ forloop.first }}
 last {{ forloop.last }}
 RENDER5
     compare("{% render 'included' for names as name %}",
-           {'names' => ['Guybrush','Threepwood']})
+            {'names' => ['Guybrush','Threepwood']})
   end
 
   def test_render6
@@ -53,7 +53,7 @@ RENDER5
 Passed {{ forename }} {{ surname }}
 RENDER6
     compare("{% render 'included', with forename:'Guybrush', surname:'Threepwood' %}",
-             {})
+            {})
   end
 
   def test_render7
@@ -61,7 +61,7 @@ RENDER6
 Passed {{ included.forename }} {{ included.surname }}
 RENDER7
     compare("{% render 'included' with map %}",
-             {'map' => {'forename' => 'Guybrush', 'surname'=>'Threepwood'}})
+            {'map' => {'forename' => 'Guybrush', 'surname'=>'Threepwood'}})
   end
 
   def test_render8
@@ -69,12 +69,12 @@ RENDER7
 Passed {{ included.name }}
 RENDER8
     compare("{% render 'included' for names %}",
-             {'names' => [{'name' => 'Guybrush'},{'name' => 'Threepwood'}]})
+            {'names' => [{'name' => 'Guybrush'},{'name' => 'Threepwood'}]})
   end
 
   def test_render9
     expect_error("{% render 'included' for names %}",
-             /Undefined render target/)
+                 /Undefined render target/)
   end
 end
 

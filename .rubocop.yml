@@ -19,5 +19,11 @@ Layout/SpaceAfterColon:
 Layout/SpaceAroundOperators:
   Enabled: false
 
+Layout/SpaceInsideHashLiteralBraces:
+  Enabled: false
+
 Style/GuardClause:
+  Enabled: false
+
+Style/ClassVars:
   Enabled: false
