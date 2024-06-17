@@ -1,16 +1,17 @@
+# frozen_string_literal: true
 require_relative '../test_base'
 
 class TestContinue < TestBase
   def test_continue
-    compare(<<CONTINUE)
-{% for i in (1..5) %}
-  {% if i == 4 %}
-    {% continue %}
-  {% else %}
-    {{ i }}
-  {% endif %}
-{% endfor %}
-CONTINUE
+    compare(<<~CONTINUE)
+      {% for i in (1..5) %}
+        {% if i == 4 %}
+          {% continue %}
+        {% else %}
+          {{ i }}
+        {% endif %}
+      {% endfor %}
+    CONTINUE
   end
 end
 

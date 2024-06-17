@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative 'context'
 require_relative 'transpiler_error'
 require_relative 'expression'

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative '../test_base'
 
 class TestText < TestBase
@@ -10,14 +11,14 @@ class TestText < TestBase
   end
 
   def test_white_space
-    compare(<<WHITE_SPACE)
-{% assign username = "John G. Chalmers-Smith" %}
-{%- if username and username.size > 10 -%}
-  Wow, {{ username -}} , you have a long name!
-{%- else -%}
-  Hello there!
-{%- endif %}
-WHITE_SPACE
+    compare(<<~WHITE_SPACE)
+      {% assign username = "John G. Chalmers-Smith" %}
+      {%- if username and username.size > 10 -%}
+        Wow, {{ username -}} , you have a long name!
+      {%- else -%}
+        Hello there!
+      {%- endif %}
+    WHITE_SPACE
   end
 end
 
