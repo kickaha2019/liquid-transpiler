@@ -78,7 +78,7 @@ class TestBase < Minitest::Test
   def setup
     Dir.entries(@@dir).each do |f|
       if /\.liquid$/ =~ f
-        File.delete(@@dir + '/' + f)
+        File.delete("#{@@dir}/#{f}")
       end
     end
   end
@@ -90,7 +90,7 @@ class TestBase < Minitest::Test
     prepare(code, 'test.liquid')
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
-    path           = @@dir + '/Test.rb'
+    path           = "#{@@dir}/Test.rb"
     if @@transpiler.transpile_dir(@@dir, path, class:clazz)
       load(path)
       transpiled_output = Object.const_get(clazz).new.render('test', params)
@@ -107,7 +107,7 @@ class TestBase < Minitest::Test
     prepare(code, 'test.liquid')
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
-    path           = @@dir + '/Test.rb'
+    path           = "#{@@dir}/Test.rb"
     if @@transpiler.transpile_dir(@@dir, path, class:clazz)
       load(path)
       transpiled_output = Object.const_get(clazz).new.render('test', params)
@@ -123,7 +123,7 @@ class TestBase < Minitest::Test
     prepare(code, 'test.liquid')
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
-    path           = @@dir + '/Test.rb'
+    path           = "#{@@dir}/Test.rb"
     if @@transpiler.transpile_dir(@@dir, path, class:clazz)
       raise 'Expected error not raised'
     else
@@ -136,7 +136,7 @@ class TestBase < Minitest::Test
   end
 
   def prepare(code, path)
-    File.open(@@dir + '/' + path, 'w') do |io|
+    File.open("#{@@dir}/#{path}", 'w') do |io|
       io.print code
     end
   end

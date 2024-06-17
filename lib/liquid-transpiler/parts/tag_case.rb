@@ -16,10 +16,10 @@ module LiquidTranspiler
         elsif part.is_a?(Text)
           part.strip
           unless part.empty?
-            error(part.offset, 'Unexpected ' + part.name)
+            error(part.offset, "Unexpected #{part.name}")
           end
         else
-          error(part.offset, 'Unexpected ' + part.name)
+          error(part.offset, "Unexpected #{part.name}")
         end
       end
 
@@ -37,7 +37,7 @@ module LiquidTranspiler
               error(offset, 'Unexpected text after case tag')
             end
           else
-            error(child.offset, 'Unexpected ' + child.name)
+            error(child.offset, "Unexpected #{child.name}")
           end
         end
 

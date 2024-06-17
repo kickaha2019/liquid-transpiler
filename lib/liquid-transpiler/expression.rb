@@ -118,7 +118,7 @@ module LiquidTranspiler
         if (op = OPERATORS[elements[i]]) && (!op[1])
           elements.delete_at(i)
           rhs = elements.delete_at(i)
-          clazz = Object.const_get('LiquidTranspiler::Operators::' + op[0])
+          clazz = Object.const_get("LiquidTranspiler::Operators::#{op[0]}")
           elements[i - 1] = clazz.new(elements[i - 1], rhs)
         else
           i += 2
@@ -130,7 +130,7 @@ module LiquidTranspiler
         if op = OPERATORS[elements[i]]
           elements.delete_at(i)
           rhs = elements.delete_at(i)
-          clazz = Object.const_get('LiquidTranspiler::Operators::' + op[0])
+          clazz = Object.const_get("LiquidTranspiler::Operators::#{op[0]}")
           elements[i - 1] = clazz.new(elements[i - 1], rhs)
         else
           break

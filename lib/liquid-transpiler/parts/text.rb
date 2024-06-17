@@ -20,7 +20,7 @@ module LiquidTranspiler
         unless empty?
           io.print(' ' * indent)
           io.print context.output
-          io.puts ' << "' + html_encode(@text) + '"'
+          io.puts " << \"#{html_encode(@text)}\""
         end
       end
 

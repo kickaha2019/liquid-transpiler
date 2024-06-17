@@ -72,7 +72,7 @@ module LiquidTranspiler
       @parsed = {}
       Dir.entries(source_dir).each do |f|
         if m = /^(.*)\.liquid$/.match(f)
-          @parsed[m[1]] = parse(source_dir + '/' + f)
+          @parsed[m[1]] = parse("#{source_dir}/#{f}")
         end
       end
     end

@@ -19,7 +19,7 @@ module LiquidTranspiler
       def generate(context, indent, io)
         io.print(' ' * indent)
         io.print context.output
-        io.puts ' << t(' + @expression.generate(context) + ')'
+        io.puts " << t(#{@expression.generate(context)})"
       end
 
       def name

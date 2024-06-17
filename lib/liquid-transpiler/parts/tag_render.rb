@@ -50,7 +50,7 @@ module LiquidTranspiler
             argument = call_arguments.keys.first
             for_name, _ = context.for(argument)
             io.puts "#{for_name}l = f(#{call_arguments[argument]},nil)"
-            call_arguments[:forloop] = for_name + 'l'
+            call_arguments[:forloop] = "#{for_name}l"
             call_arguments[argument] = for_name
 
             io.print ' ' * indent

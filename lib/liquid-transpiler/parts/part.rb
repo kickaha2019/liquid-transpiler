@@ -56,7 +56,7 @@ module LiquidTranspiler
         when 'Text'
           self
         else
-          error(part.offset, 'Unexpected ' + part.name)
+          error(part.offset, "Unexpected #{part.name}")
         end
       end
 
@@ -106,7 +106,7 @@ module LiquidTranspiler
 
       def html_encode(text)
         text.gsub(/[\\\n"#]/) do |block|
-          (block == "\n") ? '\\n' : '\\' + block
+          (block == "\n") ? '\\n' : "\\#{block}"
         end
       end
 
@@ -114,7 +114,7 @@ module LiquidTranspiler
         clazz = class_name
         m = /^Tag(.*)$/.match(clazz)
         if m
-          'tag ' + m[1].downcase
+          "tag #{m[1].downcase}"
         else
           clazz
         end
@@ -142,7 +142,7 @@ module LiquidTranspiler
           if token
             part = parse_tag(source, offset, token)
             if source.token?
-              source.error(offset, 'Unexpected ' + source.get)
+              source.error(offset, "Unexpected #{source.get}")
             end
             source.skip_space
           else
@@ -161,7 +161,7 @@ module LiquidTranspiler
       end
 
       def parse_tag(source, offset, token)
-        clazz = Object.const_get('LiquidTranspiler::Parts::Tag' + token.to_s.capitalize)
+        clazz = Object.const_get("LiquidTranspiler::Parts::Tag#{token.to_s.capitalize}")
         if clazz
           clazz.new(source, offset, self)
         else
