@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestRaw < TestBase
@@ -10,4 +11,3 @@ class TestRaw < TestBase
     RAW
   end
 end
-

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestLiquid < TestBase
@@ -46,4 +47,3 @@ class TestLiquid < TestBase
     LIQUID3
   end
 end
-

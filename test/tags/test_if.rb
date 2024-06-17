@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestIf < TestBase
@@ -36,4 +37,3 @@ class TestIf < TestBase
     IF3
   end
 end
-

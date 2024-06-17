@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestCapture < TestBase
@@ -15,4 +16,3 @@ class TestCapture < TestBase
     CAPTURE
   end
 end
-

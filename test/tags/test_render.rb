@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestRender < TestBase
@@ -46,7 +47,7 @@ class TestRender < TestBase
       last {{ forloop.last }}
     RENDER5
     compare("{% render 'included' for names as name %}",
-            {'names' => ['Guybrush','Threepwood']})
+            {'names' => ['Guybrush', 'Threepwood']})
   end
 
   def test_render6
@@ -70,7 +71,7 @@ class TestRender < TestBase
       Passed {{ included.name }}
     RENDER8
     compare("{% render 'included' for names %}",
-            {'names' => [{'name' => 'Guybrush'},{'name' => 'Threepwood'}]})
+            {'names' => [{'name' => 'Guybrush'}, {'name' => 'Threepwood'}]})
   end
 
   def test_render9
@@ -78,4 +79,3 @@ class TestRender < TestBase
                  /Undefined render target/)
   end
 end
-

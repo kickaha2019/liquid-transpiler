@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestGreaterThan < TestBase
@@ -10,4 +11,3 @@ class TestGreaterThan < TestBase
     OPERATORS
   end
 end
-

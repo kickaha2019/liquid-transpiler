@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestText < TestBase
@@ -21,4 +22,3 @@ class TestText < TestBase
     WHITE_SPACE
   end
 end
-

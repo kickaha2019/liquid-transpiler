@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestBreak < TestBase
@@ -11,4 +12,3 @@ class TestBreak < TestBase
     BREAK
   end
 end
-

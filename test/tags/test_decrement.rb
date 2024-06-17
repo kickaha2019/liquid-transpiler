@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestDecrement < TestBase
@@ -12,4 +13,3 @@ class TestDecrement < TestBase
     DECREMENT
   end
 end
-

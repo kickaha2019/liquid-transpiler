@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestEquals < TestBase
@@ -28,4 +29,3 @@ class TestEquals < TestBase
     EMPTY
   end
 end
-

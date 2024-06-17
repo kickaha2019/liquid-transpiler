@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestFor < TestBase
@@ -94,4 +95,3 @@ class TestFor < TestBase
     FORLOOP
   end
 end
-

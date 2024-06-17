@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestAndOrs < TestBase
@@ -20,4 +21,3 @@ class TestAndOrs < TestBase
     CONTAINS2
   end
 end
-

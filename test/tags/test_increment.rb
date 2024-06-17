@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestIncrement < TestBase
@@ -24,4 +25,3 @@ class TestIncrement < TestBase
     INCREMENT
   end
 end
-

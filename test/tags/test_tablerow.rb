@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestTablerow < TestBase
@@ -11,7 +12,7 @@ class TestTablerow < TestBase
   end
 
   def test_tablerow_cols
-    compare(<<~TABLEROW_COLS, {'fruit' => ['Apple', 'Banana','Pear']})
+    compare(<<~TABLEROW_COLS, {'fruit' => ['Apple', 'Banana', 'Pear']})
       {% tablerow item in fruit cols:1 %}
         {{ item }}
       {% endtablerow %}
@@ -61,4 +62,3 @@ class TestTablerow < TestBase
     TABLEROWLOOP
   end
 end
-

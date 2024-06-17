@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestAssign < TestBase
@@ -41,4 +42,3 @@ class TestAssign < TestBase
     ASSIGN2
   end
 end
-

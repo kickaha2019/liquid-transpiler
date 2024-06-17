@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module LiquidTranspiler
   class Source
     attr_reader :offset

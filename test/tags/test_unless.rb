@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestUnless < TestBase
@@ -20,4 +21,3 @@ class TestUnless < TestBase
     IF_ELSE
   end
 end
-

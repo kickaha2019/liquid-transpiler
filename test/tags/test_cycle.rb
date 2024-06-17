@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestCycle < TestBase
@@ -44,4 +45,3 @@ class TestCycle < TestBase
     CYCLE
   end
 end
-

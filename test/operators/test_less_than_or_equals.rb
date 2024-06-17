@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_base'
 
 class TestLessThanOrEquals < TestBase
@@ -10,4 +11,3 @@ class TestLessThanOrEquals < TestBase
     LESS_THAN_OR_EQUALS
   end
 end
-
