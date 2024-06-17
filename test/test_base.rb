@@ -38,7 +38,7 @@ class TestBase < Minitest::Test
     end
 
     def type
-      @product["type"]
+      @product['type']
     end
 
     def liquid_method_missing(method)
@@ -50,7 +50,7 @@ class TestBase < Minitest::Test
     end
 
     def available
-      BooleanDrop.new(@product["available"])
+      BooleanDrop.new(@product['available'])
     end
   end
 
@@ -72,7 +72,7 @@ class TestBase < Minitest::Test
   @@test_number = 0
   @@dir         = ENV['TEMP_DIR'] ? ENV['TEMP_DIR'] : Dir.tmpdir
   Liquid::Template.file_system = Liquid::LocalFileSystem.new(@@dir,
-                                                              pattern = "%s.liquid")
+                                                              pattern = '%s.liquid')
   Liquid.cache_classes = false
 
   def setup
@@ -103,7 +103,7 @@ class TestBase < Minitest::Test
     end
   end
 
-  def expect(code, params = {}, expected)
+  def expect(code, params, expected)
     prepare(code, 'test.liquid')
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
@@ -119,7 +119,7 @@ class TestBase < Minitest::Test
     end
   end
 
-  def expect_error(code, params = {}, expected_error)
+  def expect_error(code, expected_error)
     prepare(code, 'test.liquid')
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"

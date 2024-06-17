@@ -7,7 +7,7 @@ module LiquidTranspiler
 
       def generate(context, indent, io)
         io.print ' ' * (indent - 2)
-        io.puts "next"
+        io.puts 'next'
       end
     end
   end

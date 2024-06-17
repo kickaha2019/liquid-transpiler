@@ -101,7 +101,7 @@ module LiquidTranspiler
           indent -= 2
           @else.generate(context, indent + 2, io)
           io.print ' ' * indent
-          io.puts "end"
+          io.puts 'end'
         end
 
         context.endfor(@variable)

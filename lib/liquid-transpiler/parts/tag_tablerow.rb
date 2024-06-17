@@ -114,7 +114,7 @@ module LiquidTranspiler
         io.print context.output
         io.puts ' << "</tr>\\n"'
         io.print ' ' * indent
-        io.puts "  end"
+        io.puts '  end'
 
         io.print ' ' * indent
         io.puts 'end'

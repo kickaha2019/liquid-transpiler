@@ -13,5 +13,11 @@ Naming/MethodName:
 Metrics/MethodLength:
   Max: 30
 
-Layout/SpaceInsideBlockBraces:
-  AutoCorrect: true
+Layout/SpaceAfterColon:
+  Enabled: false
+
+Layout/SpaceAroundOperators:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false

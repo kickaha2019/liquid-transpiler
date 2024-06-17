@@ -23,7 +23,7 @@ module LiquidTranspiler
         context.output_push
         io.print ' ' * indent
         io.print context.output
-        io.puts " = []"
+        io.puts ' = []'
         super(context, indent, io)
         io.print ' ' * indent
         io.print context.variable(@variable)

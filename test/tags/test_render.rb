@@ -74,7 +74,7 @@ RENDER8
 
   def test_render9
     expect_error("{% render 'included' for names %}",
-             {'names' => []}, /Undefined render target/)
+             /Undefined render target/)
   end
 end
 
