@@ -3,11 +3,11 @@
 module LiquidTranspiler
   module Parts
     class TagContinue < Part
-      def add(part)
+      def add(_part)
         error(@offset, 'Internal error')
       end
 
-      def generate(context, indent, io)
+      def generate(_context, indent, io)
         io.print ' ' * (indent - 2)
         io.puts 'next'
       end

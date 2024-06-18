@@ -30,7 +30,7 @@ module LiquidTranspiler
                      end
       end
 
-      def add(part)
+      def add(_part)
         error(@offset, 'Internal error')
       end
 
@@ -50,7 +50,7 @@ module LiquidTranspiler
 
           if @for
             argument = call_arguments.keys.first
-            for_name, _ = context.for(argument)
+            for_name, = context.for(argument)
             io.puts "#{for_name}l = f(#{call_arguments[argument]},nil)"
             call_arguments[:forloop] = "#{for_name}l"
             call_arguments[argument] = for_name

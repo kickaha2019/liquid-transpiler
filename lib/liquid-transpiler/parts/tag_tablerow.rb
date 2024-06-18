@@ -3,6 +3,10 @@
 module LiquidTranspiler
   module Parts
     class TagTablerow < Part
+      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Metrics/CyclomaticComplexity
+      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/PerceivedComplexity
       def initialize(source, offset, parent)
         super
         @columns  = nil
@@ -41,6 +45,10 @@ module LiquidTranspiler
 
         source.unget term
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
 
       def add(part)
         if part.is_a?(TagEndtablerow)
@@ -52,9 +60,9 @@ module LiquidTranspiler
 
       def find_arguments(names)
         @expression.find_arguments(names)
-        @columns.find_arguments(names) if @columns
-        @limit.find_arguments(names)   if @limit
-        @start.find_arguments(names)   if @start
+        @columns&.find_arguments(names)
+        @limit&.find_arguments(names)
+        @start&.find_arguments(names)
         names = names.spawn
         names.assign(@variable)
         names.assign(:tablerowloop)

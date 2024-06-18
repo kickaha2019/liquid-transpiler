@@ -59,8 +59,8 @@ module LiquidTranspiler
 
       def find_arguments(names)
         @expression.find_arguments(names)
-        @limit.find_arguments(names) if @limit
-        @start.find_arguments(names) if @start
+        @limit&.find_arguments(names)
+        @start&.find_arguments(names)
         names = names.spawn
         names.assign(@variable)
         names.assign('forloop')

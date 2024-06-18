@@ -26,7 +26,7 @@ module TranspiledMethods
     end
 
     def first
-      @index == 0
+      @index.zero?
     end
 
     def index
@@ -76,7 +76,7 @@ module TranspiledMethods
       @column  = -1
       @row     = -1
       @index   = -1
-      @columns = 1000000000
+      @columns = 1_000_000_000
     end
 
     def col
@@ -88,7 +88,7 @@ module TranspiledMethods
     end
 
     def col_first
-      @column == 0
+      @column.zero?
     end
 
     def col_last
@@ -104,7 +104,7 @@ module TranspiledMethods
         @index += 1
         @column += 1
         @column = 0 if @column >= @columns
-        if @column == 0
+        if @column.zero?
           @row += 1
         end
         yield entry
@@ -112,7 +112,7 @@ module TranspiledMethods
     end
 
     def first
-      @index == 0
+      @index.zero?
     end
 
     def index

@@ -44,8 +44,8 @@ module LiquidTranspiler
           context = Context.new(@signature, info[1])
           begin
             @parsed[name].generate(context, 4, io)
-          rescue TranspilerError => bang
-            errors << bang.message
+          rescue TranspilerError => e
+            errors << e.message
           end
           write_method_end(io)
         end
@@ -65,8 +65,8 @@ module LiquidTranspiler
         end
 
         context.add(Parts::EndOfFile.new(source, source.offset, nil))
-      rescue TranspilerError => bang
-        errors << bang.message
+      rescue TranspilerError => e
+        errors << e.message
       end
     end
 
@@ -91,6 +91,7 @@ module LiquidTranspiler
 METHOD_END
     end
 
+    # rubocop:disable Metrics/AbcSize
     def write_method_start(info, io)
       args = (0...info[1].arguments.size).collect { |i| "a#{i}" }.join(',')
 
@@ -107,6 +108,7 @@ METHOD_HEADER
         io.puts "    d#{i} = 0"
       end
     end
+    # rubocop:enable Metrics/AbcSize
 
     def write_start(io)
       io.puts <<~"START"

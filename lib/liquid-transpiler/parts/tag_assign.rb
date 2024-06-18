@@ -15,7 +15,7 @@ module LiquidTranspiler
         source.unget term
       end
 
-      def add(part)
+      def add(_part)
         error(@offset, 'Internal error')
       end
 

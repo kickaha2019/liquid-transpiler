@@ -128,7 +128,7 @@ module LiquidTranspiler
       end
 
       i = elements.size - 2
-      while i > 0
+      while i.positive?
         if op = OPERATORS[elements[i]]
           elements.delete_at(i)
           rhs = elements.delete_at(i)

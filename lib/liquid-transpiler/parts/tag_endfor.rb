@@ -3,7 +3,7 @@
 module LiquidTranspiler
   module Parts
     class TagEndfor < Part
-      def add(part)
+      def add(_part)
         error(@offset, 'Internal error')
       end
     end

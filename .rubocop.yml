@@ -19,6 +19,12 @@ Metrics/ParameterLists:
 Metrics/ClassLength:
   Max: 300
 
+Metrics/ModuleLength:
+  Max: 500
+
+Naming/FileName:
+  Enabled: false
+
 Layout/SpaceAfterColon:
   Enabled: false
 
@@ -27,6 +33,9 @@ Layout/SpaceAroundOperators:
 
 Layout/SpaceInsideHashLiteralBraces:
   Enabled: false
+
+Layout/EmptyLineAfterMagicComment:
+  AutoCorrect: always
 
 Style/GuardClause:
   Enabled: false

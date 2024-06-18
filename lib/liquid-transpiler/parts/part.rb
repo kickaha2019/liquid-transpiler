@@ -65,7 +65,7 @@ module LiquidTranspiler
       def add_text(offset, text, rstrip, lstrip)
         text = text.lstrip if rstrip
         text = text.rstrip if lstrip
-        if text.size > 0
+        if text.size.positive?
           add(Text.new(@source, offset, text))
         end
       end
