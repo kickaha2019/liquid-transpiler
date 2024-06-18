@@ -6,7 +6,7 @@ class TestSortNatural < TestBase
   def test_sort_natural1
     compare(<<~SORT1)
       {% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}
-      
+
       {{ my_array | sort_natural | join: ", " }}
     SORT1
   end

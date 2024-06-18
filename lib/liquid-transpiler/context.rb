@@ -49,7 +49,7 @@ module LiquidTranspiler
       @fors << [@variables[name], @variables[:forloop]]
       @variables[name]     = "for#{@fors.size}"
       @variables[:forloop] = "for#{@fors.size}l"
-      return @variables[name], (@fors[-1][1] || 'nil')
+      [@variables[name], @fors[-1][1] || 'nil']
     end
 
     def increment(name)

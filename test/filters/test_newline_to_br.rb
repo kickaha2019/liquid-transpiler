@@ -9,7 +9,7 @@ class TestNewlineToBr < TestBase
       Hello
       there
       {% endcapture %}
-      
+
       {{ string_with_newlines | newline_to_br }}
     NEWLINE_TO_BR
   end

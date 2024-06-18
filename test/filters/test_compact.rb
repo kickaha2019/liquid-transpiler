@@ -6,7 +6,7 @@ class TestCompact < TestBase
   def test_compact
     compare(<<~COMPACT, {'items' => [{'category' => 'A'}, {}, {'category' => 'B'}]})
       {% assign categories = items | map: "category" | compact %}
-      
+
       {% for category in categories %}
       - {{ category }}
       {% endfor %}

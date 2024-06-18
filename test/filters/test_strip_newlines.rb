@@ -9,7 +9,7 @@ class TestStripNewlines < TestBase
       Hello
       there
       {% endcapture %}
-      
+
       {{ string_with_newlines | strip_newlines }}
     STRIP_NEWLINES
   end

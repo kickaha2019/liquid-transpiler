@@ -9,7 +9,7 @@ class TestNil < TestBase
       Wasn't nil
       {% else %}
       Was nil
-      {% endif %}    
+      {% endif %}#{'    '}
       {{ hash.nothing }}
       {% if unknown %}
       Non-existing object

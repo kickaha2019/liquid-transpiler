@@ -15,7 +15,7 @@ class TestAndOrs < TestBase
     compare(<<~AND_OR2)
       {% if true and false and false or true %}
         This evaluates to false, since the tags are checked like this:
-      
+
         true and (false and (false or true))
         true and (false and true)
         true and false

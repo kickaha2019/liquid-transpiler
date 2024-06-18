@@ -27,3 +27,27 @@ Style/GuardClause:
 
 Style/ClassVars:
   Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Lint/AssignmentInCondition:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
+
+Style/ParallelAssignment:
+  Enabled: false
+
+Naming/AccessorMethodName:
+  Enabled: false
+
+Style/WhileUntilModifier:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false

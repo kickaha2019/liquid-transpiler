@@ -133,7 +133,7 @@ module LiquidTranspiler
           source.skip_space
           rstrip = source.next('-')
           if term.nil? && source.next('}}')
-            return lstrip, Parts::Embedded.new(source, offset, expr), rstrip
+            [lstrip, Parts::Embedded.new(source, offset, expr), rstrip]
           else
             error(offset, 'Expecting }}')
           end
@@ -153,7 +153,7 @@ module LiquidTranspiler
 
           rstrip = source.next('-')
           if source.next('%}')
-            return lstrip, part, rstrip
+            [lstrip, part, rstrip]
           else
             source.error(offset, 'Expecting %}')
           end

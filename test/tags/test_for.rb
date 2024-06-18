@@ -37,23 +37,23 @@ class TestFor < TestBase
     FOR_OFFSET1
   end
 
-#   def test_for_offset2
-#     compare(<<FOR_OFFSET2, {'array' => [1, 2, 3, 4, 5, 6]})
-# {% for item in array limit:3 %}
-#   {{ item }}
-# {% endfor %}
-# {% for item in array limit: 3 offset: continue %}
-#   {{ item }}
-# {% endfor %}
-# FOR_OFFSET2
-#   end
+  #   def test_for_offset2
+  #     compare(<<FOR_OFFSET2, {'array' => [1, 2, 3, 4, 5, 6]})
+  # {% for item in array limit:3 %}
+  #   {{ item }}
+  # {% endfor %}
+  # {% for item in array limit: 3 offset: continue %}
+  #   {{ item }}
+  # {% endfor %}
+  # FOR_OFFSET2
+  #   end
 
   def test_for_range
     compare(<<~FOR_RANGE)
       {% for i in (3..5) %}
         {{ i }}
       {% endfor %}
-      
+
       {% assign num = 4 %}
       {% assign range = (1..num) %}
       {% for i in range %}

@@ -47,7 +47,7 @@ module LiquidTranspiler
           possible = []
 
           sub_names[0].locals { |name| possible << name }
-          sub_names[1..-1].each do |child|
+          sub_names[1..].each do |child|
             last, possible = possible, []
             last.each do |name|
               possible << name if child.local?(name)

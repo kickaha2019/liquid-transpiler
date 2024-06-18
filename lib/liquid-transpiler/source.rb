@@ -45,7 +45,7 @@ module LiquidTranspiler
 
     def expect_name
       if token = get
-        unless token.is_a?(Symbol) && (!RESERVED_WORDS.include?(token))
+        unless token.is_a?(Symbol) && !RESERVED_WORDS.include?(token)
           error(@offset, 'Expected name')
         end
         token
@@ -63,6 +63,10 @@ module LiquidTranspiler
       prefix
     end
 
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/PerceivedComplexity
     def get
       unless @ungot.empty?
         return @ungot.pop
@@ -96,7 +100,7 @@ module LiquidTranspiler
           while (@offset < @text.size) && @text[@offset..@offset] == '.'
             @offset += 1
           end
-          return @text[start...@offset]
+          @text[start...@offset]
         end
       when '-'
         return nil if ['%', '}'].include?(@text[@offset + 1..@offset + 1])
@@ -114,6 +118,10 @@ module LiquidTranspiler
         nil
       end
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def get_double_quoted_string
       i = @offset + 1
@@ -141,12 +149,13 @@ module LiquidTranspiler
       end
 
       name = @text[origin...@offset]
-      if /^(\-|)\d+$/ =~ name
+      if /^(-|)\d+$/ =~ name
         error(origin, 'Syntax error')
       end
       name.to_sym
     end
 
+    # rubocop:disable Style/RedundantRegexpEscape
     def get_number
       origin = @offset
       if m = @text.match(/[^0-9\-a-z_\.]/i, @offset)
@@ -159,7 +168,7 @@ module LiquidTranspiler
         end
 
         number = @text[origin...@offset]
-        return get_name if /[a-z_]|^\-.*\-/i =~ number
+        return get_name if /[a-z_]|^-.*-/i =~ number
       else
         @offset = origin + 1
       end
@@ -211,15 +220,15 @@ module LiquidTranspiler
       end
     end
 
-    def peek(n)
-      @text[@offset..(@offset + n - 1)]
+    def peek(distance)
+      @text[@offset..(@offset + distance - 1)]
     end
 
     def position(offset)
       lines = 1
       index = 0
 
-      while (index < offset)
+      while index < offset
         if (index1 = @text.index("\n", index)) && (index1 < offset)
           index = index1 + 1
           lines += 1
@@ -228,11 +237,11 @@ module LiquidTranspiler
         end
       end
 
-      return lines, (offset - index + 1), @text[offset...(offset + 50)].gsub("\n", ' ')
+      [lines, (offset - index + 1), @text[offset...(offset + 50)].gsub("\n", ' ')]
     end
 
     def remnant
-      @offset, text = @text.size, @text[@offset..-1]
+      @offset, text = @text.size, @text[@offset..]
       text
     end
 
@@ -242,12 +251,10 @@ module LiquidTranspiler
           @offset = m.begin(0)
         end
 
-        if (!eof?) && (@text[@offset..@offset] == '#')
-          if m = /(\n|\-%\}|%\}|\}\})/.match(@text, @offset + 1)
+        if !eof? && (@text[@offset..@offset] == '#')
+          if m = /(\n|-%\}|%\}|\}\})/.match(@text, @offset + 1)
             @offset = m.begin(0)
             next("\n")
-          # if i = @text.index( "\n", @offset+1)
-          #            @offset = i + 1
           else
             @offset = @text.size
             break

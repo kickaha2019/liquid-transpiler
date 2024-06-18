@@ -33,7 +33,7 @@ module LiquidTranspiler
         formula = Operators::Filter.new(filter, formula, args)
       end
 
-      return formula, term
+      [formula, term]
     end
 
     def self.parse1(source)
@@ -46,12 +46,12 @@ module LiquidTranspiler
 
         if /^[a-z]/i =~ expr.token
           expr2, term = parse2(source)
-          return Operators::Parameter.new(expr.token, expr2), term
+          [Operators::Parameter.new(expr.token, expr2), term]
         else
           source.error(source.offset, 'Unexpected :')
         end
       else
-        return expr, term
+        [expr, term]
       end
     end
 
@@ -83,7 +83,7 @@ module LiquidTranspiler
         end
       end
 
-      return to_formula(elements), term
+      [to_formula(elements), term]
     end
 
     def self.parse3(source)

@@ -50,7 +50,7 @@ module TranspiledMethods
     end
 
     def offset(setting)
-      @data = @data[setting..-1]
+      @data = @data[setting..]
     end
 
     def parentloop
@@ -136,7 +136,7 @@ module TranspiledMethods
     end
 
     def offset(setting)
-      @data = @data[setting..-1]
+      @data = @data[setting..]
     end
 
     def rindex
@@ -266,7 +266,7 @@ module TranspiledMethods
         fragments << m[1]
         offset    = m.end(0)
       else
-        fragments << f_escape(value[offset..-1])
+        fragments << f_escape(value[offset..])
         break
       end
     end

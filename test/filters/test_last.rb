@@ -13,7 +13,7 @@ class TestLast < TestBase
     compare(<<~LAST)
       {% assign my_array = "zebra, octopus, giraffe, tiger" | split: ", " %}
       {{ my_array.last }}
-      
+
       {% if my_array.last == "tiger" %}
         There goes a tiger!
       {% endif %}

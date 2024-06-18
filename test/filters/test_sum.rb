@@ -6,7 +6,7 @@ class TestSum < TestBase
   def test_sum1
     expect(<<~SUM1, {'animals' => [{'count' => 1}, {'count' => 3}]}, '4')
       {% assign total_count = animals | sum: "count" %}
-      
+
       {{ total_count }}
     SUM1
   end
