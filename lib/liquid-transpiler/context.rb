@@ -2,7 +2,6 @@
 
 module LiquidTranspiler
   class Context
-    # rubocop:disable Metrics/AbcSize
     def initialize(signatures, names)
       @signatures = signatures
       @variables  = {}
@@ -29,7 +28,6 @@ module LiquidTranspiler
       @index     = 0
       @tablerows = []
     end
-    # rubocop:enable Metrics/AbcSize
 
     def cycle(name)
       @cycles[name]

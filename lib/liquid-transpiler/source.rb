@@ -65,10 +65,7 @@ module LiquidTranspiler
       prefix
     end
 
-    # rubocop:disable Metrics/AbcSize
-    # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/PerceivedComplexity
     def get
       unless @ungot.empty?
         return @ungot.pop
@@ -118,10 +115,7 @@ module LiquidTranspiler
         get_operator
       end
     end
-    # rubocop:enable Metrics/AbcSize
-    # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/PerceivedComplexity
 
     def get_double_quoted_string
       i = @offset + 1

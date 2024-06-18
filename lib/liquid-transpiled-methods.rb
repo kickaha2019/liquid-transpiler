@@ -171,13 +171,13 @@ module TranspiledMethods
   def f_at_least(value, limit)
     value = n(value)
     limit = n(limit)
-    (value < limit) ? limit : value
+    value < limit ? limit : value
   end
 
   def f_at_most(value, limit)
     value = n(value)
     limit = n(limit)
-    (value < limit) ? value : limit
+    value < limit ? value : limit
   end
 
   def f_capitalize(value)

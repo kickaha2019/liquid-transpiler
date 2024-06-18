@@ -3,9 +3,6 @@
 module LiquidTranspiler
   module Parts
     class TagTablerow < Part
-      # rubocop:disable Metrics/AbcSize
-      # rubocop:disable Metrics/CyclomaticComplexity
-      # rubocop:disable Metrics/MethodLength
       def initialize(source, offset, parent)
         super
         @columns  = nil
@@ -44,9 +41,6 @@ module LiquidTranspiler
 
         source.unget term
       end
-      # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/CyclomaticComplexity
-      # rubocop:enable Metrics/MethodLength
 
       def add(part)
         if part.is_a?(TagEndtablerow)
@@ -67,7 +61,6 @@ module LiquidTranspiler
         super(names)
       end
 
-      # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/MethodLength
       def generate(context, indent, io)
         io.print ' ' * indent
@@ -131,7 +124,6 @@ module LiquidTranspiler
 
         context.endtablerow(@variable)
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
     end
   end

@@ -9,6 +9,7 @@ module LiquidTranspiler
         source.unget term
       end
 
+      # rubocop:disable Style/CaseLikeIf
       def add(part)
         if part.is_a?(TagWhen) || part.is_a?(TagElse)
           @children << part
@@ -24,6 +25,7 @@ module LiquidTranspiler
           error(part.offset, "Unexpected #{part.name}")
         end
       end
+      # rubocop:enable Style/CaseLikeIf
 
       def find_arguments(names)
         @expression.find_arguments(names)

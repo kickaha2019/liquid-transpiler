@@ -91,7 +91,6 @@ module LiquidTranspiler
 METHOD_END
     end
 
-    # rubocop:disable Metrics/AbcSize
     def write_method_start(info, io)
       args = (0...info[1].arguments.size).collect { |i| "a#{i}" }.join(',')
 
@@ -108,7 +107,6 @@ METHOD_HEADER
         io.puts "    d#{i} = 0"
       end
     end
-    # rubocop:enable Metrics/AbcSize
 
     def write_start(io)
       io.puts <<~"START"

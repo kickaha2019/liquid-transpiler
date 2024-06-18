@@ -17,6 +17,7 @@ module LiquidTranspiler
         @children = []
       end
 
+      # rubocop:disable Metrics/MethodLength
       def add(part)
         @children << part
 
@@ -61,6 +62,7 @@ module LiquidTranspiler
           error(part.offset, "Unexpected #{part.name}")
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       def add_text(offset, text, rstrip, lstrip)
         text = text.lstrip if rstrip
@@ -108,7 +110,7 @@ module LiquidTranspiler
 
       def html_encode(text)
         text.gsub(/[\\\n"#]/) do |block|
-          (block == "\n") ? '\\n' : "\\#{block}"
+          block == "\n" ? '\\n' : "\\#{block}"
         end
       end
 
