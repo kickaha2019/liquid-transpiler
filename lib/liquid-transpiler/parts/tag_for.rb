@@ -18,7 +18,7 @@ module LiquidTranspiler
 
         @expression, term = Expression.parse(source)
 
-        while true
+        loop do
           case term
           when :limit
             if source.get != ':'

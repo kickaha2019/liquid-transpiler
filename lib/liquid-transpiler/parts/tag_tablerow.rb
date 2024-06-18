@@ -6,7 +6,6 @@ module LiquidTranspiler
       # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/CyclomaticComplexity
       # rubocop:disable Metrics/MethodLength
-      # rubocop:disable Metrics/PerceivedComplexity
       def initialize(source, offset, parent)
         super
         @columns  = nil
@@ -21,7 +20,7 @@ module LiquidTranspiler
 
         @expression, term = Expression.parse(source)
 
-        while true
+        loop do
           case term
           when :cols
             if source.get != ':'
@@ -48,7 +47,6 @@ module LiquidTranspiler
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/CyclomaticComplexity
       # rubocop:enable Metrics/MethodLength
-      # rubocop:enable Metrics/PerceivedComplexity
 
       def add(part)
         if part.is_a?(TagEndtablerow)
@@ -70,9 +68,7 @@ module LiquidTranspiler
       end
 
       # rubocop:disable Metrics/AbcSize
-      # rubocop:disable Metrics/CyclomaticComplexity
       # rubocop:disable Metrics/MethodLength
-      # rubocop:disable Metrics/PerceivedComplexity
       def generate(context, indent, io)
         io.print ' ' * indent
         for_name = context.tablerow(@variable)
@@ -136,9 +132,7 @@ module LiquidTranspiler
         context.endtablerow(@variable)
       end
       # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/CyclomaticComplexity
       # rubocop:enable Metrics/MethodLength
-      # rubocop:enable Metrics/PerceivedComplexity
     end
   end
 end

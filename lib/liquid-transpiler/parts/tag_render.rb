@@ -9,12 +9,13 @@ module LiquidTranspiler
         @parameters = {}
         @for        = false
 
-        m = /^['"]([a-z0-9_\-]+)['"]$/i.match(source.get)
-        if m
+        # rubocop:disable Style/RedundantRegexpEscape
+        if m = /^['"]([a-z0-9_\-]+)['"]$/i.match(source.get)
           @target = m[1]
         else
           source.error(@offset, 'Expected render target')
         end
+        # rubocop:enable Style/RedundantRegexpEscape
 
         term = source.get
         source.unget case term
