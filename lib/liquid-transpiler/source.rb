@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rubocop:disable Style/RedundantRegexpEscape
 
 module LiquidTranspiler
   class Source
@@ -54,9 +55,9 @@ module LiquidTranspiler
       end
     end
 
-    def find(re)
+    def find(regex)
       prefix = nil
-      @text.match(re, @offset) do |m|
+      @text.match(regex, @offset) do |m|
         was, @offset = @offset, m.begin(0)
         prefix = @text[was...@offset]
       end
@@ -114,8 +115,6 @@ module LiquidTranspiler
         get_operator
       when '!'
         get_operator
-      else
-        nil
       end
     end
     # rubocop:enable Metrics/AbcSize
@@ -155,7 +154,6 @@ module LiquidTranspiler
       name.to_sym
     end
 
-    # rubocop:disable Style/RedundantRegexpEscape
     def get_number
       origin = @offset
       if m = @text.match(/[^0-9\-a-z_\.]/i, @offset)
@@ -279,3 +277,5 @@ module LiquidTranspiler
     end
   end
 end
+
+# rubocop:enable Style/RedundantRegexpEscape

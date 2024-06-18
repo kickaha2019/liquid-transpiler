@@ -61,6 +61,10 @@ module LiquidTranspiler
         super(names)
       end
 
+      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Metrics/CyclomaticComplexity
+      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/PerceivedComplexity
       def generate(context, indent, io)
         io.print ' ' * indent
         for_name = context.tablerow(@variable)
@@ -123,6 +127,10 @@ module LiquidTranspiler
 
         context.endtablerow(@variable)
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
     end
   end
 end

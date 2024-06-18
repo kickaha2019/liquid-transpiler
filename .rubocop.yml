@@ -13,6 +13,12 @@ Naming/MethodName:
 Metrics/MethodLength:
   Max: 30
 
+Metrics/ParameterLists:
+  Max: 5
+
+Metrics/ClassLength:
+  Max: 300
+
 Layout/SpaceAfterColon:
   Enabled: false
 
@@ -29,6 +35,9 @@ Style/ClassVars:
   Enabled: false
 
 Style/WordArray:
+  Enabled: false
+
+Style/SymbolArray:
   Enabled: false
 
 Style/Documentation:
@@ -50,4 +59,7 @@ Style/WhileUntilModifier:
   Enabled: false
 
 Style/IfUnlessModifier:
+  Enabled: false
+
+Lint/BooleanSymbol:
   Enabled: false
