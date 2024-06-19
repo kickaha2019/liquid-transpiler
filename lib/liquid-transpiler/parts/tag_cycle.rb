@@ -3,6 +3,7 @@
 module LiquidTranspiler
   module Parts
     class TagCycle < Part
+      # rubocop:disable Lint/EmptyWhen
       def initialize(source, offset, parent)
         super
         @key   = nil
@@ -24,11 +25,12 @@ module LiquidTranspiler
         end
 
         if @key.nil?
-          @key = '[' + @cycle.collect { |c| c.to_s }.join(',') + ']'
+          @key = '[' + @cycle.collect(&:to_s).join(',') + ']'
         end
 
         source.unget token
       end
+      # rubocop:enable Lint/EmptyWhen
 
       def add(part)
         error(part.offset, 'Internal error')

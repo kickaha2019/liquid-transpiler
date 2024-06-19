@@ -10,9 +10,11 @@ module LiquidTranspiler
       @errors    = []
     end
 
+    # rubocop:disable Style/ExplicitBlockArgument
     def errors
       @errors.each { |error| yield error }
     end
+    # rubocop:enable Style/ExplicitBlockArgument
 
     def transpile_dir(source_dir, path, options = {})
       process_options(options)

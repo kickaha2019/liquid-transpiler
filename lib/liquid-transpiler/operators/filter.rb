@@ -28,7 +28,7 @@ module LiquidTranspiler
           if argument.is_a?(Parameter)
             options << "'#{argument.key}'=>#{argument.value.generate(context)}"
           else
-            params << "#{argument.generate(context)}"
+            params << argument.generate(context).to_s
           end
         end
 

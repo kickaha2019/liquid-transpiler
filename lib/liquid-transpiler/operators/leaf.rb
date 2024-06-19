@@ -3,7 +3,7 @@
 module LiquidTranspiler
   module Operators
     class Leaf
-      SPECIALS = { :true => 'true', :false => 'false', :empty => ':empty' }
+      SPECIALS = { true: 'true', false: 'false', empty: ':empty' }.freeze
       attr_reader :token
 
       def initialize(token)

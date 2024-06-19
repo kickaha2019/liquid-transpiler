@@ -12,7 +12,7 @@ module LiquidTranspiler
       '>=' => ['GreaterThanOrEquals', false],
       '<' => ['LessThan', false],
       '<=' => ['LessThanOrEquals', false]
-    }
+    }.freeze
 
     def self.parse(source)
       formula, term = parse1(source)
@@ -86,6 +86,7 @@ module LiquidTranspiler
       [to_formula(elements), term]
     end
 
+    # rubocop:disable Style/CaseLikeIf
     def self.parse3(source)
       token = source.get
 
@@ -113,6 +114,7 @@ module LiquidTranspiler
         source.error(source.offset, 'Bad syntax')
       end
     end
+    # rubocop:enable Style/CaseLikeIf
 
     def self.to_formula(elements)
       i = 1

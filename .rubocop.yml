@@ -61,6 +61,9 @@ Style/SymbolArray:
 Style/Documentation:
   Enabled: false
 
+Style/StringConcatenation:
+  Enabled: false
+
 Lint/AssignmentInCondition:
   Enabled: false
 

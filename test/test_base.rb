@@ -10,7 +10,7 @@ class TestBase < Minitest::Test
   PRODUCT_DATA = [{'type' => 'cupboard', 'title' => 'Vacuum',       'available' => true},
                   {'type' => 'kitchen',  'title' => 'Spatula',      'available' => false},
                   {'type' => 'lounge',   'title' => 'Television',   'available' => false},
-                  {'type' => 'kitchen',  'title' => 'Garlic press', 'available' => true}]
+                  {'type' => 'kitchen',  'title' => 'Garlic press', 'available' => true}].freeze
 
   SITE_DATA    = [{'category' => 'business'},
                   {'category' => 'celebrities'},
@@ -18,7 +18,7 @@ class TestBase < Minitest::Test
                   {'category' => 'lifestyle'},
                   {'category' => 'sports'},
                   {},
-                  {'category' => 'technology'}]
+                  {'category' => 'technology'}].freeze
 
   class BooleanDrop < Liquid::Drop
     def initialize(value)

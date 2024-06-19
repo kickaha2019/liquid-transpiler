@@ -205,9 +205,9 @@ module TranspiledMethods
     if date.is_a?(String)
       case date
       when 'now'
-        date = Date::today
+        date = Date.today
       when 'today'
-        date = Date::today
+        date = Date.today
       else
         date = Date.parse(date)
       end
@@ -252,6 +252,8 @@ module TranspiledMethods
         '&#39;'
       when '&'
         '&amp;'
+      else
+        letter
       end
     end
   end
@@ -389,7 +391,7 @@ module TranspiledMethods
     if sort_by
       l(list).sort_by { |entry| x(entry, sort_by).downcase }
     else
-      l(list).sort_by { |entry| entry.downcase }
+      l(list).sort_by(&:downcase)
     end
   end
 

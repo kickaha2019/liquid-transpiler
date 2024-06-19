@@ -6,7 +6,7 @@ module LiquidTranspiler
   class Source
     attr_reader :offset
 
-    RESERVED_WORDS = [:true, :false, :empty]
+    RESERVED_WORDS = [:true, :false, :empty].freeze
 
     def initialize(path)
       @path   = path
@@ -28,7 +28,7 @@ module LiquidTranspiler
         Text:   #{peek}
         Error:  #{msg}
       ERROR
-      raise TranspilerError.new(details)
+      raise TranspilerError, details
     end
 
     def expect_literal

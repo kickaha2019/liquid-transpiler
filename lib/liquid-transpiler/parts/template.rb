@@ -6,6 +6,7 @@ module LiquidTranspiler
   module Parts
     class Template < Part
       class Names
+        # rubocop:disable Metrics/ParameterLists
         def initialize(arguments = {}, cycles = {}, increments = {}, variables = {})
           @arguments  = arguments
           @cycles     = cycles
@@ -13,6 +14,7 @@ module LiquidTranspiler
           @variables  = variables
           @locals     = {}
         end
+        # rubocop:enable Metrics/ParameterLists
 
         def arguments
           @arguments.keys
@@ -49,8 +51,8 @@ module LiquidTranspiler
           @locals[name]
         end
 
-        def locals
-          @locals.each_key { |name| yield name }
+        def locals(&block)
+          @locals.each_key(&block)
         end
 
         def reference(name)
