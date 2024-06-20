@@ -61,4 +61,13 @@ class TestTablerow < TestBase
       {% endtablerow %}
     TABLEROWLOOP
   end
+
+  def test_tablerowloop2
+    expect_code(<<~TABLEROWLOOP2, /def t0\(\)/)
+      {% tablerow item in (3..5) cols:2 %}
+        item {{ item }}
+        col {{ tablerowloop.col }}
+      {% endtablerow %}
+    TABLEROWLOOP2
+  end
 end

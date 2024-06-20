@@ -36,4 +36,39 @@ class TestIf < TestBase
       {% endunless %}
     IF3
   end
+
+  def test_if4
+    expect_code(<<~IF4, /def t0\(a0\)/)
+      {% if true %}
+      {% assign fruit = 'Apple' %}
+      {% endif %}
+      {{ fruit }}
+    IF4
+  end
+
+  def test_if5
+    expect_code(<<~IF5, /def t0\(\)/)
+      {% if true %}
+      {% assign fruit = 'Apple' %}
+      {% else %}
+      {% assign fruit = 'Banana' %}
+      {% endif %}
+      {{ fruit }}
+    IF5
+  end
+
+  def test_if6
+    expect_code(<<~IF6, /def t0\(\)/)
+      {% if true %}
+        {% if false %}
+        {% assign fruit = 'Apple' %}
+        {% else %}
+        {% assign fruit = 'Banana' %}
+        {% endif %}
+      {% else %}
+      {% assign fruit = 'Durian' %}
+      {% endif %}
+      {{ fruit }}
+    IF6
+  end
 end

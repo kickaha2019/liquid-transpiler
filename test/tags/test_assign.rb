@@ -41,4 +41,19 @@ class TestAssign < TestBase
       {{ -_ }}
     ASSIGN2
   end
+
+  def test_assign6
+    expect_code(<<~ASSIGN1, /def t0\(\)/)
+      {% assign my_variable = "tomato" %}
+      {{ my_variable }}
+    ASSIGN1
+  end
+
+  def test_assign7
+    expect_code(<<~ASSIGN7, /def t0\(a0\)/)
+      {{ my_variable }}
+      {% assign my_variable = "tomato" %}
+      {{ my_variable }}
+    ASSIGN7
+  end
 end

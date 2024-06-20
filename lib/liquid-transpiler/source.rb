@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/EmptyElse
 # rubocop:disable Style/RedundantRegexpEscape
 
 module LiquidTranspiler
@@ -113,87 +114,11 @@ module LiquidTranspiler
         get_operator
       when '!'
         get_operator
+      else
+        nil
       end
     end
     # rubocop:enable Metrics/MethodLength
-
-    def get_double_quoted_string
-      i = @offset + 1
-
-      while m = @text.match(/[\\"]/, i)
-        i = m.begin(0)
-        if @text[i..i] == '\\'
-          i += 2
-        else
-          string = @text[@offset..i]
-          @offset = i + 1
-          return string
-        end
-      end
-
-      error(@offset, 'Unclosed quoted string')
-    end
-
-    def get_name
-      origin = @offset
-      if m = @text.match(/[^a-z0-9_\-]/, @offset)
-        @offset = m.end(0) - 1
-      else
-        @offset = @text.size
-      end
-
-      name = @text[origin...@offset]
-      if /^(-|)\d+$/ =~ name
-        error(origin, 'Syntax error')
-      end
-      name.to_sym
-    end
-
-    def get_number
-      origin = @offset
-      if m = @text.match(/[^0-9\-a-z_\.]/i, @offset)
-        finish = m.end(0) - 1
-
-        if i = @text[origin...finish].index('..')
-          @offset = i + origin
-        else
-          @offset = finish
-        end
-
-        number = @text[origin...@offset]
-        return get_name if /[a-z_]|^-.*-/i =~ number
-      else
-        @offset = origin + 1
-      end
-      @text[origin...@offset]
-    end
-
-    def get_operator
-      origin = @offset
-      if m = @text.match(/[^=<>]/, @offset + 1)
-        @offset = m.end(0) - 1
-      else
-        @offset = @text.size
-      end
-      @text[origin...@offset]
-    end
-
-    def get_single_quoted_string
-      i = @offset + 1
-
-      while m = @text.match(/[\\']/, i)
-        i = m.begin(0)
-        if @text[i..i] == '\\'
-          i += 2
-        else
-          string = @text[@offset..i]
-          @offset = i + 1
-          return string
-        end
-      end
-
-      error(@offset, 'Unclosed quoted string')
-    end
 
     def next(expected)
       unless @ungot.empty?
@@ -245,8 +170,8 @@ module LiquidTranspiler
         end
 
         if !eof? && (@text[@offset..@offset] == '#')
-          if m = /(\n|-%\}|%\}|\}\})/.match(@text, @offset + 1)
-            @offset = m.begin(0)
+          if m1 = /(\n|-%}|%}|}})/.match(@text, @offset + 1)
+            @offset = m1.begin(0)
             next("\n")
           else
             @offset = @text.size
@@ -270,7 +195,88 @@ module LiquidTranspiler
     def unget(token)
       @ungot << token if token
     end
+
+    private
+
+    def get_double_quoted_string
+      i = @offset + 1
+
+      while m = @text.match(/[\\"]/, i)
+        i = m.begin(0)
+        if @text[i..i] == '\\'
+          i += 2
+        else
+          string = @text[@offset..i]
+          @offset = i + 1
+          return string
+        end
+      end
+
+      error(@offset, 'Unclosed quoted string')
+    end
+
+    def get_name
+      origin = @offset
+      if m = @text.match(/[^a-z0-9_\-]/, @offset)
+        @offset = m.end(0) - 1
+      else
+        @offset = @text.size
+      end
+
+      name = @text[origin...@offset]
+      if /^(-|)\d+$/ =~ name
+        error(origin, 'Syntax error')
+      end
+      name.to_sym
+    end
+
+    def get_number
+      origin = @offset
+      if m = @text.match(/[^0-9\-a-z_.]/i, @offset)
+        finish = m.end(0) - 1
+
+        if i = @text[origin...finish].index('..')
+          @offset = i + origin
+        else
+          @offset = finish
+        end
+
+        number = @text[origin...@offset]
+        return get_name if /[a-z_]|^-.*-/i =~ number
+      else
+        @offset = origin + 1
+      end
+      @text[origin...@offset]
+    end
+
+    def get_operator
+      origin = @offset
+      if m = @text.match(/[^=<>]/, @offset + 1)
+        @offset = m.end(0) - 1
+      else
+        @offset = @text.size
+      end
+      @text[origin...@offset]
+    end
+
+    def get_single_quoted_string
+      i = @offset + 1
+
+      while m = @text.match(/[\\']/, i)
+        i = m.begin(0)
+        if @text[i..i] == '\\'
+          i += 2
+        else
+          string = @text[@offset..i]
+          @offset = i + 1
+          return string
+        end
+      end
+
+      error(@offset, 'Unclosed quoted string')
+    end
   end
 end
 
+# rubocop:enable Style/EmptyElse
 # rubocop:enable Style/RedundantRegexpEscape

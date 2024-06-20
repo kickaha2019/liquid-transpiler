@@ -1,17 +1,20 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/HashAlignment
+
 module LiquidTranspiler
   class Expression
     OPERATORS = {
-      :and => ['And', true],
-      :contains => ['Contains', false],
-      :or => ['Or', true],
-      '==' => ['Equals',              false],
-      '!=' => ['NotEquals',           false],
-      '>' => ['GreaterThan', false],
-      '>=' => ['GreaterThanOrEquals', false],
-      '<' => ['LessThan', false],
-      '<=' => ['LessThanOrEquals', false]
+      :and      => ['And',                 true],
+      :contains => ['Contains',            false],
+      :or       => ['Or',                  true],
+      '=='      => ['Equals',              false],
+      '!='      => ['NotEquals',           false],
+      '<>'      => ['NotEquals',           false],
+      '>'       => ['GreaterThan',         false],
+      '>='      => ['GreaterThanOrEquals', false],
+      '<'       => ['LessThan',            false],
+      '<='      => ['LessThanOrEquals',    false]
     }.freeze
 
     def self.parse(source)
@@ -34,6 +37,13 @@ module LiquidTranspiler
       end
 
       [formula, term]
+    end
+
+    def self.parse_parameter(offset, source)
+      if source.get != ':'
+        source.error(offset, 'Expected :')
+      end
+      parse(source)
     end
 
     def self.parse1(source)
@@ -68,7 +78,7 @@ module LiquidTranspiler
           end
           elements[-1] = Operators::Array.new(elements[-1], formula)
         when '.'
-          elements[-1] = Operators::Dereference.new(elements[-1], source.get_name)
+          elements[-1] = Operators::Dereference.new(elements[-1], source.expect_name)
         when '|'
           term = token
           break
@@ -148,3 +158,5 @@ module LiquidTranspiler
     end
   end
 end
+
+# rubocop:enable Layout/HashAlignment

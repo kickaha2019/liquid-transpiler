@@ -124,6 +124,20 @@ class TestBase < Minitest::Test
     end
   end
 
+  def expect_code(code, expected_code)
+    prepare(code, 'test.liquid')
+    @@test_number  += 1
+    clazz          =  "Temp#{@@test_number}"
+    path           = "#{@@dir}/Test.rb"
+    if @@transpiler.transpile_dir(@@dir, path, class:clazz)
+      code = IO.read(path)
+      refute_nil code.match(expected_code)
+    else
+      @@transpiler.errors { |error| puts error }
+      raise 'Unexpected error in test'
+    end
+  end
+
   def expect_error(code, expected_error)
     prepare(code, 'test.liquid')
     @@test_number  += 1

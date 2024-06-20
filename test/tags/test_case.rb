@@ -20,4 +20,25 @@ class TestCase < TestBase
       {% endcase %}
     CASE_ELSE
   end
+
+  def test_case2
+    expect_code(<<~CASE2, /def t0\(a0\)/)
+      {% case 2 %}
+      {% when 1 %}{% assign fruit = 'Apple' %}
+      {% when 2 %}{% assign fruit = 'Banana' %}
+      {% endcase %}
+      {{ fruit }}
+    CASE2
+  end
+
+  def test_case3
+    expect_code(<<~CASE3, /def t0\(\)/)
+      {% case 2 %}
+      {% when 1 %}{% assign fruit = 'Apple' %}
+      {% when 2 %}{% assign fruit = 'Banana' %}
+      {% else %}{% assign fruit = 'Durian' %}
+      {% endcase %}
+      {{ fruit }}
+    CASE3
+  end
 end

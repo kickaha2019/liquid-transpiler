@@ -21,18 +21,12 @@ module LiquidTranspiler
         loop do
           case term
           when :limit
-            if source.get != ':'
-              source.error(@offset, 'Expected : after limit')
-            end
-            @limit, term = Expression.parse(source)
+            @limit, term = Expression.parse_parameter(@offset, source)
           when :reversed
             @reversed = true
             term = source.get
           when :offset
-            if source.get != ':'
-              source.error(@offset, 'Expected : after offset')
-            end
-            @start, term = Expression.parse(source)
+            @start, term = Expression.parse_parameter(@offset, source)
           else
             break
           end
@@ -63,7 +57,7 @@ module LiquidTranspiler
         @start&.find_arguments(names)
         names = names.spawn
         names.assign(@variable)
-        names.assign('forloop')
+        names.assign(:forloop)
         super(names)
       end
 

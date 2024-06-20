@@ -62,6 +62,14 @@ class TestFor < TestBase
     FOR_RANGE
   end
 
+  def test_for_range2
+    expect_code(<<~FOR_RANGE2, /def t0\(\)/)
+      {% for i in (3..5) %}
+        {{ i }}
+      {% endfor %}
+    FOR_RANGE2
+  end
+
   def test_for_reversed
     compare(<<~FOR_LIMIT, {'array' => [1, 2, 3, 4, 5, 6]})
       {% for item in array reversed %}
@@ -93,5 +101,19 @@ class TestFor < TestBase
         {% endfor %}
       {% endfor %}
     FORLOOP
+  end
+
+  def test_for_forloop2
+    expect_code(<<~FORLOOP2, /def t0\(\)/)
+      {% for item in (1..2) %}
+        length {{ forloop.length }}
+        index {{ forloop.index }}
+        index0 {{ forloop.index0 }}
+        rindex {{ forloop.rindex }}
+        rindex0 {{ forloop.rindex0 }}
+        first {{ forloop.first }}
+        last {{ forloop.last }}
+      {% endfor %}
+    FORLOOP2
   end
 end

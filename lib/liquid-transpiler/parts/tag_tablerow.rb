@@ -20,20 +20,11 @@ module LiquidTranspiler
         loop do
           case term
           when :cols
-            if source.get != ':'
-              source.error(@offset, 'Expected : after cols')
-            end
-            @columns, term = Expression.parse(source)
+            @columns, term = Expression.parse_parameter(@offset, source)
           when :limit
-            if source.get != ':'
-              source.error(@offset, 'Expected : after limit')
-            end
-            @limit, term = Expression.parse(source)
+            @limit, term = Expression.parse_parameter(@offset, source)
           when :offset
-            if source.get != ':'
-              source.error(@offset, 'Expected : after offset')
-            end
-            @start, term = Expression.parse(source)
+            @start, term = Expression.parse_parameter(@offset, source)
           else
             break
           end
