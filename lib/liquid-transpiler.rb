@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'liquid-transpiler/requires'
+Dir["#{__dir__}/liquid-transpiler/*.rb"].each { |f| require f }
+Dir["#{__dir__}/liquid-transpiler/operators/*.rb"].each { |f| require f }
+Dir["#{__dir__}/liquid-transpiler/parts/*.rb"].each { |f| require f }
 
 module LiquidTranspiler
   class LiquidTranspiler
