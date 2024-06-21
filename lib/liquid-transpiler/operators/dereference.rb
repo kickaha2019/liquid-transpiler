@@ -21,7 +21,7 @@ module LiquidTranspiler
         when 'size'
           "f_size(#{@expression.generate(context)})"
         else
-          "x(#{@expression.generate(context)},'#{@field}')"
+          "unpack(#{@expression.generate(context)},'#{@field}')"
         end
       end
     end

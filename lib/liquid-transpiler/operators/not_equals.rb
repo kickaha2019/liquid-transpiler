@@ -14,7 +14,7 @@ module LiquidTranspiler
       end
 
       def generate(context)
-        "o_ne(#{@left.generate(context)},#{@right.generate(context)})"
+        "operator_ne(#{@left.generate(context)},#{@right.generate(context)})"
       end
     end
   end

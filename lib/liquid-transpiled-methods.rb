@@ -152,56 +152,48 @@ module TranspiledMethods
     end
   end
 
-  def f(list, old_forloop)
-    unless list.is_a?(Array)
-      list = list.to_a
-    end
-
-    Forloop.new(old_forloop, l(list))
+  def filter_abs(value)
+    to_number(value).abs
   end
 
-  def f_abs(value)
-    n(value).abs
-  end
-
-  def f_append(value, postfix)
+  def filter_append(value, postfix)
     value.to_s + postfix.to_s
   end
 
-  def f_at_least(value, limit)
-    value = n(value)
-    limit = n(limit)
+  def filter_at_least(value, limit)
+    value = to_number(value)
+    limit = to_number(limit)
     value < limit ? limit : value
   end
 
-  def f_at_most(value, limit)
-    value = n(value)
-    limit = n(limit)
+  def filter_at_most(value, limit)
+    value = to_number(value)
+    limit = to_number(limit)
     value < limit ? value : limit
   end
 
-  def f_capitalize(value)
+  def filter_capitalize(value)
     value.to_s.capitalize
   end
 
-  def f_ceil(value)
-    n(value).ceil
+  def filter_ceil(value)
+    to_number(value).ceil
   end
 
-  def f_compact(map)
+  def filter_compact(map)
     [].tap do |result|
-      l(map).each { |entry| result << entry if entry }
+      to_array(map).each { |entry| result << entry if entry }
     end
   end
 
-  def f_concat(map1, map2)
+  def filter_concat(map1, map2)
     [].tap do |result|
-      l(map1).each { |entry| result << entry }
-      l(map2).each { |entry| result << entry }
+      to_array(map1).each { |entry| result << entry }
+      to_array(map2).each { |entry| result << entry }
     end
   end
 
-  def f_date(date, format)
+  def filter_date(date, format)
     if date.is_a?(String)
       case date
       when 'now'
@@ -216,16 +208,16 @@ module TranspiledMethods
     date.strftime(format)
   end
 
-  def f_default(value, defval, params = {})
+  def filter_default(value, defval, params = {})
     return value if params['allow_false'] && (value == false)
     return defval if value.respond_to?(EMPTY_METHOD) && value.empty?
 
     value || defval
   end
 
-  def f_divided_by(value, divisor)
-    value = n(value)
-    divisor = n(divisor)
+  def filter_divided_by(value, divisor)
+    value = to_number(value)
+    divisor = to_number(divisor)
 
     if divisor.is_a?(Integer)
       (value / divisor).floor
@@ -234,11 +226,11 @@ module TranspiledMethods
     end
   end
 
-  def f_downcase(value)
+  def filter_downcase(value)
     value.to_s.downcase
   end
 
-  def f_escape(value)
+  def filter_escape(value)
     value = value.to_s
     value.gsub(/['&"<>]/) do |letter|
       case letter
@@ -258,17 +250,17 @@ module TranspiledMethods
     end
   end
 
-  def f_escape_once(value)
+  def filter_escape_once(value)
     value = value.to_s
 
     fragments, offset = [], 0
     while offset < value.size
       if m = value.match(/(&([a-z]+|#\d+);)/i, offset)
-        fragments << f_escape(value[offset...m.begin(0)])
+        fragments << filter_escape(value[offset...m.begin(0)])
         fragments << m[1]
         offset    = m.end(0)
       else
-        fragments << f_escape(value[offset..])
+        fragments << filter_escape(value[offset..])
         break
       end
     end
@@ -276,8 +268,8 @@ module TranspiledMethods
     fragments.join('')
   end
 
-  def f_first(list)
-    l(list)[0]
+  def filter_first(list)
+    to_array(list)[0]
     # return list[0] if list.is_a?( Array)
     # list.each do |entry|
     #   return entry
@@ -285,91 +277,91 @@ module TranspiledMethods
     # nil
   end
 
-  def f_floor(value)
-    n(value).floor
+  def filter_floor(value)
+    to_number(value).floor
   end
 
-  def f_join(map, separator)
+  def filter_join(map, separator)
     [].tap do |result|
-      l(map).each { |entry| result << entry }
+      to_array(map).each { |entry| result << entry }
     end.join(separator)
   end
 
-  def f_last(list)
-    l(list)[-1]
+  def filter_last(list)
+    to_array(list)[-1]
   end
 
-  def f_lstrip(value)
+  def filter_lstrip(value)
     value.to_s.lstrip
   end
 
-  def f_minus(left, right)
-    n(left) - n(right)
+  def filter_minus(left, right)
+    to_number(left) - to_number(right)
   end
 
-  def f_modulo(left, right)
-    n(left) % n(right)
+  def filter_modulo(left, right)
+    to_number(left) % to_number(right)
   end
 
-  def f_map(map, field)
+  def filter_map(map, field)
     [].tap do |result|
-      l(map).each { |entry| result << x(entry, field) }
+      to_array(map).each { |entry| result << unpack(entry, field) }
     end
   end
 
-  def f_newline_to_br(value)
+  def filter_newline_to_br(value)
     value.to_s.gsub("\n", "<br />\n")
   end
 
-  def f_plus(left, right)
-    n(left) + n(right)
+  def filter_plus(left, right)
+    to_number(left) + to_number(right)
   end
 
-  def f_prepend(value, prefix)
+  def filter_prepend(value, prefix)
     prefix.to_s + value.to_s
   end
 
-  def f_remove(value, elide)
+  def filter_remove(value, elide)
     value.to_s.gsub(elide.to_s, '')
   end
 
-  def f_remove_first(value, elide)
+  def filter_remove_first(value, elide)
     value.to_s.sub(elide.to_s, '')
   end
 
-  def f_replace(value, was, now)
+  def filter_replace(value, was, now)
     value.to_s.gsub(was.to_s, now.to_s)
   end
 
-  def f_replace_first(value, was, now)
+  def filter_replace_first(value, was, now)
     value.to_s.sub(was.to_s, now.to_s)
   end
 
-  def f_reverse(list)
-    l(list).reverse
+  def filter_reverse(list)
+    to_array(list).reverse
   end
 
-  def f_round(value, places = 0)
-    n(value).round(places)
+  def filter_round(value, places = 0)
+    to_number(value).round(places)
   end
 
-  def f_rstrip(value)
+  def filter_rstrip(value)
     value.to_s.rstrip
   end
 
-  def f_size(list)
+  def filter_size(list)
     if list.is_a?(String)
       list.size
     else
-      l(list).size
+      to_array(list).size
     end
   end
 
-  def f_slice(list, start, length = 1)
+  def filter_slice(list, start, length = 1)
     if list.is_a?(String)
       list.slice(start, length)
     else
-      l(list).slice(start, length).join('')
+      to_array(list).slice(start, length).join('')
     end
     # start = list.size + start if start < 0
     # if list.is_a?( String)
@@ -379,116 +371,116 @@ module TranspiledMethods
     # end
   end
 
-  def f_sort(list, sort_by = nil)
+  def filter_sort(list, sort_by = nil)
     if sort_by
-      l(list).sort_by { |entry| x(entry, sort_by) }
+      to_array(list).sort_by { |entry| unpack(entry, sort_by) }
     else
-      l(list).sort
+      to_array(list).sort
     end
   end
 
-  def f_sort_natural(list, sort_by = nil)
+  def filter_sort_natural(list, sort_by = nil)
     if sort_by
-      l(list).sort_by { |entry| x(entry, sort_by).downcase }
+      to_array(list).sort_by { |entry| unpack(entry, sort_by).downcase }
     else
-      l(list).sort_by(&:downcase)
+      to_array(list).sort_by(&:downcase)
     end
   end
 
-  def f_split(value, separator)
+  def filter_split(value, separator)
     value.to_s.split(separator.to_s)
   end
 
-  def f_strip(value)
+  def filter_strip(value)
     value.to_s.strip
   end
 
-  def f_strip_html(value)
+  def filter_strip_html(value)
     value.to_s.gsub(/<[^>]*>/, '')
   end
 
-  def f_strip_newlines(value)
+  def filter_strip_newlines(value)
     value.to_s.gsub("\n", '')
   end
 
-  def f_sum(list, sum_by = nil)
+  def filter_sum(list, sum_by = nil)
     if sum_by
-      l(list).inject(0) { |r, e| r + x(e, sum_by) }
+      to_array(list).inject(0) { |r, e| r + unpack(e, sum_by) }
     else
-      l(list).inject(:+)
+      to_array(list).inject(:+)
     end
   end
 
-  def f_times(value, mult)
-    n(value) * n(mult)
+  def filter_times(value, mult)
+    to_number(value) * to_number(mult)
   end
 
-  def f_truncate(text, limit, etc = '...')
+  def filter_truncate(text, limit, etc = '...')
     return text if text.size <= limit
 
     text[0...(limit - etc.size)] + etc
   end
 
-  def f_truncatewords(text, limit, etc = '...')
+  def filter_truncatewords(text, limit, etc = '...')
     words = text.split(' ')
     return text if words.size <= limit
 
     words[0...limit].join(' ') + etc
   end
 
-  def f_uniq(list)
-    l(list).uniq
+  def filter_uniq(list)
+    to_array(list).uniq
   end
 
-  def f_upcase(value)
+  def filter_upcase(value)
     value.to_s.upcase
   end
 
-  def f_url_decode(text)
+  def filter_url_decode(text)
     CGI.unescape text
   end
 
-  def f_url_encode(text)
+  def filter_url_encode(text)
     CGI.escape text
   end
 
-  def f_where(list, field, value = nil)
+  def filter_where(list, field, value = nil)
     if value.nil?
       [].tap do |results|
-        l(list).each do |entry|
-          results << entry if x(entry, field)
+        to_array(list).each do |entry|
+          results << entry if unpack(entry, field)
         end
       end
     else
       [].tap do |results|
-        l(list).each do |entry|
-          results << entry if x(entry, field) == value
+        to_array(list).each do |entry|
+          results << entry if unpack(entry, field) == value
         end
       end
     end
   end
 
-  def l(list)
-    list.to_a
-  end
-
-  def n(value)
-    if value.is_a?(String)
-      if value.index('.').nil?
-        value.to_i
-      else
-        value.to_f
-      end
-    else
-      value
+  def forloop(list, old_forloop)
+    unless list.is_a?(Array)
+      list = list.to_a
     end
+
+    Forloop.new(old_forloop, to_array(list))
   end
 
-  def o_contains(text, search)
+  def method_missing(symbol, * args)
+    if m = /^filter_(.*)$/.match(symbol.to_s)
+      raise "Undefined filter: #{m[1]}"
+    end
+
+    super(symbol, args)
+  end
+
+  def operator_contains(text, search)
     !text.index(search).nil?
   end
 
-  def o_eq(left, right)
+  def operator_eq(left, right)
     return true if left == right
 
     if left == :empty
@@ -500,7 +492,7 @@ module TranspiledMethods
     end
   end
 
-  def o_ne(left, right)
+  def operator_ne(left, right)
     if left == :empty
       !right.empty?
     elsif right == :empty
@@ -510,8 +502,8 @@ module TranspiledMethods
     end
   end
 
-  def t(thing)
-    thing.to_s
+  def respond_to_missing?
+    true
   end
 
   def tablerow(list)
@@ -519,10 +511,30 @@ module TranspiledMethods
     #   list = list.to_a
     # end
     #
-    Tablerowloop.new(l(list))
+    Tablerowloop.new(to_array(list))
   end
 
-  def x(thing, field)
+  def to_array(list)
+    list.to_a
+  end
+
+  def to_number(value)
+    if value.is_a?(String)
+      if value.index('.').nil?
+        value.to_i
+      else
+        value.to_f
+      end
+    else
+      value
+    end
+  end
+
+  def to_string(thing)
+    thing.to_s
+  end
+
+  def unpack(thing, field)
     if thing.is_a?(Hash)
       thing[field]
     else

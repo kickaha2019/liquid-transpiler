@@ -36,7 +36,7 @@ module LiquidTranspiler
           params << "{#{options.join(',')}}"
         end
 
-        "f_#{@name}(#{params.join(',')})"
+        "filter_#{@name}(#{params.join(',')})"
       end
     end
   end

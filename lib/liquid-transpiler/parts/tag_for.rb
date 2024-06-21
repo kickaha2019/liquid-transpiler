@@ -64,7 +64,7 @@ module LiquidTranspiler
       def generate(context, indent, io)
         io.print ' ' * indent
         for_name, old_for_loop = context.for(@variable)
-        io.puts "#{for_name}l = f(#{@expression.generate(context)},#{old_for_loop})"
+        io.puts "#{for_name}l = forloop(#{@expression.generate(context)},#{old_for_loop})"
 
         if @start
           io.print ' ' * indent

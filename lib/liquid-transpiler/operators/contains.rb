@@ -14,7 +14,7 @@ module LiquidTranspiler
       end
 
       def generate(context)
-        "o_contains(#{@text.generate(context)}, #{@search.generate(context)})"
+        "operator_contains(#{@text.generate(context)}, #{@search.generate(context)})"
       end
     end
   end

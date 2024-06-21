@@ -14,7 +14,7 @@ module LiquidTranspiler
       end
 
       def generate(context)
-        "o_eq(#{@left.generate(context)},#{@right.generate(context)})"
+        "operator_eq(#{@left.generate(context)},#{@right.generate(context)})"
       end
     end
   end
