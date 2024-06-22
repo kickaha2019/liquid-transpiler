@@ -10,10 +10,11 @@ module LiquidTranspiler
     RESERVED_WORDS = [:true, :false, :empty].freeze
 
     def initialize(path)
-      @path   = path
-      @offset = 0
-      @text   = IO.read(path)
-      @ungot  = []
+      @path       = path
+      @offset     = 0
+      @text       = IO.read(path)
+      @ungot      = []
+      @ignore_eol = true
     end
 
     def eof?
@@ -77,7 +78,7 @@ module LiquidTranspiler
 
       letter = @text[@offset..@offset]
 
-      if [',', ']', '[', ':', '|', '(', ')'].include?(letter)
+      if [',', ']', '[', ':', '|', '(', ')', "\n"].include?(letter)
         @offset += 1
         return letter
       elsif /[0-9]/ =~ letter
@@ -120,6 +121,10 @@ module LiquidTranspiler
     end
     # rubocop:enable Metrics/MethodLength
 
+    def ignore_eol(flag)
+      @ignore_eol = flag
+    end
+
     def next(expected)
       unless @ungot.empty?
         if @ungot[-1] == expected
@@ -134,6 +139,16 @@ module LiquidTranspiler
         @offset += expected.size
         true
       else
+        false
+      end
+    end
+
+    def next_token?(expected)
+      term = get
+      if term == expected
+        true
+      else
+        unget term
         false
       end
     end
@@ -165,14 +180,18 @@ module LiquidTranspiler
 
     def skip_space
       until eof?
-        @text.match(/\S/, @offset) do |m|
+        @text.match(@ignore_eol ? /\S/ : /[^ \t]/, @offset) do |m|
           @offset = m.begin(0)
         end
 
         if !eof? && (@text[@offset..@offset] == '#')
           if m1 = /(\n|-%}|%}|}})/.match(@text, @offset + 1)
             @offset = m1.begin(0)
-            next("\n")
+            if @ignore_eol
+              next("\n")
+            else
+              break
+            end
           else
             @offset = @text.size
             break

@@ -46,4 +46,20 @@ class TestLiquid < TestBase
       {{ overlays }}
     LIQUID3
   end
+
+  def test_liquid_error1
+    expect_error(<<~LIQUID_ERROR1, /Bad syntax/)
+      {% liquid#{' '}
+        assign x =#{' '}
+        123
+      %}
+      {{ x }}
+    LIQUID_ERROR1
+  end
+
+  def test_liquid_error2
+    expect_error(<<~LIQUID_ERROR2, /Unexpected echo/)
+      {% liquid echo "Hello" echo "World" %}
+    LIQUID_ERROR2
+  end
 end
