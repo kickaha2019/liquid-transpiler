@@ -15,6 +15,7 @@ module LiquidTranspiler
       @text       = IO.read(path)
       @ungot      = []
       @ignore_eol = true
+      @line       = 1
     end
 
     def eof?
@@ -125,9 +126,14 @@ module LiquidTranspiler
       @ignore_eol = flag
     end
 
+    def line_number
+      @line
+    end
+
     def next(expected)
       unless @ungot.empty?
         if @ungot[-1] == expected
+          @line += 1 if expected == "\n"
           @ungot.pop
           return true
         else
@@ -180,24 +186,32 @@ module LiquidTranspiler
 
     def skip_space
       until eof?
-        @text.match(@ignore_eol ? /\S/ : /[^ \t]/, @offset) do |m|
+        @text.match(/[^ \t]/, @offset) do |m|
           @offset = m.begin(0)
         end
 
-        if !eof? && (@text[@offset..@offset] == '#')
+        case @text[@offset..@offset]
+        when "\n"
+          if @ignore_eol
+            @line   += 1
+            @offset += 1
+          else
+            return
+          end
+        when '#'
           if m1 = /(\n|-%}|%}|}})/.match(@text, @offset + 1)
             @offset = m1.begin(0)
             if @ignore_eol
               next("\n")
             else
-              break
+              return
             end
           else
             @offset = @text.size
-            break
+            return
           end
         else
-          break
+          return
         end
       end
     end

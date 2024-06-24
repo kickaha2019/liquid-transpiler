@@ -154,6 +154,29 @@ class TestBase < Minitest::Test
     end
   end
 
+  def expect_runtime_exception(code, expected_exception, params = {})
+    prepare(code, 'test.liquid')
+    @@test_number  += 1
+    clazz          =  "Temp#{@@test_number}"
+    path           = "#{@@dir}/Test.rb"
+    unless @@transpiler.transpile_dir(@@dir, path, class:clazz)
+      raise 'Expected error not raised'
+    end
+
+    okay = false
+    begin
+      load(path)
+      Object.const_get(clazz).new.render('test', params)
+    rescue StandardError => e
+      p e.message
+      okay = expected_exception =~ e.message
+    end
+
+    unless okay
+      raise 'Expected exception not raised'
+    end
+  end
+
   def prepare(code, path)
     File.open("#{@@dir}/#{path}", 'w') do |io|
       io.print code
