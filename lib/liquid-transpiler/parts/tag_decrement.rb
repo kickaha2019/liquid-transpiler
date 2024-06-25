@@ -16,13 +16,13 @@ module LiquidTranspiler
         names.increment(@name)
       end
 
-      def generate(context, indent, io)
+      def generate(context, indent)
         variable = context.increment(@name)
-        io.print ' ' * indent
-        io.puts "#{variable} -= 1"
-        io.print(' ' * indent)
-        io.print context.output
-        io.puts " << #{variable}.to_s"
+        context.print ' ' * indent
+        context.puts "#{variable} -= 1"
+        context.print(' ' * indent)
+        context.print context.output
+        context.puts " << #{variable}.to_s"
       end
     end
   end

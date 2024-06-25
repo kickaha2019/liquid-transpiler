@@ -41,7 +41,7 @@ module LiquidTranspiler
         end
       end
 
-      def generate(context, indent, io)
+      def generate(context, indent)
         info = context.signature(@target)
         if info
           call_arguments = {}
@@ -52,39 +52,39 @@ module LiquidTranspiler
           if @for
             argument = call_arguments.keys.first
             for_name, = context.for(argument)
-            io.puts "#{for_name}l = forloop(#{call_arguments[argument]},nil)"
+            context.puts "#{for_name}l = forloop(#{call_arguments[argument]},nil)"
             call_arguments[:forloop] = "#{for_name}l"
             call_arguments[argument] = for_name
 
-            io.print ' ' * indent
-            io.puts "#{for_name}l.each do |#{for_name}|"
-            generate_call(info, call_arguments, context, indent + 2, io)
-            io.print ' ' * indent
-            io.puts 'end'
+            context.print ' ' * indent
+            context.puts "#{for_name}l.each do |#{for_name}|"
+            generate_call(info, call_arguments, context, indent + 2)
+            context.print ' ' * indent
+            context.puts 'end'
 
             context.endfor(argument)
           else
-            generate_call(info, call_arguments, context, indent, io)
+            generate_call(info, call_arguments, context, indent)
           end
         else
           error(@offset, "Undefined render target: #{@target}")
         end
       end
 
-      def generate_call(info, parameters, context, indent, io)
-        io.print ' ' * indent
-        io.print context.output
-        io.print "<< t#{info[0]}"
+      def generate_call(info, parameters, context, indent)
+        context.print ' ' * indent
+        context.print context.output
+        context.print "<< t#{info[0]}"
 
         separ = '('
         info[1].arguments.each do |arg|
-          io.print separ
+          context.print separ
           separ = ','
-          io.print parameters[arg] || 'nil'
+          context.print parameters[arg] || 'nil'
         end
 
-        io.print ')' if separ != '('
-        io.puts
+        context.print ')' if separ != '('
+        context.puts
       end
 
       def setup_more?(term)

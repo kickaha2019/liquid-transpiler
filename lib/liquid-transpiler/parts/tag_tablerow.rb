@@ -53,65 +53,65 @@ module LiquidTranspiler
       end
 
       # rubocop:disable Metrics/MethodLength
-      def generate(context, indent, io)
-        io.print ' ' * indent
+      def generate(context, indent)
+        context.print ' ' * indent
         for_name = context.tablerow(@variable)
-        io.puts "#{for_name}l = tablerow(#{@expression.generate(context)})"
+        context.puts "#{for_name}l = tablerow(#{@expression.generate(context)})"
 
         if @columns
-          io.print ' ' * indent
-          io.puts "#{for_name}l.columns #{@columns.generate(context)}"
+          context.print ' ' * indent
+          context.puts "#{for_name}l.columns #{@columns.generate(context)}"
         end
 
         if @start
-          io.print ' ' * indent
-          io.puts "#{for_name}l.offset #{@start.generate(context)}"
+          context.print ' ' * indent
+          context.puts "#{for_name}l.offset #{@start.generate(context)}"
         end
 
         if @limit
-          io.print ' ' * indent
-          io.puts "#{for_name}l.limit #{@limit.generate(context)}"
+          context.print ' ' * indent
+          context.puts "#{for_name}l.limit #{@limit.generate(context)}"
         end
 
-        io.print ' ' * indent
-        io.puts "#{for_name}l.each do |#{for_name}|"
+        context.print ' ' * indent
+        context.puts "#{for_name}l.each do |#{for_name}|"
 
-        io.print ' ' * indent
-        io.puts "  if #{for_name}l.col_first"
-        io.print ' ' * (indent + 4)
-        io.print context.output
-        io.print ' << "<tr class=\\"row#{'
-        io.print "#{for_name}l.row}"
-        io.puts '\\">"'
-        io.print ' ' * (indent + 4)
-        io.print context.output
-        io.print ' << "\\n"'
-        io.puts "  if #{for_name}l.row == 1"
-        io.print ' ' * indent
-        io.puts '  end'
+        context.print ' ' * indent
+        context.puts "  if #{for_name}l.col_first"
+        context.print ' ' * (indent + 4)
+        context.print context.output
+        context.print ' << "<tr class=\\"row#{'
+        context.print "#{for_name}l.row}"
+        context.puts '\\">"'
+        context.print ' ' * (indent + 4)
+        context.print context.output
+        context.print ' << "\\n"'
+        context.puts "  if #{for_name}l.row == 1"
+        context.print ' ' * indent
+        context.puts '  end'
 
-        io.print ' ' * (indent + 2)
-        io.print context.output
-        io.print ' << "<td class=\\"col#{'
-        io.print "#{for_name}l.col}"
-        io.puts '\\">"'
+        context.print ' ' * (indent + 2)
+        context.print context.output
+        context.print ' << "<td class=\\"col#{'
+        context.print "#{for_name}l.col}"
+        context.puts '\\">"'
 
-        super(context, indent + 2, io)
+        super(context, indent + 2)
 
-        io.print ' ' * (indent + 2)
-        io.print context.output
-        io.puts " << '</td>'"
+        context.print ' ' * (indent + 2)
+        context.print context.output
+        context.puts " << '</td>'"
 
-        io.print ' ' * indent
-        io.puts "  if #{for_name}l.col_last || #{for_name}l.last"
-        io.print ' ' * (indent + 4)
-        io.print context.output
-        io.puts ' << "</tr>\\n"'
-        io.print ' ' * indent
-        io.puts '  end'
+        context.print ' ' * indent
+        context.puts "  if #{for_name}l.col_last || #{for_name}l.last"
+        context.print ' ' * (indent + 4)
+        context.print context.output
+        context.puts ' << "</tr>\\n"'
+        context.print ' ' * indent
+        context.puts '  end'
 
-        io.print ' ' * indent
-        io.puts 'end'
+        context.print ' ' * indent
+        context.puts 'end'
 
         context.endtablerow(@variable)
       end

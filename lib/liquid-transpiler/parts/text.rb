@@ -18,11 +18,11 @@ module LiquidTranspiler
         @text.empty?
       end
 
-      def generate(context, indent, io)
+      def generate(context, indent)
         unless empty?
-          io.print(' ' * indent)
-          io.print context.output
-          io.puts " << \"#{html_encode(@text)}\""
+          context.print(' ' * indent)
+          context.print context.output
+          context.puts " << \"#{html_encode(@text)}\""
         end
       end
 

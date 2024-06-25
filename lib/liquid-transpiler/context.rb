@@ -2,11 +2,13 @@
 
 module LiquidTranspiler
   class Context
-    def initialize(signatures, names)
+    def initialize(signatures, names, io)
       @signatures = signatures
       @variables  = {}
       @cycles     = {}
       @increments = {}
+      @io         = io
+      @line       = 1
 
       arguments = names.arguments
       (0...arguments.size).each do |i|
@@ -66,6 +68,15 @@ module LiquidTranspiler
 
     def output_push
       @output << "h#{@output.size + 1}"
+    end
+
+    def print(text)
+      @io.print text
+    end
+
+    def puts(text = '')
+      @io.puts text
+      @line += 1
     end
 
     def signature(name)

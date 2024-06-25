@@ -7,9 +7,9 @@ module LiquidTranspiler
         error(@offset, 'Internal error')
       end
 
-      def generate(_context, indent, io)
-        io.print ' ' * (indent - 2)
-        io.puts 'next'
+      def generate(context, indent)
+        context.print ' ' * (indent - 2)
+        context.puts 'next'
       end
     end
   end

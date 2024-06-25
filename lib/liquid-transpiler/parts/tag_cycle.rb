@@ -43,15 +43,15 @@ module LiquidTranspiler
         end
       end
 
-      def generate(context, indent, io)
+      def generate(context, indent)
         variable = context.cycle(@key)
-        io.print ' ' * indent
-        io.puts "#{variable} += 1"
-        io.print ' ' * indent
-        io.puts "#{variable} = 0 if #{variable} >= #{@cycle.size}"
+        context.print ' ' * indent
+        context.puts "#{variable} += 1"
+        context.print ' ' * indent
+        context.puts "#{variable} = 0 if #{variable} >= #{@cycle.size}"
 
-        io.print(' ' * indent)
-        io.print context.output
+        context.print(' ' * indent)
+        context.print context.output
         values = @cycle.collect do |cycle|
           if cycle.is_a?(Symbol)
             context.variable(cycle)
@@ -59,7 +59,7 @@ module LiquidTranspiler
             cycle
           end
         end
-        io.puts " << [#{values.join(',')}][#{variable}]"
+        context.puts " << [#{values.join(',')}][#{variable}]"
       end
     end
   end

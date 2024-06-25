@@ -10,12 +10,15 @@ module LiquidTranspiler
     RESERVED_WORDS = [:true, :false, :empty].freeze
 
     def initialize(path)
-      @path       = path
-      @offset     = 0
-      @text       = IO.read(path)
-      @ungot      = []
-      @ignore_eol = true
-      @line       = 1
+      @path        = path
+      @offset      = 0
+      @text        = IO.read(path)
+      @ungot       = []
+      @ignore_eol  = true
+      @line        = 1
+      @posn_index  = -1
+      @posn_line   = 1
+      @posn_column = 0
     end
 
     def eof?
@@ -23,12 +26,12 @@ module LiquidTranspiler
     end
 
     def error(offset, msg)
-      line, column, peek = position(offset)
+      line, column = position(offset)
       details = <<~ERROR
         File:   #{@path.split('/')[-1]}
         Line:   #{line}
         Column: #{column}
-        Text:   #{peek}
+        Text:   #{peek_from(offset, 50).gsub("\n", ' ')}
         Error:  #{msg}
       ERROR
       raise TranspilerError, details
@@ -64,6 +67,7 @@ module LiquidTranspiler
       @text.match(regex, @offset) do |m|
         was, @offset = @offset, m.begin(0)
         prefix = @text[was...@offset]
+        @line += prefix.count("\n")
       end
       prefix
     end
@@ -142,6 +146,7 @@ module LiquidTranspiler
       end
 
       if @text[@offset...(@offset + expected.size)] == expected
+        @line += 1 if expected == "\n"
         @offset += expected.size
         true
       else
@@ -163,24 +168,33 @@ module LiquidTranspiler
       @text[@offset..(@offset + distance - 1)]
     end
 
-    def position(offset)
-      lines = 1
-      index = 0
+    def peek_from(offset, distance)
+      @text[offset..(offset + distance - 1)]
+    end
 
-      while index < offset
-        if (index1 = @text.index("\n", index)) && (index1 < offset)
-          index = index1 + 1
-          lines += 1
-        else
-          break
-        end
+    def position(offset)
+      if @posn_index > offset
+        @posn_index  = -1
+        @posn_line   = 1
+        @posn_column = 0
       end
 
-      [lines, (offset - index + 1), @text[offset...(offset + 50)].gsub("\n", ' ')]
+      while @posn_index <= offset
+        if @text[@posn_index] == "\n"
+          @posn_line   += 1
+          @posn_column =  0
+        else
+          @posn_column += 1
+        end
+        @posn_index += 1
+      end
+
+      [@posn_line, @posn_column]
     end
 
     def remnant
       @offset, text = @text.size, @text[@offset..]
+      @line += text.count("\n")
       text
     end
 

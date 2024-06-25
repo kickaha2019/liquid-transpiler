@@ -11,10 +11,11 @@ module LiquidTranspiler
       attr_reader :offset, :parent
 
       def initialize(source, offset, parent)
-        @source   = source
-        @offset   = offset
-        @parent   = parent
-        @children = []
+        @source        = source
+        @line, @column = source.position(offset)
+        @offset        = offset
+        @parent        = parent
+        @children      = []
       end
 
       # rubocop:disable Metrics/MethodLength
@@ -102,9 +103,9 @@ module LiquidTranspiler
         end
       end
 
-      def generate(context, indent, io)
+      def generate(context, indent)
         @children.each do |child|
-          child.generate(context, indent, io)
+          child.generate(context, indent)
         end
       end
 

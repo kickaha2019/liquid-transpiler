@@ -18,10 +18,10 @@ module LiquidTranspiler
         @expression.find_arguments(names)
       end
 
-      def generate(context, indent, io)
-        io.print(' ' * indent)
-        io.print context.output
-        io.puts " << to_string(#{@expression.generate(context)})"
+      def generate(context, indent)
+        context.print(' ' * indent)
+        context.print context.output
+        context.puts " << to_string(#{@expression.generate(context)})"
       end
 
       def name

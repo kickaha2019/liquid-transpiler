@@ -45,9 +45,9 @@ module LiquidTranspiler
         write_start(io)
         @signature.each_pair do |name, info|
           write_method_start(info, io)
-          context = Context.new(@signature, info[1])
+          context = Context.new(@signature, info[1], io)
           begin
-            @parsed[name].generate(context, 4, io)
+            @parsed[name].generate(context, 4)
           rescue TranspilerError => e
             errors << e.message
           end

@@ -21,15 +21,15 @@ module LiquidTranspiler
         names.assign(@variable)
       end
 
-      def generate(context, indent, io)
+      def generate(context, indent)
         context.output_push
-        io.print ' ' * indent
-        io.print context.output
-        io.puts ' = []'
-        super(context, indent, io)
-        io.print ' ' * indent
-        io.print context.variable(@variable)
-        io.puts " = #{context.output}.join('')"
+        context.print ' ' * indent
+        context.print context.output
+        context.puts ' = []'
+        super(context, indent)
+        context.print ' ' * indent
+        context.print context.variable(@variable)
+        context.puts " = #{context.output}.join('')"
         context.output_pop
       end
     end

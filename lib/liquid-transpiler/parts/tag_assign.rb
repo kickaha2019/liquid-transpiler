@@ -24,10 +24,10 @@ module LiquidTranspiler
         names.assign(@variable)
       end
 
-      def generate(context, indent, io)
-        io.print ' ' * indent
-        io.print context.variable(@variable)
-        io.puts " = #{@expression.generate(context)}"
+      def generate(context, indent)
+        context.print ' ' * indent
+        context.print context.variable(@variable)
+        context.puts " = #{@expression.generate(context)}"
       end
     end
   end

@@ -61,43 +61,43 @@ module LiquidTranspiler
         super(names)
       end
 
-      def generate(context, indent, io)
-        io.print ' ' * indent
+      def generate(context, indent)
+        context.print ' ' * indent
         for_name, old_for_loop = context.for(@variable)
-        io.puts "#{for_name}l = forloop(#{@expression.generate(context)},#{old_for_loop})"
+        context.puts "#{for_name}l = forloop(#{@expression.generate(context)},#{old_for_loop})"
 
         if @start
-          io.print ' ' * indent
-          io.puts "#{for_name}l.offset #{@start.generate(context)}"
+          context.print ' ' * indent
+          context.puts "#{for_name}l.offset #{@start.generate(context)}"
         end
 
         if @limit
-          io.print ' ' * indent
-          io.puts "#{for_name}l.limit #{@limit.generate(context)}"
+          context.print ' ' * indent
+          context.puts "#{for_name}l.limit #{@limit.generate(context)}"
         end
 
         if @reversed
-          io.print ' ' * indent
-          io.puts "#{for_name}l.reverse"
+          context.print ' ' * indent
+          context.puts "#{for_name}l.reverse"
         end
 
         if @else
-          io.print ' ' * indent
-          io.puts "unless #{for_name}l.empty?"
+          context.print ' ' * indent
+          context.puts "unless #{for_name}l.empty?"
           indent += 2
         end
 
-        io.print ' ' * indent
-        io.puts "#{for_name}l.each do |#{for_name}|"
-        super(context, indent + 2, io)
-        io.print ' ' * indent
-        io.puts 'end'
+        context.print ' ' * indent
+        context.puts "#{for_name}l.each do |#{for_name}|"
+        super(context, indent + 2)
+        context.print ' ' * indent
+        context.puts 'end'
 
         if @else
           indent -= 2
-          @else.generate(context, indent + 2, io)
-          io.print ' ' * indent
-          io.puts 'end'
+          @else.generate(context, indent + 2)
+          context.print ' ' * indent
+          context.puts 'end'
         end
 
         context.endfor(@variable)

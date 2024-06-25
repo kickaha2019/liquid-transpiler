@@ -11,12 +11,12 @@ module LiquidTranspiler
         super(part)
       end
 
-      def generate(context, indent, io)
-        io.print ' ' * indent
-        io.puts "unless #{@expression.generate(context)}"
-        super(context, indent + 2, io)
-        io.print ' ' * indent
-        io.puts 'end'
+      def generate(context, indent)
+        context.print ' ' * indent
+        context.puts "unless #{@expression.generate(context)}"
+        super(context, indent + 2)
+        context.print ' ' * indent
+        context.puts 'end'
       end
     end
   end

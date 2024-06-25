@@ -17,10 +17,10 @@ module LiquidTranspiler
         super(part)
       end
 
-      def generate(context, indent, io)
-        io.print ' ' * (indent - 2)
-        io.puts "when #{@expression.generate(context)}"
-        super(context, indent, io)
+      def generate(context, indent)
+        context.print ' ' * (indent - 2)
+        context.puts "when #{@expression.generate(context)}"
+        super(context, indent)
       end
     end
   end
