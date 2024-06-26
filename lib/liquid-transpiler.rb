@@ -41,20 +41,22 @@ module LiquidTranspiler
     end
 
     def generate_ruby(path)
-      File.open(path, 'w') do |io|
-        write_start(io)
-        @signature.each_pair do |name, info|
-          write_method_start(info, io)
-          context = Context.new(@signature, info[1], io)
-          begin
-            @parsed[name].generate(context, 4)
-          rescue TranspilerError => e
-            errors << e.message
-          end
-          write_method_end(io)
+      context = Context.new(@signature, path)
+      context.write_start(@clazz, @include)
+      @signature.each_pair do |name, info|
+        context.record(name)
+        context.prepare(info[1])
+        context.write_method_start(info)
+        begin
+          @parsed[name].record(context)
+          @parsed[name].generate(context, 4)
+        rescue TranspilerError => e
+          errors << e.message
         end
-        io.puts 'end'
+        context.write_method_end
       end
+      context.write_records
+      context.write_end
     end
 
     def parse(path)
@@ -86,53 +88,6 @@ module LiquidTranspiler
     def process_options(options)
       @clazz   = options[:class]   || 'Transpiled'
       @include = options[:include] || 'TranspiledMethods'
-    end
-
-    def write_method_end(io)
-      io.puts <<"METHOD_END"
-    h.join('')
-  end
-METHOD_END
-    end
-
-    def write_method_start(info, io)
-      args = (0...info[1].arguments.size).collect { |i| "a#{i}" }.join(',')
-
-      io.puts <<"METHOD_HEADER"
-  def t#{info[0]}(#{args})
-    h = []
-METHOD_HEADER
-
-      (0...info[1].cycles.size).each do |i|
-        io.puts "    c#{i} = -1"
-      end
-
-      (0...info[1].increments.size).each do |i|
-        io.puts "    d#{i} = 0"
-      end
-    end
-
-    def write_start(io)
-      io.puts <<~"START"
-        class #{@clazz}
-          include #{@include}
-          TEMPLATES = {
-      START
-      @signature.each_pair do |key, info|
-        args = info[1].arguments.collect { |arg| "'#{arg}'" }.join(',')
-        io.puts "  '#{key}' => [:t#{info[0]},[#{args}]],"
-      end
-      io.puts <<RENDER
-  }
-  def render( name, params={})
-    if info = TEMPLATES[name]
-      send( info[0], * info[1].collect {|arg| params[arg]})#{'  '}
-    else
-      raise( 'Unknown template: ' + name)
-    end
-  end
-  private
-RENDER
     end
   end
 end

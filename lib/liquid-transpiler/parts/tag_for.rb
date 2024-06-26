@@ -95,6 +95,7 @@ module LiquidTranspiler
 
         if @else
           indent -= 2
+          @else.record(context)
           @else.generate(context, indent + 2)
           context.print ' ' * indent
           context.puts 'end'

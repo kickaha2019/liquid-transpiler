@@ -2,33 +2,11 @@
 
 module LiquidTranspiler
   class Context
-    def initialize(signatures, names, io)
+    def initialize(signatures, path)
       @signatures = signatures
-      @variables  = {}
-      @cycles     = {}
-      @increments = {}
-      @io         = io
+      @io         = File.open(path, 'w')
       @line       = 1
-
-      arguments = names.arguments
-      (0...arguments.size).each do |i|
-        @variables[arguments[i]] = "a#{i}"
-      end
-
-      cycles = names.cycles
-      (0...cycles.size).each do |i|
-        @cycles[cycles[i]] = "c#{i}"
-      end
-
-      increments = names.increments
-      (0...increments.size).each do |i|
-        @increments[increments[i]] = "d#{i}"
-      end
-
-      @output    = ['h']
-      @fors      = []
-      @index     = 0
-      @tablerows = []
+      @records    = []
     end
 
     def cycle(name)
@@ -70,6 +48,31 @@ module LiquidTranspiler
       @output << "h#{@output.size + 1}"
     end
 
+    def prepare(names)
+      @variables  = {}
+      @cycles     = {}
+      @increments = {}
+      arguments = names.arguments
+      (0...arguments.size).each do |i|
+        @variables[arguments[i]] = "a#{i}"
+      end
+
+      cycles = names.cycles
+      (0...cycles.size).each do |i|
+        @cycles[cycles[i]] = "c#{i}"
+      end
+
+      increments = names.increments
+      (0...increments.size).each do |i|
+        @increments[increments[i]] = "d#{i}"
+      end
+
+      @output    = ['h']
+      @fors      = []
+      @index     = 0
+      @tablerows = []
+    end
+
     def print(text)
       @io.print text
     end
@@ -77,6 +80,10 @@ module LiquidTranspiler
     def puts(text = '')
       @io.puts text
       @line += 1
+    end
+
+    def record(*data)
+      @records << [@line, *data]
     end
 
     def signature(name)
@@ -88,6 +95,70 @@ module LiquidTranspiler
       @variables[name]          = "tablerow#{@tablerows.size}"
       @variables[:tablerowloop] = "tablerow#{@tablerows.size}l"
       @variables[name]
+    end
+
+    def write_end
+      puts 'end'
+      @io.close
+    end
+
+    def write_method_end
+      puts <<"METHOD_END"
+    h.join('')
+  end
+METHOD_END
+    end
+
+    def write_method_start(info)
+      args = (0...info[1].arguments.size).collect { |i| "a#{i}" }.join(',')
+
+      puts <<"METHOD_HEADER"
+  def t#{info[0]}(#{args})
+    h = []
+METHOD_HEADER
+
+      (0...info[1].cycles.size).each do |i|
+        puts "    c#{i} = -1"
+      end
+
+      (0...info[1].increments.size).each do |i|
+        puts "    d#{i} = 0"
+      end
+    end
+
+    def write_records
+      puts 'RECORDS = ['
+      @records.each do |rec|
+        if rec[1].is_a?(String)
+          puts "[#{rec[0]},\"#{rec[1]}\"],"
+        else
+          puts "[#{rec[0]},#{rec[1]},#{rec[2]}],"
+        end
+      end
+      puts '].freeze'
+    end
+
+    def write_start(clazz, include)
+      puts <<~"START"
+        class #{clazz}
+          include #{include}
+          TEMPLATES = {
+      START
+      @signatures.each_pair do |key, info|
+        args = info[1].arguments.collect { |arg| "'#{arg}'" }.join(',')
+        @io.puts "  '#{key}' => [:t#{info[0]},[#{args}]],"
+      end
+      @io.puts <<RENDER
+  }.freeze
+  def render( name, params={})
+    if info = TEMPLATES[name]
+      send( info[0], * info[1].collect {|arg| params[arg]})#{'  '}
+    else
+      raise( 'Unknown template: ' + name)
+    end
+  end
+  private
+RENDER
     end
 
     def variable(name)

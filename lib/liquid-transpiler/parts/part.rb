@@ -105,6 +105,7 @@ module LiquidTranspiler
 
       def generate(context, indent)
         @children.each do |child|
+          child.record(context)
           child.generate(context, indent)
         end
       end
@@ -172,6 +173,10 @@ module LiquidTranspiler
         else
           source.error(offset, "Bad tag name: #{token}")
         end
+      end
+
+      def record(context)
+        context.record(@line, @column)
       end
     end
   end
