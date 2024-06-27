@@ -75,15 +75,17 @@ module LiquidTranspiler
 
     def print(text)
       @io.print text
+      @line += text.count("\n")
     end
 
     def puts(text = '')
       @io.puts text
-      @line += 1
+      @line += (1 + text.count("\n"))
+      @line -= 1 if text[-1] == "\n"
     end
 
-    def record(*data)
-      @records << [@line, *data]
+    def record(reference, *data)
+      @records << [reference, @line, *data]
     end
 
     def signature(name)
@@ -129,10 +131,10 @@ METHOD_HEADER
     def write_records
       puts 'RECORDS = ['
       @records.each do |rec|
-        if rec[1].is_a?(String)
-          puts "[#{rec[0]},\"#{rec[1]}\"],"
+        if rec[2].is_a?(String)
+          puts "[#{rec[1]},\"#{rec[2]}\"], # #{rec[0]}"
         else
-          puts "[#{rec[0]},#{rec[1]},#{rec[2]}],"
+          puts "[#{rec[1]},#{rec[2]},#{rec[3]}], # #{rec[0]}"
         end
       end
       puts '].freeze'
@@ -146,13 +148,17 @@ METHOD_HEADER
       START
       @signatures.each_pair do |key, info|
         args = info[1].arguments.collect { |arg| "'#{arg}'" }.join(',')
-        @io.puts "  '#{key}' => [:t#{info[0]},[#{args}]],"
+        puts "  '#{key}' => [:t#{info[0]},[#{args}]],"
       end
-      @io.puts <<RENDER
+      puts <<RENDER
   }.freeze
   def render( name, params={})
     if info = TEMPLATES[name]
-      send( info[0], * info[1].collect {|arg| params[arg]})#{'  '}
+      begin
+        send( info[0], * info[1].collect {|arg| params[arg]})#{'  '}
+      rescue StandardError => e
+        raise liquify_exception(RECORDS,e)
+      end
     else
       raise( 'Unknown template: ' + name)
     end

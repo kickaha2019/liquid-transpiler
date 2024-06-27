@@ -154,7 +154,7 @@ class TestBase < Minitest::Test
     end
   end
 
-  def expect_runtime_exception(code, expected_exception, params = {})
+  def expect_runtime_exception(code, params = {})
     prepare(code, 'test.liquid')
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
@@ -168,8 +168,8 @@ class TestBase < Minitest::Test
       load(path)
       Object.const_get(clazz).new.render('test', params)
     rescue StandardError => e
-      p e.message
-      okay = expected_exception =~ e.message
+      okay = true
+      yield e
     end
 
     unless okay

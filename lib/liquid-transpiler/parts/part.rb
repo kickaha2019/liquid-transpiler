@@ -176,7 +176,7 @@ module LiquidTranspiler
       end
 
       def record(context)
-        context.record(@line, @column)
+        context.record(class_name, @line, @column)
       end
     end
   end

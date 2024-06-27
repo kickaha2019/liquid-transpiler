@@ -44,7 +44,7 @@ module LiquidTranspiler
       context = Context.new(@signature, path)
       context.write_start(@clazz, @include)
       @signature.each_pair do |name, info|
-        context.record(name)
+        context.record(name, name)
         context.prepare(info[1])
         context.write_method_start(info)
         begin

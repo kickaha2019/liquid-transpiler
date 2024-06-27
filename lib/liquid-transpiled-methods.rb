@@ -468,6 +468,31 @@ module TranspiledMethods
     Forloop.new(old_forloop, to_array(list))
   end
 
+  def liquify_exception(records, exception)
+    backtrace = exception.backtrace
+    if backtrace.is_a?(Array)
+      backtrace.each_index do |i|
+        /:(\d+):in `t\d+'$/.match(backtrace[i]) do |m|
+          file, line, column = '', 1, 1
+          records.each do |record|
+            if record[0] <= m[1].to_i
+              if record[1].is_a?(String)
+                file = record[1]
+              else
+                line, column = record[1], record[2]
+              end
+            else
+              break
+            end
+          end
+          backtrace[i] = "#{file}.liquid:#{line}:#{column}"
+        end
+      end
+      exception.set_backtrace(backtrace)
+    end
+    exception
+  end
+
   def method_missing(symbol, * args)
     if m = /^filter_(.*)$/.match(symbol.to_s)
       raise "Undefined filter: #{m[1]}"

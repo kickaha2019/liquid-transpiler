@@ -16,9 +16,9 @@ module LiquidTranspiler
       @ungot       = []
       @ignore_eol  = true
       @line        = 1
-      @posn_index  = -1
+      @posn_index  = 0
       @posn_line   = 1
-      @posn_column = 0
+      @posn_column = 1
     end
 
     def eof?
@@ -174,19 +174,19 @@ module LiquidTranspiler
 
     def position(offset)
       if @posn_index > offset
-        @posn_index  = -1
+        @posn_index  = 0
         @posn_line   = 1
-        @posn_column = 0
+        @posn_column = 1
       end
 
-      while @posn_index <= offset
+      while @posn_index < offset
+        @posn_index += 1
         if @text[@posn_index] == "\n"
           @posn_line   += 1
-          @posn_column =  0
+          @posn_column =  1
         else
           @posn_column += 1
         end
-        @posn_index += 1
       end
 
       [@posn_line, @posn_column]
