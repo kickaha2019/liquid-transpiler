@@ -74,7 +74,7 @@ module LiquidTranspiler
       def generate_call(info, parameters, context, indent)
         context.print ' ' * indent
         context.print context.output
-        context.print "<< t#{info[0]}"
+        context.print " << t#{info[0]}"
 
         separ = '('
         info[1].arguments.each do |arg|

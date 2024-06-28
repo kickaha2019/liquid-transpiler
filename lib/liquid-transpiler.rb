@@ -35,13 +35,13 @@ module LiquidTranspiler
       @signature = {}
       index = 0
       @parsed.each_pair do |name, ast|
-        @signature[name] = [index, ast.deduce_names]
+        @signature[name] = [index, ast.deduce_names(@globals)]
         index += 1
       end
     end
 
     def generate_ruby(path)
-      context = Context.new(@signature, path)
+      context = Context.new(@globals, @signature, path)
       context.write_start(@clazz, @include)
       @signature.each_pair do |name, info|
         context.record(name, name)
@@ -88,6 +88,7 @@ module LiquidTranspiler
     def process_options(options)
       @clazz   = options[:class]   || 'Transpiled'
       @include = options[:include] || 'TranspiledMethods'
+      @globals = options[:globals] || []
     end
   end
 end

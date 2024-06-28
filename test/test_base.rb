@@ -113,7 +113,7 @@ class TestBase < Minitest::Test
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = "#{@@dir}/Test.rb"
-    if @@transpiler.transpile_dir(@@dir, path, class:clazz)
+    if @@transpiler.transpile_dir(@@dir, path, class:clazz, globals:['site'])
       load(path)
       transpiled_output = Object.const_get(clazz).new.render('test', params)
       p ['transpiled_output', transpiled_output]
@@ -129,7 +129,7 @@ class TestBase < Minitest::Test
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = "#{@@dir}/Test.rb"
-    if @@transpiler.transpile_dir(@@dir, path, class:clazz)
+    if @@transpiler.transpile_dir(@@dir, path, class:clazz, globals:['site'])
       code = IO.read(path)
       refute_nil code.match(expected_code)
     else
@@ -143,7 +143,7 @@ class TestBase < Minitest::Test
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = "#{@@dir}/Test.rb"
-    if @@transpiler.transpile_dir(@@dir, path, class:clazz)
+    if @@transpiler.transpile_dir(@@dir, path, class:clazz, globals:['site'])
       raise 'Expected error not raised'
     else
       errors = []
@@ -159,7 +159,7 @@ class TestBase < Minitest::Test
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = "#{@@dir}/Test.rb"
-    unless @@transpiler.transpile_dir(@@dir, path, class:clazz)
+    unless @@transpiler.transpile_dir(@@dir, path, class:clazz, globals:['site'])
       raise 'Expected error not raised'
     end
 

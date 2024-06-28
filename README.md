@@ -1,18 +1,24 @@
 # liquid-transpiler
 Convert [Liquid](https://shopify.github.io/liquid/) templates to a Ruby class for performance.
-The aim is to support what is specified at
+The aim was to support what is specified at
 [Liquid templates](https://shopify.github.io/liquid/tags/template/)
 as far as possible, with the generated Ruby code giving the
 same results as the templates executed through
 the [Liquid Ruby gem](https://rubygems.org/gems/liquid/).
 
 This *transpiler* is not suitable for a server context
-which **Liquid** was
-designed for. There are tests but there will be 
+like [Shopify]() use **Liquid** in. In most 
+environments like
+[Jekyll](https://jekyllrb.com) or
+[Bridgetown](https://www.bridgetownrb.com) the **Liquid**
+implementations used have been extended with new tags etc
+which the *transpiler* doesn't have.
+
+There is a suite of tests but there will be 
 incompatibities with real use of **Liquid** which is
 very forgiving as regards syntax and execution. Sometimes
 what one might consider errors inside **Liquid** 
-just result in empty text.
+just result in empty text. 
 
 ## Using the transpiler
 ```
@@ -37,8 +43,8 @@ end
 load generated_file
 generated = Transpiled.new
 
-# Render a template *template* with options
-# in a *data* hash
+# Render a template *template* with settings
+# in a *data* hash with string keys
 html = generated.render( template, data)
 ```
 
@@ -49,6 +55,7 @@ keys.
 |Option|Default|Description|
 |-|-|-|
 |:class|Transpiled|Name of class to generate|
+|:globals||Array of names of variables which will be available in every template|
 |:include|LiquidTranspiledMethods|Module to include into generated class|
 
 ## Error handling

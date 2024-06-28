@@ -75,8 +75,9 @@ module LiquidTranspiler
         super(part)
       end
 
-      def deduce_names
+      def deduce_names(globals)
         Names.new.tap do |names|
+          globals.each { |global| names.assign(global.to_sym) }
           find_arguments(names)
         end
       end

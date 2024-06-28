@@ -2,7 +2,8 @@
 
 module LiquidTranspiler
   class Context
-    def initialize(signatures, path)
+    def initialize(globals, signatures, path)
+      @globals    = globals
       @signatures = signatures
       @io         = File.open(path, 'w')
       @line       = 1
@@ -52,6 +53,11 @@ module LiquidTranspiler
       @variables  = {}
       @cycles     = {}
       @increments = {}
+
+      @globals.each_index do |i|
+        @variables[@globals[i].to_sym] = "@g#{i}"
+      end
+
       arguments = names.arguments
       (0...arguments.size).each do |i|
         @variables[arguments[i]] = "a#{i}"
@@ -146,15 +152,26 @@ METHOD_HEADER
           include #{include}
           TEMPLATES = {
       START
+
       @signatures.each_pair do |key, info|
         args = info[1].arguments.collect { |arg| "'#{arg}'" }.join(',')
         puts "  '#{key}' => [:t#{info[0]},[#{args}]],"
       end
-      puts <<RENDER
+
+      puts <<RENDER1
   }.freeze
   def render( name, params={})
     if info = TEMPLATES[name]
       begin
+RENDER1
+
+      @globals.each_index do |i|
+        puts <<RENDER2
+        @g#{i} = params['#{@globals[i]}']
+RENDER2
+      end
+
+      puts <<RENDER3
         send( info[0], * info[1].collect {|arg| params[arg]})#{'  '}
       rescue StandardError => e
         raise liquify_exception(RECORDS,e)
@@ -164,7 +181,7 @@ METHOD_HEADER
     end
   end
   private
-RENDER
+RENDER3
     end
 
     def variable(name)
