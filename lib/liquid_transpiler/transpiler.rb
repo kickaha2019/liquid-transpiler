@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-Dir["#{__dir__}/liquid-transpiler/*.rb"].each { |f| require f }
-Dir["#{__dir__}/liquid-transpiler/operators/*.rb"].each { |f| require f }
-Dir["#{__dir__}/liquid-transpiler/parts/*.rb"].each { |f| require f }
+Dir["#{__dir__}/liquid_transpiler/*.rb"].each { |f| require f }
+Dir["#{__dir__}/liquid_transpiler/operators/*.rb"].each { |f| require f }
+Dir["#{__dir__}/liquid_transpiler/parts/*.rb"].each { |f| require f }
 
 module LiquidTranspiler
-  class LiquidTranspiler
+  class Transpiler
     def initialize
       @signature = {}
       @parsed    = {}
@@ -87,7 +87,7 @@ module LiquidTranspiler
 
     def process_options(options)
       @clazz   = options[:class]   || 'Transpiled'
-      @include = options[:include] || 'TranspiledMethods'
+      @include = options[:include] || 'LiquidTranspiledMethods'
       @globals = options[:globals] || []
     end
   end

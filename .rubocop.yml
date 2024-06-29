@@ -7,8 +7,8 @@ AllCops:
 
 Naming/MethodName:
   Exclude:
-    - 'lib/liquid-transpiler.rb'
-    - 'lib/liquid-transpiled-methods.rb'
+    - 'lib/liquid_transpiler.rb'
+    - 'lib/liquid_transpiled_methods.rb'
 
 Metrics/MethodLength:
   Max: 35

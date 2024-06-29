@@ -4,7 +4,7 @@ require 'date'
 require 'uri'
 require 'cgi'
 
-module TranspiledMethods
+module LiquidTranspiledMethods
   EMPTY_METHOD = 'empty?'.to_sym
 
   class Forloop

@@ -3,8 +3,8 @@
 require 'minitest/autorun'
 require 'liquid'
 
-require_relative '../lib/liquid-transpiler'
-require_relative '../lib/liquid-transpiled-methods'
+require_relative '../lib/liquid_transpiler'
+require_relative '../lib/liquid_transpiled_methods'
 
 class TestBase < Minitest::Test
   PRODUCT_DATA = [{'type' => 'cupboard', 'title' => 'Vacuum',       'available' => true},
@@ -73,7 +73,7 @@ class TestBase < Minitest::Test
     end
   end
 
-  @@transpiler  = LiquidTranspiler::LiquidTranspiler.new
+  @@transpiler  = LiquidTranspiler::Transpiler.new
   @@test_number = 0
   @@dir         = ENV['TEMP_DIR'] || Dir.tmpdir
   Liquid::Template.file_system = Liquid::LocalFileSystem.new(@@dir,
