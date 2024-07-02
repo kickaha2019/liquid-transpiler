@@ -20,59 +20,6 @@ class TestBase < Minitest::Test
                   {},
                   {'category' => 'technology'}].freeze
 
-  class BooleanDrop < Liquid::Drop
-    def initialize(value)
-      super()
-      @value = value
-    end
-
-    def to_liquid
-      @value
-    end
-
-    def to_s
-      @value.to_s
-    end
-  end
-
-  class ProductDrop < Liquid::Drop
-    def initialize(product)
-      super()
-      @product = product
-    end
-
-    def type
-      @product['type']
-    end
-
-    def liquid_method_missing(method)
-      if method == :title
-        @product['title']
-      else
-        super(method)
-      end
-    end
-
-    def available
-      BooleanDrop.new(@product['available'])
-    end
-  end
-
-  class ProductsDrop < Liquid::Drop
-    def initialize(products)
-      super()
-      @products = products
-    end
-
-    def [](index)
-      ProductDrop.new(@products[index])
-    end
-
-    def size
-      @products.size
-    end
-  end
-
   @@transpiler  = LiquidTranspiler::Transpiler.new
   @@test_number = 0
   @@dir         = ENV['TEMP_DIR'] || Dir.tmpdir

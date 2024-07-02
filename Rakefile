@@ -17,3 +17,8 @@ task :rubocop do
     RuboCop::RakeTask.new
   end
 end
+
+task(gem: :build)
+task :build do
+  system 'gem build liquid_transpiler.gemspec'
+end

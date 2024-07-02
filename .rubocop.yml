@@ -4,6 +4,8 @@ AllCops:
   SuggestExtensions: false
   Exclude:
     - 'temp/*.rb'
+    - 'liquid_transpiler.gemspec'
+    - 'test/examples/*.rb'
 
 Naming/MethodName:
   Exclude:
