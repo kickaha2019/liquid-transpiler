@@ -11,7 +11,7 @@ module LiquidTranspiler
         @cycle << source.get
 
         token = source.get
-        while token
+        until token.nil?
           case token
           when ':'
             @key = @cycle.delete_at(0).to_s
@@ -55,8 +55,10 @@ module LiquidTranspiler
         values = @cycle.collect do |cycle|
           if cycle.is_a?(Symbol)
             context.variable(cycle)
+          elsif cycle.is_a?(String)
+            context.string(cycle)
           else
-            cycle
+            cycle.to_s
           end
         end
         context.puts " << [#{values.join(',')}][#{variable}]"

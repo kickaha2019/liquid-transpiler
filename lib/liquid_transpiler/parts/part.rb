@@ -145,14 +145,14 @@ module LiquidTranspiler
           lstrip = source.next('-')
           token  = source.get
 
-          if token
+          if token.nil?
+            part = nil
+          else
             part = parse_tag(source, offset, token)
             if source.token?
               source.error(offset, "Unexpected #{source.get}")
             end
             source.skip_space
-          else
-            part = nil
           end
 
           rstrip = source.next('-')

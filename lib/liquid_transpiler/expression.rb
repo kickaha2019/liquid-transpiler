@@ -69,7 +69,7 @@ module LiquidTranspiler
       elements = [parse3(source)]
       term     = nil
 
-      while token = source.get
+      until (token = source.get).nil?
         case token
         when '['
           formula, term1 = parse1(source)
@@ -100,13 +100,7 @@ module LiquidTranspiler
     def self.parse3(source)
       token = source.get
 
-      if /^([a-z0-9\-'"]|\.[0-9])/i =~ token
-        Operators::Leaf.new(token)
-
-      elsif token.is_a?(Symbol)
-        Operators::Leaf.new(token)
-
-      elsif token == '('
+      if token == '('
         from, type = parse1(source)
 
         unless ['..', '...'].include? type
@@ -119,6 +113,21 @@ module LiquidTranspiler
         end
 
         Operators::Range.new(from, to, type)
+
+      elsif token == "\n"
+        source.error(source.offset, 'Bad syntax')
+
+      elsif token.is_a?(String)
+        Operators::Leaf.new(token)
+
+      elsif token.is_a?(Integer)
+        Operators::Leaf.new(token)
+
+      elsif token.is_a?(Float)
+        Operators::Leaf.new(token)
+
+      elsif token.is_a?(Symbol)
+        Operators::Leaf.new(token)
 
       else
         source.error(source.offset, 'Bad syntax')

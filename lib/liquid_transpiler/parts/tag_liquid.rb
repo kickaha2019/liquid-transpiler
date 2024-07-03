@@ -10,6 +10,9 @@ module LiquidTranspiler
         newline = true
 
         while source.token?
+          term = source.get
+          source.unget(term)
+
           if source.next_token?("\n")
             newline = true
           else

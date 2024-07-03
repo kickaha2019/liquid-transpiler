@@ -38,27 +38,23 @@ module LiquidTranspiler
     end
 
     def expect_literal
-      if token = get
-        if token.is_a?(Symbol)
-          error(@offset, 'Expected literal')
-        elsif /^['"]/ =~ token
-          token
-        else
-          error(@offset, 'Expected literal')
-        end
+      token = get
+      if token.is_a?(String)
+        token
       else
         error(@offset, 'Expected literal')
       end
     end
 
     def expect_name
-      if token = get
+      token = get
+      if token.nil?
+        error(@offset, 'Expected name')
+      else
         unless token.is_a?(Symbol) && !RESERVED_WORDS.include?(token)
           error(@offset, 'Expected name')
         end
         token
-      else
-        error(@offset, 'Expected name')
       end
     end
 
@@ -94,9 +90,9 @@ module LiquidTranspiler
 
       case letter
       when '"'
-        get_double_quoted_string
+        get_quoted_string '"'
       when "'"
-        get_single_quoted_string
+        get_quoted_string "'"
       when '.'
         if /[0-9]/ =~ @text[@offset + 1..@offset + 1]
           get_number
@@ -231,11 +227,12 @@ module LiquidTranspiler
     end
 
     def token?
-      if term = get
+      term = get
+      if term.nil?
+        false
+      else
         unget(term)
         true
-      else
-        false
       end
     end
 
@@ -245,21 +242,15 @@ module LiquidTranspiler
 
     private
 
-    def get_double_quoted_string
-      i = @offset + 1
-
-      while m = @text.match(/[\\"]/, i)
-        i = m.begin(0)
-        if @text[i..i] == '\\'
-          i += 2
-        else
-          string = @text[@offset..i]
-          @offset = i + 1
-          return string
-        end
+    def get_quoted_string(delimiter)
+      i = @text.index(delimiter, @offset + 1)
+      if i
+        s       = @text[(@offset+1)..(i-1)]
+        @offset = i + 1
+        s
+      else
+        error(@offset, 'Unclosed quoted string')
       end
-
-      error(@offset, 'Unclosed quoted string')
     end
 
     def get_name
@@ -291,9 +282,10 @@ module LiquidTranspiler
         number = @text[origin...@offset]
         return get_name if /[a-z_]|^-.*-/i =~ number
       else
-        @offset = origin + 1
+        error(origin, 'Syntax error')
       end
-      @text[origin...@offset]
+
+      /[.]/ =~ number ? number.to_f : number.to_i
     end
 
     def get_operator
@@ -304,23 +296,6 @@ module LiquidTranspiler
         @offset = @text.size
       end
       @text[origin...@offset]
-    end
-
-    def get_single_quoted_string
-      i = @offset + 1
-
-      while m = @text.match(/[\\']/, i)
-        i = m.begin(0)
-        if @text[i..i] == '\\'
-          i += 2
-        else
-          string = @text[@offset..i]
-          @offset = i + 1
-          return string
-        end
-      end
-
-      error(@offset, 'Unclosed quoted string')
     end
   end
 end

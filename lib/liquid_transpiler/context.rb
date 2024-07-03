@@ -98,6 +98,13 @@ module LiquidTranspiler
       @signatures[name]
     end
 
+    def string(text)
+      escaped = text.gsub(/["\\]/) do |letter|
+        letter == '"' ? '\\"' : '\\\\'
+      end
+      '"' + escaped + '"'
+    end
+
     def tablerow(name)
       @tablerows << [@variables[name], @variables[:tablerowloop]]
       @variables[name]          = "tablerow#{@tablerows.size}"

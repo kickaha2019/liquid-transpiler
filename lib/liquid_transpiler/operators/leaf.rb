@@ -19,7 +19,13 @@ module LiquidTranspiler
       def generate(context)
         return SPECIALS[@token] if SPECIALS[@token]
 
-        @token.is_a?(Symbol) ? context.variable(@token) : @token
+        if @token.is_a?(Symbol)
+          context.variable(@token)
+        elsif @token.is_a?(String)
+          context.string(@token)
+        else
+          @token.to_s
+        end
       end
     end
   end

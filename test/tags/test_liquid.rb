@@ -49,8 +49,8 @@ class TestLiquid < TestBase
 
   def test_liquid_error1
     expect_error(<<~LIQUID_ERROR1, /Bad syntax/)
-      {% liquid#{' '}
-        assign x =#{' '}
+      {% liquid
+        assign x =
         123
       %}
       {{ x }}
