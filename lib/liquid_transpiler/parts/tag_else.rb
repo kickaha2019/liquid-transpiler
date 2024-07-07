@@ -18,9 +18,9 @@ module LiquidTranspiler
         super(part)
       end
 
-      def generate(context, indent)
+      def generate(context)
         context.indent(-2).write('else').indent(2)
-        super(context, indent)
+        super(context)
       end
     end
   end

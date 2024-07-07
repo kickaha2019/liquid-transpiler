@@ -7,7 +7,7 @@ module LiquidTranspiler
         error(@offset, 'Internal error')
       end
 
-      def generate(context, indent)
+      def generate(context)
         context.indent(-2).write('break').indent(2)
       end
     end

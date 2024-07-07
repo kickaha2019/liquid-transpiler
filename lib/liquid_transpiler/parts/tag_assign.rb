@@ -24,7 +24,7 @@ module LiquidTranspiler
         names.assign(@variable)
       end
 
-      def generate(context, indent)
+      def generate(context)
         context.write(context.variable(@variable) +
                       " = #{@expression.generate(context)}")
       end

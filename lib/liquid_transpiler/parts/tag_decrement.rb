@@ -16,7 +16,7 @@ module LiquidTranspiler
         names.increment(@name)
       end
 
-      def generate(context, indent)
+      def generate(context)
         variable = context.increment(@name)
         context.write("#{variable} -= 1")
         context.write_output("#{variable}.to_s")

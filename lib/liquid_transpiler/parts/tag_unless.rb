@@ -11,9 +11,9 @@ module LiquidTranspiler
         super(part)
       end
 
-      def generate(context, indent)
+      def generate(context)
         context.write("unless #{@expression.generate(context)}").indent(2)
-        super(context, indent + 2)
+        super(context)
         context.indent(-2).write 'end'
       end
     end

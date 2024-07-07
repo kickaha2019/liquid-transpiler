@@ -17,7 +17,7 @@ module LiquidTranspiler
         @expression.find_arguments(names)
       end
 
-      def generate(context, indent)
+      def generate(context)
         context.write_output("#{@expression.generate(context)}.to_s")
       end
     end

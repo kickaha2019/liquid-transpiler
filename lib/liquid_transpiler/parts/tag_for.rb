@@ -61,8 +61,7 @@ module LiquidTranspiler
         super(names)
       end
 
-      def generate(context, indent)
-        context.print ' ' * indent
+      def generate(context)
         for_name, old_for_loop = context.for(@variable)
         context.write "#{for_name}l = forloop(#{@expression.generate(context)},#{old_for_loop})"
 
@@ -83,12 +82,12 @@ module LiquidTranspiler
         end
 
         context.write("#{for_name}l.each do |#{for_name}|").indent(2)
-        super(context, indent + 2)
+        super(context)
         context.indent(-2).write 'end'
 
         if @else
           @else.record(context)
-          @else.generate(context, indent + 2)
+          @else.generate(context)
           context.indent(-2).write 'end'
         end
 

@@ -43,7 +43,7 @@ module LiquidTranspiler
         end
       end
 
-      def generate(context, indent)
+      def generate(context)
         variable = context.cycle(@key)
         context.write("#{variable} += 1")
         context.write("#{variable} = 0 if #{variable} >= #{@cycle.size}")

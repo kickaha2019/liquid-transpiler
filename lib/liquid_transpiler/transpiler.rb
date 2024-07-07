@@ -49,7 +49,7 @@ module LiquidTranspiler
         context.write_method_start(info)
         begin
           @parsed[name].record(context)
-          @parsed[name].generate(context, 4)
+          @parsed[name].generate(context)
         rescue TranspilerError => e
           errors << e.message
         end

@@ -18,7 +18,7 @@ module LiquidTranspiler
         @text.empty?
       end
 
-      def generate(context, indent)
+      def generate(context)
         unless empty?
           context.write_output "\"#{html_encode(@text)}\""
         end

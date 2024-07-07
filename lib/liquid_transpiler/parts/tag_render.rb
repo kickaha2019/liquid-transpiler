@@ -40,7 +40,7 @@ module LiquidTranspiler
         end
       end
 
-      def generate(context, indent)
+      def generate(context)
         info = context.signature(@target)
         if info
           call_arguments = {}
@@ -57,20 +57,20 @@ module LiquidTranspiler
 
             context.write "#{for_name}l.each do |#{for_name}|"
             context.indent(2)
-            generate_call(info, call_arguments, context, indent + 2)
+            generate_call(info, call_arguments, context)
             context.indent(-2)
             context.write 'end'
 
             context.endfor(argument)
           else
-            generate_call(info, call_arguments, context, indent)
+            generate_call(info, call_arguments, context)
           end
         else
           error(@offset, "Undefined render target: #{@target}")
         end
       end
 
-      def generate_call(info, parameters, context, indent)
+      def generate_call(info, parameters, context)
         call, separ = ["t#{info[0]}"], '('
         info[1].arguments.each do |arg|
           call << separ

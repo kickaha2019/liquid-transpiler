@@ -103,10 +103,10 @@ module LiquidTranspiler
         end
       end
 
-      def generate(context, indent)
+      def generate(context)
         @children.each do |child|
           child.record(context)
-          child.generate(context, indent)
+          child.generate(context)
         end
       end
 

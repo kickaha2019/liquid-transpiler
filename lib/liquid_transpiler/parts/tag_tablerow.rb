@@ -52,8 +52,7 @@ module LiquidTranspiler
         super(names)
       end
 
-      # rubocop:disable Metrics/MethodLength
-      def generate(context, indent)
+      def generate(context)
         for_name = context.tablerow(@variable)
         context.write "#{for_name}l = tablerow(#{@expression.generate(context)})"
 
@@ -83,7 +82,7 @@ module LiquidTranspiler
         td = ['"<td class=\\"col#{', "#{for_name}l.col}", '\\">"']
         context.write_output td.join('')
 
-        super(context, indent + 2)
+        super(context)
 
         context.write_output "'</td>'"
 
@@ -95,7 +94,6 @@ module LiquidTranspiler
 
         context.endtablerow(@variable)
       end
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end
