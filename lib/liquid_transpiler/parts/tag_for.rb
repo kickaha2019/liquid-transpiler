@@ -64,41 +64,32 @@ module LiquidTranspiler
       def generate(context, indent)
         context.print ' ' * indent
         for_name, old_for_loop = context.for(@variable)
-        context.puts "#{for_name}l = forloop(#{@expression.generate(context)},#{old_for_loop})"
+        context.write "#{for_name}l = forloop(#{@expression.generate(context)},#{old_for_loop})"
 
         if @start
-          context.print ' ' * indent
-          context.puts "#{for_name}l.offset #{@start.generate(context)}"
+          context.write "#{for_name}l.offset #{@start.generate(context)}"
         end
 
         if @limit
-          context.print ' ' * indent
-          context.puts "#{for_name}l.limit #{@limit.generate(context)}"
+          context.write "#{for_name}l.limit #{@limit.generate(context)}"
         end
 
         if @reversed
-          context.print ' ' * indent
-          context.puts "#{for_name}l.reverse"
+          context.write "#{for_name}l.reverse"
         end
 
         if @else
-          context.print ' ' * indent
-          context.puts "unless #{for_name}l.empty?"
-          indent += 2
+          context.write("unless #{for_name}l.empty?").indent(2)
         end
 
-        context.print ' ' * indent
-        context.puts "#{for_name}l.each do |#{for_name}|"
+        context.write("#{for_name}l.each do |#{for_name}|").indent(2)
         super(context, indent + 2)
-        context.print ' ' * indent
-        context.puts 'end'
+        context.indent(-2).write 'end'
 
         if @else
-          indent -= 2
           @else.record(context)
           @else.generate(context, indent + 2)
-          context.print ' ' * indent
-          context.puts 'end'
+          context.indent(-2).write 'end'
         end
 
         context.endfor(@variable)

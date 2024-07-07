@@ -8,8 +8,7 @@ module LiquidTranspiler
       end
 
       def generate(context, indent)
-        context.print ' ' * (indent - 2)
-        context.puts 'break'
+        context.indent(-2).write('break').indent(2)
       end
     end
   end

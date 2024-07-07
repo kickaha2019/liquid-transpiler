@@ -8,6 +8,7 @@ module LiquidTranspiler
       @io         = File.open(path, 'w')
       @line       = 1
       @records    = []
+      @indent     = 0
     end
 
     def cycle(name)
@@ -35,6 +36,11 @@ module LiquidTranspiler
 
     def increment(name)
       @increments[name]
+    end
+
+    def indent(delta)
+      @indent += delta
+      self
     end
 
     def output
@@ -112,6 +118,11 @@ module LiquidTranspiler
       @variables[name]
     end
 
+    def write(text)
+      puts(' ' * @indent + text)
+      self
+    end
+
     def write_end
       puts 'end'
       @io.close
@@ -139,6 +150,12 @@ METHOD_HEADER
       (0...info[1].increments.size).each do |i|
         puts "    d#{i} = 0"
       end
+
+      indent(4)
+    end
+
+    def write_output(text)
+      write(output + ' << ' + text)
     end
 
     def write_records

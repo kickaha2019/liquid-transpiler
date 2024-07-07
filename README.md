@@ -1,6 +1,8 @@
 # liquid-transpiler
-Convert [Liquid](https://shopify.github.io/liquid/) templates to a Ruby class for performance.
-The aim was to support what is specified at
+An experimental converter of
+[Liquid](https://shopify.github.io/liquid/) templates 
+to Ruby code for performance.
+This converter aims to support what is specified at
 [Liquid templates](https://shopify.github.io/liquid/tags/template/)
 as far as possible, with the generated Ruby code giving the
 same results as the templates executed through
@@ -27,6 +29,7 @@ code assumes templates check for data being missing.
 
 * [Using the transpiler](USAGE.md)
 * [Issues and limitations](ISSUES.md)
+* [Performance](PERFORMANCE.md)
 
 ## Testing
 The tests take some template code and check that running it through

@@ -19,9 +19,7 @@ module LiquidTranspiler
       end
 
       def generate(context, indent)
-        context.print(' ' * indent)
-        context.print context.output
-        context.puts " << to_string(#{@expression.generate(context)})"
+        context.write_output("to_string(#{@expression.generate(context)})")
       end
 
       def name

@@ -19,8 +19,7 @@ module LiquidTranspiler
       end
 
       def generate(context, indent)
-        context.print ' ' * (indent - 2)
-        context.puts 'else'
+        context.indent(-2).write('else').indent(2)
         super(context, indent)
       end
     end

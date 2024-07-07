@@ -45,13 +45,9 @@ module LiquidTranspiler
 
       def generate(context, indent)
         variable = context.cycle(@key)
-        context.print ' ' * indent
-        context.puts "#{variable} += 1"
-        context.print ' ' * indent
-        context.puts "#{variable} = 0 if #{variable} >= #{@cycle.size}"
+        context.write("#{variable} += 1")
+        context.write("#{variable} = 0 if #{variable} >= #{@cycle.size}")
 
-        context.print(' ' * indent)
-        context.print context.output
         values = @cycle.collect do |cycle|
           if cycle.is_a?(Symbol)
             context.variable(cycle)
@@ -61,7 +57,7 @@ module LiquidTranspiler
             cycle.to_s
           end
         end
-        context.puts " << [#{values.join(',')}][#{variable}]"
+        context.write_output("[#{values.join(',')}][#{variable}]")
       end
     end
   end

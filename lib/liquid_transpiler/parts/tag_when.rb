@@ -18,8 +18,7 @@ module LiquidTranspiler
       end
 
       def generate(context, indent)
-        context.print ' ' * (indent - 2)
-        context.puts "when #{@expression.generate(context)}"
+        context.indent(-2).write("when #{@expression.generate(context)}").indent(2)
         super(context, indent)
       end
     end

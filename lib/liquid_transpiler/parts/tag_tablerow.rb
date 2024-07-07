@@ -54,64 +54,44 @@ module LiquidTranspiler
 
       # rubocop:disable Metrics/MethodLength
       def generate(context, indent)
-        context.print ' ' * indent
         for_name = context.tablerow(@variable)
-        context.puts "#{for_name}l = tablerow(#{@expression.generate(context)})"
+        context.write "#{for_name}l = tablerow(#{@expression.generate(context)})"
 
         if @columns
-          context.print ' ' * indent
-          context.puts "#{for_name}l.columns #{@columns.generate(context)}"
+          context.write "#{for_name}l.columns #{@columns.generate(context)}"
         end
 
         if @start
-          context.print ' ' * indent
-          context.puts "#{for_name}l.offset #{@start.generate(context)}"
+          context.write "#{for_name}l.offset #{@start.generate(context)}"
         end
 
         if @limit
-          context.print ' ' * indent
-          context.puts "#{for_name}l.limit #{@limit.generate(context)}"
+          context.write "#{for_name}l.limit #{@limit.generate(context)}"
         end
 
-        context.print ' ' * indent
-        context.puts "#{for_name}l.each do |#{for_name}|"
+        context.write("#{for_name}l.each do |#{for_name}|").indent(2)
+        context.write("if #{for_name}l.col_first").indent(2)
 
-        context.print ' ' * indent
-        context.puts "  if #{for_name}l.col_first"
-        context.print ' ' * (indent + 4)
-        context.print context.output
-        context.print ' << "<tr class=\\"row#{'
-        context.print "#{for_name}l.row}"
-        context.puts '\\">"'
-        context.print ' ' * (indent + 4)
-        context.print context.output
-        context.print ' << "\\n"'
-        context.puts "  if #{for_name}l.row == 1"
-        context.print ' ' * indent
-        context.puts '  end'
+        tr = ['"<tr class=\\"row#{',
+              "#{for_name}l.row}",
+              '\\">"']
+        context.write_output tr.join('')
 
-        context.print ' ' * (indent + 2)
-        context.print context.output
-        context.print ' << "<td class=\\"col#{'
-        context.print "#{for_name}l.col}"
-        context.puts '\\">"'
+        context.write_output('"\\n" ' + "if #{for_name}l.row == 1")
+        context.indent(-2).write 'end'
+
+        td = ['"<td class=\\"col#{', "#{for_name}l.col}", '\\">"']
+        context.write_output td.join('')
 
         super(context, indent + 2)
 
-        context.print ' ' * (indent + 2)
-        context.print context.output
-        context.puts " << '</td>'"
+        context.write_output "'</td>'"
 
-        context.print ' ' * indent
-        context.puts "  if #{for_name}l.col_last || #{for_name}l.last"
-        context.print ' ' * (indent + 4)
-        context.print context.output
-        context.puts ' << "</tr>\\n"'
-        context.print ' ' * indent
-        context.puts '  end'
+        context.write("if #{for_name}l.col_last || #{for_name}l.last").indent(2)
+        context.write_output('"</tr>\\n"')
+        context.indent(-2).write('end')
 
-        context.print ' ' * indent
-        context.puts 'end'
+        context.indent(-2).write('end')
 
         context.endtablerow(@variable)
       end

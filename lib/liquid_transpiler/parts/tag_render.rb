@@ -51,15 +51,15 @@ module LiquidTranspiler
           if @for
             argument = call_arguments.keys.first
             for_name, = context.for(argument)
-            context.puts "#{for_name}l = forloop(#{call_arguments[argument]},nil)"
+            context.write "#{for_name}l = forloop(#{call_arguments[argument]},nil)"
             call_arguments[:forloop] = "#{for_name}l"
             call_arguments[argument] = for_name
 
-            context.print ' ' * indent
-            context.puts "#{for_name}l.each do |#{for_name}|"
+            context.write "#{for_name}l.each do |#{for_name}|"
+            context.indent(2)
             generate_call(info, call_arguments, context, indent + 2)
-            context.print ' ' * indent
-            context.puts 'end'
+            context.indent(-2)
+            context.write 'end'
 
             context.endfor(argument)
           else
@@ -71,19 +71,15 @@ module LiquidTranspiler
       end
 
       def generate_call(info, parameters, context, indent)
-        context.print ' ' * indent
-        context.print context.output
-        context.print " << t#{info[0]}"
-
-        separ = '('
+        call, separ = ["t#{info[0]}"], '('
         info[1].arguments.each do |arg|
-          context.print separ
+          call << separ
           separ = ','
-          context.print parameters[arg] || 'nil'
+          call << parameters[arg] || 'nil'
         end
 
-        context.print ')' if separ != '('
-        context.puts
+        call << ')' if separ != '('
+        context.write_output call.join('')
       end
 
       def setup_more?(term)

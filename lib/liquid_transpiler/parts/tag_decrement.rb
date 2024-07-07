@@ -18,11 +18,8 @@ module LiquidTranspiler
 
       def generate(context, indent)
         variable = context.increment(@name)
-        context.print ' ' * indent
-        context.puts "#{variable} -= 1"
-        context.print(' ' * indent)
-        context.print context.output
-        context.puts " << #{variable}.to_s"
+        context.write("#{variable} -= 1")
+        context.write_output("#{variable}.to_s")
       end
     end
   end

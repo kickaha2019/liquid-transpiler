@@ -20,9 +20,7 @@ module LiquidTranspiler
 
       def generate(context, indent)
         unless empty?
-          context.print(' ' * indent)
-          context.print context.output
-          context.puts " << \"#{html_encode(@text)}\""
+          context.write_output "\"#{html_encode(@text)}\""
         end
       end
 

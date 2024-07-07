@@ -12,11 +12,9 @@ module LiquidTranspiler
       end
 
       def generate(context, indent)
-        context.print ' ' * indent
-        context.puts "if #{@expression.generate(context)}"
+        context.write("if #{@expression.generate(context)}").indent(2)
         super(context, indent + 2)
-        context.print ' ' * indent
-        context.puts 'end'
+        context.indent(-2).write 'end'
       end
     end
   end

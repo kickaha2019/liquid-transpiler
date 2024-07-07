@@ -23,13 +23,9 @@ module LiquidTranspiler
 
       def generate(context, indent)
         context.output_push
-        context.print ' ' * indent
-        context.print context.output
-        context.puts ' = []'
+        context.write(context.output + ' = []')
         super(context, indent)
-        context.print ' ' * indent
-        context.print context.variable(@variable)
-        context.puts " = #{context.output}.join('')"
+        context.write(context.variable(@variable) + " = #{context.output}.join('')")
         context.output_pop
       end
     end
