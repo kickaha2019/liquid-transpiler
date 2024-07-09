@@ -85,11 +85,6 @@ module LiquidTranspiler
       @tablerows = []
     end
 
-    def print(text)
-      @io.print text
-      @line += text.count("\n")
-    end
-
     def puts(text = '')
       @io.puts text
       @line += (1 + text.count("\n"))
@@ -133,6 +128,7 @@ module LiquidTranspiler
     h.join('')
   end
 METHOD_END
+      indent(-4)
     end
 
     def write_method_start(info)
@@ -215,5 +211,12 @@ RENDER3
       end
       @variables[name]
     end
+  end
+
+  private
+
+  def print(text)
+    @io.print text
+    @line += text.count("\n")
   end
 end

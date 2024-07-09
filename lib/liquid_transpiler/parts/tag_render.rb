@@ -75,7 +75,7 @@ module LiquidTranspiler
         info[1].arguments.each do |arg|
           call << separ
           separ = ','
-          call << parameters[arg] || 'nil'
+          call << (parameters[arg] || 'nil')
         end
 
         call << ')' if separ != '('

@@ -38,7 +38,6 @@ class TestBase < Minitest::Test
   def compare(code, params = {})
     liquid         =  Liquid::Template.parse(code)
     liquid_output  =  liquid.render(params)
-    p ['liquid_output', liquid_output]
     prepare(code, 'test.liquid')
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
@@ -46,8 +45,8 @@ class TestBase < Minitest::Test
     if @@transpiler.transpile_dir(@@dir, path, class:clazz)
       load(path)
       transpiled_output = Object.const_get(clazz).new.render('test', params)
-      p ['liquid_output', liquid_output]
-      p ['transpiled_output', transpiled_output]
+      #p ['liquid_output', liquid_output]
+      #p ['transpiled_output', transpiled_output]
       assert_equal liquid_output, transpiled_output
     else
       @@transpiler.errors { |error| puts error }

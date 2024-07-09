@@ -63,9 +63,9 @@ module LiquidTranspiler
       end
 
       def generate(context)
-        context.write("case #{@expression.generate(context)}")
+        context.write("case #{@expression.generate(context)}").indent(2)
         super(context)
-        context.write('end')
+        context.indent(-2).write('end')
       end
     end
   end
