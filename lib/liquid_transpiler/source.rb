@@ -9,7 +9,8 @@ module LiquidTranspiler
 
     RESERVED_WORDS = [:true, :false, :empty].freeze
 
-    def initialize(path)
+    def initialize(transpiler,path)
+      @transpiler  = transpiler
       @path        = path
       @offset      = 0
       @text        = IO.read(path)
@@ -56,6 +57,10 @@ module LiquidTranspiler
         end
         token
       end
+    end
+
+    def filter_class(name)
+      @transpiler.filter_class(name)
     end
 
     def find(regex)

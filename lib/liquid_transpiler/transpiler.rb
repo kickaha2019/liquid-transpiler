@@ -10,6 +10,11 @@ module LiquidTranspiler
       @signature = {}
       @parsed    = {}
       @errors    = []
+      @filters   = {}
+    end
+
+    def define_filter(name, clazz)
+      @filters[name.to_sym] = clazz
     end
 
     # rubocop:disable Style/ExplicitBlockArgument
@@ -17,6 +22,10 @@ module LiquidTranspiler
       @errors.each { |error| yield error }
     end
     # rubocop:enable Style/ExplicitBlockArgument
+
+    def filter_class(name)
+      @filters[name]
+    end
 
     def transpile_dir(source_dir, path, options = {})
       process_options(options)
@@ -60,7 +69,7 @@ module LiquidTranspiler
     end
 
     def parse(path)
-      source  = Source.new(path)
+      source  = Source.new(self, path)
       context = Parts::Template.new(source, 0, nil)
       rstrip  = false
 

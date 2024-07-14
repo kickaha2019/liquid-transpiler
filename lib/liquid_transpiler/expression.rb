@@ -22,18 +22,23 @@ module LiquidTranspiler
 
       while term == '|'
         filter, args = source.expect_name, []
-        source.skip_space
-        if source.next(':')
-          param, term = parse1(source)
-          args << param
-          while term == ','
+        if clazz = source.filter_class(filter)
+          formula = clazz.new(formula)
+          term    = formula.setup(source)
+        else
+          source.skip_space
+          if source.next(':')
             param, term = parse1(source)
             args << param
+            while term == ','
+              param, term = parse1(source)
+              args << param
+            end
+          else
+            term = source.get
           end
-        else
-          term = source.get
+          formula = Operators::Filter.new(filter, formula, args)
         end
-        formula = Operators::Filter.new(filter, formula, args)
       end
 
       [formula, term]

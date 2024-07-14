@@ -20,7 +20,6 @@ class TestBase < Minitest::Test
                   {},
                   {'category' => 'technology'}].freeze
 
-  @@transpiler  = LiquidTranspiler::Transpiler.new
   @@test_number = 0
   @@dir         = ENV['TEMP_DIR'] || Dir.tmpdir
   Liquid::Template.file_system = Liquid::LocalFileSystem.new(@@dir,
@@ -28,6 +27,7 @@ class TestBase < Minitest::Test
   Liquid.cache_classes = false
 
   def setup
+    @transpiler  = LiquidTranspiler::Transpiler.new
     Dir.entries(@@dir).each do |f|
       if /\.liquid$/ =~ f
         File.delete("#{@@dir}/#{f}")
@@ -42,14 +42,14 @@ class TestBase < Minitest::Test
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = "#{@@dir}/Test.rb"
-    if @@transpiler.transpile_dir(@@dir, path, class:clazz)
+    if transpile(@@dir, path, clazz)
       load(path)
       transpiled_output = Object.const_get(clazz).new.render('test', params)
       #p ['liquid_output', liquid_output]
       #p ['transpiled_output', transpiled_output]
       assert_equal liquid_output, transpiled_output
     else
-      @@transpiler.errors { |error| puts error }
+      @transpiler.errors { |error| puts error }
       raise 'Transpiler errors'
     end
   end
@@ -59,13 +59,13 @@ class TestBase < Minitest::Test
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = "#{@@dir}/Test.rb"
-    if @@transpiler.transpile_dir(@@dir, path, class:clazz, globals:['site'])
+    if transpile(@@dir, path, clazz)
       load(path)
       transpiled_output = Object.const_get(clazz).new.render('test', params)
       p ['transpiled_output', transpiled_output]
       assert_equal expected, transpiled_output.strip
     else
-      @@transpiler.errors { |error| puts error }
+      @transpiler.errors { |error| puts error }
       raise 'Transpiler errors'
     end
   end
@@ -75,11 +75,11 @@ class TestBase < Minitest::Test
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = "#{@@dir}/Test.rb"
-    if @@transpiler.transpile_dir(@@dir, path, class:clazz, globals:['site'])
+    if transpile(@@dir, path, clazz)
       code = IO.read(path)
       refute_nil code.match(expected_code)
     else
-      @@transpiler.errors { |error| puts error }
+      @transpiler.errors { |error| puts error }
       raise 'Unexpected error in test'
     end
   end
@@ -89,11 +89,11 @@ class TestBase < Minitest::Test
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = "#{@@dir}/Test.rb"
-    if @@transpiler.transpile_dir(@@dir, path, class:clazz, globals:['site'])
+    if transpile(@@dir, path, clazz)
       raise 'Expected error not raised'
     else
       errors = []
-      @@transpiler.errors { |error| errors << error }
+      @transpiler.errors { |error| errors << error }
       puts errors[0]
       assert_equal 1, errors.size
       assert_match expected_error, errors[0]
@@ -105,7 +105,7 @@ class TestBase < Minitest::Test
     @@test_number  += 1
     clazz          =  "Temp#{@@test_number}"
     path           = "#{@@dir}/Test.rb"
-    unless @@transpiler.transpile_dir(@@dir, path, class:clazz, globals:['site'])
+    unless transpile(@@dir, path, clazz)
       raise 'Expected error not raised'
     end
 
@@ -127,6 +127,10 @@ class TestBase < Minitest::Test
     File.open("#{@@dir}/#{path}", 'w') do |io|
       io.print code
     end
+  end
+
+  def transpile(dir,path,clazz)
+    @transpiler.transpile_dir(dir, path, class:clazz, globals:['site'])
   end
 
   def poro_products
