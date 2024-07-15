@@ -9,6 +9,10 @@ module LiquidTranspiler
         @expression = expression
       end
 
+      def filter_name
+        'relative_url'
+      end
+
       def find_arguments(names)
         @expression.find_arguments(names)
         BASE_PATH.find_arguments(names)
@@ -22,7 +26,7 @@ module LiquidTranspiler
         source.skip_space
         term = source.get
         if term == ':'
-          source.error(source.offset,'relative_url takes no arguments')
+          source.error(source.offset,filter_name+' takes no arguments')
         end
         term
       end
