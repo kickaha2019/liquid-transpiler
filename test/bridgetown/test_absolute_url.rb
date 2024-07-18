@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../test_base'
+require_relative '../../lib/liquid_transpiler/extensions/bridgetown_absolute_url'
 
 class TestAbsoluteURL < TestBase
   def test_absolute_url
