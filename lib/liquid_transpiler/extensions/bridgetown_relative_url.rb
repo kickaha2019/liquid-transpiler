@@ -1,17 +1,12 @@
 # frozen_string_literal: true
 
+require_relative 'filter_base'
+
 module LiquidTranspiler
   module Extensions
-    class BridgetownRelativeURL
-      BASE_PATH = Operators::Dereference.new( Operators::Leaf.new( :bridgetown),'base_path').freeze
-
-      def initialize(expression)
-        @expression = expression
-      end
-
-      def filter_name
-        'relative_url'
-      end
+    class BridgetownRelativeURL < FilterBase
+      BASE_PATH = Operators::Dereference.new( Operators::Leaf.new( :bridgetown),
+                                              'base_path').freeze
 
       def find_arguments(names)
         @expression.find_arguments(names)
@@ -20,15 +15,6 @@ module LiquidTranspiler
 
       def generate(context)
         "filter_prepend(#{@expression.generate(context)},#{BASE_PATH.generate(context)})"
-      end
-
-      def setup(source)
-        source.skip_space
-        term = source.get
-        if term == ':'
-          source.error(source.offset,filter_name+' takes no arguments')
-        end
-        term
       end
     end
   end

@@ -4,12 +4,8 @@ require_relative 'filter_base'
 
 module LiquidTranspiler
   module Extensions
-    class BridgetownDateToXMLSchema < FilterBase
+    class BridgetownDateToRFC822 < FilterBase
       TIMEZONE = Operators::Dereference.new( Operators::Leaf.new( :bridgetown),'timezone').freeze
-
-      def filter_name
-        'date_to_xmlschema'
-      end
 
       def find_arguments(names)
         super
@@ -21,7 +17,7 @@ module LiquidTranspiler
          TIMEZONE.generate(context),
          ',',
          @expression.generate(context),
-         ',"%Y-%m-%dT%H:%M:%S%:z")'].join ''
+         ',"%a, %d %b %Y %H:%M:%S %z")'].join ''
       end
     end
   end

@@ -5,11 +5,8 @@ require_relative 'bridgetown_relative_url'
 module LiquidTranspiler
   module Extensions
     class BridgetownAbsoluteURL < BridgetownRelativeURL
-      URL = Operators::Dereference.new( Operators::Leaf.new( :bridgetown),'url').freeze
-
-      def filter_name
-        'absolute_url'
-      end
+      URL = Operators::Dereference.new( Operators::Leaf.new( :bridgetown),
+                                        'url').freeze
 
       def find_arguments(names)
         super
