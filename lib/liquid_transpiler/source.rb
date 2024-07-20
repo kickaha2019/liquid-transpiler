@@ -9,7 +9,7 @@ module LiquidTranspiler
 
     RESERVED_WORDS = [:true, :false, :empty].freeze
 
-    def initialize(transpiler,path)
+    def initialize(transpiler, path)
       @transpiler  = transpiler
       @path        = path
       @offset      = 0

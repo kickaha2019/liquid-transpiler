@@ -5,7 +5,7 @@ require_relative 'filter_base'
 module LiquidTranspiler
   module Extensions
     class BridgetownRelativeURL < FilterBase
-      BASE_PATH = Operators::Dereference.new( Operators::Leaf.new( :bridgetown),
+      BASE_PATH = Operators::Dereference.new(Operators::Leaf.new(:bridgetown),
                                               'base_path').freeze
 
       def find_arguments(names)

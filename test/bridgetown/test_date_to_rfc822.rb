@@ -18,7 +18,7 @@ class TestDateToRFC822 < TestBase
            'Fri, 07 Nov 2008 13:07:54 -0800')
   end
 
-  def transpile(dir,path,clazz)
+  def transpile(dir, path, clazz)
     @transpiler.define_filter('date_to_rfc822',
                               LiquidTranspiler::Extensions::BridgetownDateToRFC822)
     @transpiler.transpile_dir(dir,

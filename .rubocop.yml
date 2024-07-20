@@ -89,3 +89,9 @@ Style/IfUnlessModifier:
 
 Lint/BooleanSymbol:
   Enabled: false
+
+Layout/ArgumentAlignment:
+  Enabled: false
+
+Layout/HashAlignment:
+  Enabled: false

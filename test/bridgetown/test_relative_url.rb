@@ -10,7 +10,7 @@ class TestRelativeURL < TestBase
            '/xxx/assets/image.jpg')
   end
 
-  def transpile(dir,path,clazz)
+  def transpile(dir, path, clazz)
     @transpiler.define_filter('relative_url', LiquidTranspiler::Extensions::BridgetownRelativeURL)
     @transpiler.transpile_dir(dir, path, class:clazz, globals:['bridgetown'])
   end

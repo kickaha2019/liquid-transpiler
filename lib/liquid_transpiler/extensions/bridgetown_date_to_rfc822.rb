@@ -1,23 +1,21 @@
 # frozen_string_literal: true
 
-require_relative 'filter_base'
+require_relative 'bridgetown_date_to_base'
 
 module LiquidTranspiler
   module Extensions
-    class BridgetownDateToRFC822 < FilterBase
-      TIMEZONE = Operators::Dereference.new( Operators::Leaf.new( :bridgetown),'timezone').freeze
-
-      def find_arguments(names)
+    class BridgetownDateToRFC822 < BridgetownDateToBase
+      def initialize(expression)
         super
-        TIMEZONE.find_arguments(names)
+        @arguments << Operators::Leaf.new('%a, %d %b %Y %H:%M:%S %z')
+      end
+
+      def filter_name
+        'date_to_rfc822'
       end
 
       def generate(context)
-        ['filter_time_strftime(',
-         TIMEZONE.generate(context),
-         ',',
-         @expression.generate(context),
-         ',"%a, %d %b %Y %H:%M:%S %z")'].join ''
+        super(context, 'filter_time_strftime')
       end
     end
   end

@@ -10,7 +10,7 @@ class TestAbsoluteURL < TestBase
            'http://example.com/my-basepath/assets/image.jpg')
   end
 
-  def transpile(dir,path,clazz)
+  def transpile(dir, path, clazz)
     @transpiler.define_filter('absolute_url', LiquidTranspiler::Extensions::BridgetownAbsoluteURL)
     @transpiler.transpile_dir(dir, path, class:clazz, globals:['bridgetown'])
   end

@@ -27,7 +27,7 @@ class TestBase < Minitest::Test
   Liquid.cache_classes = false
 
   def setup
-    @transpiler  = LiquidTranspiler::Transpiler.new
+    @transpiler = LiquidTranspiler::Transpiler.new
     Dir.entries(@@dir).each do |f|
       if /\.liquid$/ =~ f
         File.delete("#{@@dir}/#{f}")
@@ -45,8 +45,8 @@ class TestBase < Minitest::Test
     if transpile(@@dir, path, clazz)
       load(path)
       transpiled_output = Object.const_get(clazz).new.render('test', params)
-      #p ['liquid_output', liquid_output]
-      #p ['transpiled_output', transpiled_output]
+      # p ['liquid_output', liquid_output]
+      # p ['transpiled_output', transpiled_output]
       assert_equal liquid_output, transpiled_output
     else
       @transpiler.errors { |error| puts error }
@@ -129,7 +129,7 @@ class TestBase < Minitest::Test
     end
   end
 
-  def transpile(dir,path,clazz)
+  def transpile(dir, path, clazz)
     @transpiler.transpile_dir(dir, path, class:clazz, globals:['site'])
   end
 

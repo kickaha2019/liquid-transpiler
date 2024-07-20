@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Layout/HashAlignment
-
 module LiquidTranspiler
   class Expression
     OPERATORS = {
@@ -172,5 +170,3 @@ module LiquidTranspiler
     end
   end
 end
-
-# rubocop:enable Layout/HashAlignment

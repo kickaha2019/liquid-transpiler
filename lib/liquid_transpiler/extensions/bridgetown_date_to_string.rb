@@ -4,18 +4,19 @@ require_relative 'bridgetown_date_to_base'
 
 module LiquidTranspiler
   module Extensions
-    class BridgetownDateToXMLSchema < BridgetownDateToBase
+    class BridgetownDateToString < BridgetownDateToBase
       def initialize(expression)
         super
-        @arguments << Operators::Leaf.new('%Y-%m-%dT%H:%M:%S%:z')
+        @arguments.unshift(Operators::Leaf.new('%b'))
       end
 
       def filter_name
-        'date_to_xmlschema'
+        'date_to_string'
       end
 
       def generate(context)
-        super(context, 'filter_time_strftime')
+        super(context,
+              'filter_date_to_string')
       end
     end
   end

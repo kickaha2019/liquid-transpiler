@@ -8,16 +8,16 @@ class FilterBase
 
   def find_arguments(names)
     @expression.find_arguments(names)
-    @arguments.each {|argument| argument.find_arguments(names)}
+    @arguments.each { |argument| argument.find_arguments(names) }
   end
 
   def setup(source)
     source.skip_space
     if source.next(':')
-      param, term = parse1(source)
+      param, term = LiquidTranspiler::Expression.parse1(source)
       @arguments << param
       while term == ','
-        param, term = parse1(source)
+        param, term = LiquidTranspiler::Expression.parse1(source)
         @arguments << param
       end
     else

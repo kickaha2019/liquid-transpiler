@@ -18,7 +18,7 @@ class TestDateToXMLSchema < TestBase
            '2000-12-01T00:00:00-08:00')
   end
 
-  def transpile(dir,path,clazz)
+  def transpile(dir, path, clazz)
     @transpiler.define_filter('date_to_xmlschema',
                               LiquidTranspiler::Extensions::BridgetownDateToXMLSchema)
     @transpiler.transpile_dir(dir,
