@@ -164,7 +164,7 @@ module LiquidTranspiler
         i -= 2
       end
 
-      raise 'Dev' if elements.size > 1
+      raise 'Internal error' if elements.size > 1
 
       elements[0]
     end

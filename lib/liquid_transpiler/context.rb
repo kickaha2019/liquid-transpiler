@@ -3,12 +3,13 @@
 module LiquidTranspiler
   class Context
     def initialize(globals, signatures, path)
-      @globals    = globals
-      @signatures = signatures
-      @io         = File.open(path, 'w')
-      @line       = 1
-      @records    = []
-      @indent     = 0
+      @globals     = globals
+      @signatures  = signatures
+      @io          = File.open(path, 'w')
+      @line        = 1
+      @records     = []
+      @indent      = 0
+      @temporaries = 0
     end
 
     def cycle(name)
@@ -113,6 +114,19 @@ module LiquidTranspiler
       @variables[name]
     end
 
+    def temporary
+      @temporaries += 1
+      "e#{@temporaries}"
+    end
+
+    def variable(name)
+      unless @variables[name]
+        @index += 1
+        @variables[name] = "v#{@index}"
+      end
+      @variables[name]
+    end
+
     def write(text)
       puts(' ' * @indent + text)
       self
@@ -202,14 +216,6 @@ RENDER2
   end
   private
 RENDER3
-    end
-
-    def variable(name)
-      unless @variables[name]
-        @index += 1
-        @variables[name] = "v#{@index}"
-      end
-      @variables[name]
     end
   end
 

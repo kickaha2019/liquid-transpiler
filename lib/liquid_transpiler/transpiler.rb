@@ -69,7 +69,7 @@ module LiquidTranspiler
     end
 
     def parse(path)
-      source  = Source.new(self, path)
+      source  = Source.new(self, path, IO.read(path))
       context = Parts::Template.new(source, 0, nil)
       rstrip  = false
 

@@ -9,11 +9,11 @@ module LiquidTranspiler
 
     RESERVED_WORDS = [:true, :false, :empty].freeze
 
-    def initialize(transpiler, path)
+    def initialize(transpiler, path, text)
       @transpiler  = transpiler
       @path        = path
       @offset      = 0
-      @text        = IO.read(path)
+      @text        = text
       @ungot       = []
       @ignore_eol  = true
       @line        = 1
@@ -57,6 +57,11 @@ module LiquidTranspiler
         end
         token
       end
+    end
+
+    def expect_nested_source
+      text = expect_literal
+      Source.new(@transpiler, @path, text)
     end
 
     def filter_class(name)
@@ -277,18 +282,18 @@ module LiquidTranspiler
       origin = @offset
       if m = @text.match(/[^0-9\-a-z_.]/i, @offset)
         finish = m.end(0) - 1
-
-        if i = @text[origin...finish].index('..')
-          @offset = i + origin
-        else
-          @offset = finish
-        end
-
-        number = @text[origin...@offset]
-        return get_name if /[a-z_]|^-.*-/i =~ number
       else
-        error(origin, 'Syntax error')
+        finish = @text.size
       end
+
+      if i = @text[origin...finish].index('..')
+        @offset = i + origin
+      else
+        @offset = finish
+      end
+
+      number = @text[origin...@offset]
+      return get_name if /[a-z_]|^-.*-/i =~ number
 
       /[.]/ =~ number ? number.to_f : number.to_i
     end
