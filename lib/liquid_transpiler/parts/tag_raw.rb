@@ -6,9 +6,9 @@ module LiquidTranspiler
       def initialize(source, offset, parent)
         super
         source.skip_space
-        source.next('-')
+        source.next_string?('-')
 
-        unless source.next('%}')
+        unless source.next_string?('%}')
           source.error(source.offset, 'Expected %}')
         end
 
@@ -18,8 +18,8 @@ module LiquidTranspiler
         end
         add(Text.new(source, @offset, text))
 
-        source.next('{%')
-        source.next('-')
+        source.next_string?('{%')
+        source.next_string?('-')
         unless source.expect_name == :endraw
           source.error(source.offset, 'Internal error')
         end

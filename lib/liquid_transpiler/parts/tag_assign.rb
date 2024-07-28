@@ -7,11 +7,11 @@ module LiquidTranspiler
         super
         @variable = source.expect_name
         source.skip_space
-        unless source.next('=')
+        unless source.next_string?('=')
           source.error(@offset, 'Expecting =')
         end
 
-        @expression, term = Expression.parse(source)
+        @expression, term = source.expect_expression
         source.unget term
       end
 

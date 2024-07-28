@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
+require_relative 'source'
+
 # rubocop:disable Style/EmptyElse
 # rubocop:disable Style/RedundantRegexpEscape
 
 module LiquidTranspiler
   class Source
+    include ParserExpressions
+
     attr_reader :offset
 
     RESERVED_WORDS = [:true, :false, :empty].freeze
@@ -140,7 +144,7 @@ module LiquidTranspiler
       @line
     end
 
-    def next(expected)
+    def next_string?(expected)
       unless @ungot.empty?
         if @ungot[-1] == expected
           @line += 1 if expected == "\n"
@@ -222,7 +226,7 @@ module LiquidTranspiler
           if m1 = /(\n|-%}|%}|}})/.match(@text, @offset + 1)
             @offset = m1.begin(0)
             if @ignore_eol
-              next("\n")
+              next_string?("\n")
             else
               return
             end

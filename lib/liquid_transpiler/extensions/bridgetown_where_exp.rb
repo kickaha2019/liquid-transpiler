@@ -30,14 +30,14 @@ module LiquidTranspiler
 
       def setup(source)
         source.skip_space
-        source.error(source.offset, 'Expecting :') unless source.next(':')
+        source.error(source.offset, 'Expecting :') unless source.next_string?(':')
         @variable = source.expect_literal.to_sym
 
         source.skip_space
-        source.error(source.offset, 'Expecting ,') unless source.next(',')
+        source.error(source.offset, 'Expecting ,') unless source.next_string?(',')
         nested = source.expect_nested_source
 
-        @clause, term = LiquidTranspiler::Expression.parse1(nested)
+        @clause, term = nested.read_expression1
         source.error(source.offset, 'Bad where clause') unless term.nil?
         source.get
       end

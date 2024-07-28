@@ -6,9 +6,9 @@ module LiquidTranspiler
       def initialize(source, offset, parent)
         super
         source.skip_space
-        source.next('-')
+        source.next_string?('-')
 
-        unless source.next('%}')
+        unless source.next_string?('%}')
           source.error(source.offset, 'Expected %}')
         end
 
@@ -16,8 +16,8 @@ module LiquidTranspiler
           source.error(source.offset, 'endcomment tag not found')
         end
 
-        source.next('{%')
-        source.next('-')
+        source.next_string?('{%')
+        source.next_string?('-')
         unless source.expect_name == :endcomment
           source.error(source.offset, 'Internal error')
         end

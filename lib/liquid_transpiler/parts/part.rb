@@ -130,19 +130,19 @@ module LiquidTranspiler
         source.skip_space
         offset = source.offset
 
-        if source.next('{{')
-          lstrip = source.next('-')
-          expr, term = Expression.parse(source)
+        if source.next_string?('{{')
+          lstrip = source.next_string?('-')
+          expr, term = source.expect_expression
 
           source.skip_space
-          rstrip = source.next('-')
-          if term.nil? && source.next('}}')
+          rstrip = source.next_string?('-')
+          if term.nil? && source.next_string?('}}')
             [lstrip, Parts::Embedded.new(source, offset, expr), rstrip]
           else
             error(offset, 'Expecting }}')
           end
-        elsif source.next('{%')
-          lstrip = source.next('-')
+        elsif source.next_string?('{%')
+          lstrip = source.next_string?('-')
           token  = source.get
 
           if token.nil?
@@ -155,8 +155,8 @@ module LiquidTranspiler
             source.skip_space
           end
 
-          rstrip = source.next('-')
-          if source.next('%}')
+          rstrip = source.next_string?('-')
+          if source.next_string?('%}')
             [lstrip, part, rstrip]
           else
             source.error(offset, 'Expecting %}')

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module LiquidTranspiler
-  class Expression
+  module ParserExpressions
     OPERATORS = {
       :and      => ['And',                 true],
       :contains => ['Contains',            false],
@@ -15,25 +15,25 @@ module LiquidTranspiler
       '<='      => ['LessThanOrEquals',    false]
     }.freeze
 
-    def self.parse(source)
-      formula, term = parse1(source)
+    def expect_expression
+      formula, term = read_expression1
 
       while term == '|'
-        filter, args = source.expect_name, []
-        if clazz = source.filter_class(filter)
+        filter, args = expect_name, []
+        if clazz = filter_class(filter)
           formula = clazz.new(formula)
-          term    = formula.setup(source)
+          term    = formula.setup(self)
         else
-          source.skip_space
-          if source.next(':')
-            param, term = parse1(source)
+          skip_space
+          if next_string?(':')
+            param, term = read_expression1
             args << param
             while term == ','
-              param, term = parse1(source)
+              param, term = read_expression1
               args << param
             end
           else
-            term = source.get
+            term = get
           end
           formula = Operators::Filter.new(filter, formula, args)
         end
@@ -42,53 +42,46 @@ module LiquidTranspiler
       [formula, term]
     end
 
-    def self.parse_parameter(offset, source)
-      if source.get != ':'
-        source.error(offset, 'Expected :')
-      end
-      parse(source)
-    end
-
-    def self.parse1(source)
-      expr, term = parse2(source)
+    def read_expression1
+      expr, term = read_expression2
 
       if term == ':'
         unless expr.is_a?(Operators::Leaf)
-          source.error(source.offset, 'Unexpected :')
+          error(offset, 'Unexpected :')
         end
 
         if /^[a-z]/i =~ expr.token
-          expr2, term = parse2(source)
+          expr2, term = read_expression2
           [Operators::Parameter.new(expr.token, expr2), term]
         else
-          source.error(source.offset, 'Unexpected :')
+          error(offset, 'Unexpected :')
         end
       else
         [expr, term]
       end
     end
 
-    def self.parse2(source)
-      elements = [parse3(source)]
+    def read_expression2
+      elements = [read_expression3]
       term     = nil
 
-      until (token = source.get).nil?
+      until (token = get).nil?
         case token
         when '['
-          formula, term1 = parse1(source)
+          formula, term1 = read_expression1
           unless term1 == ']'
-            source.error(source.offset, 'Expected ]')
+            error(offset, 'Expected ]')
           end
           elements[-1] = Operators::Array.new(elements[-1], formula)
         when '.'
-          elements[-1] = Operators::Dereference.new(elements[-1], source.expect_name)
+          elements[-1] = Operators::Dereference.new(elements[-1], expect_name)
         when '|'
           term = token
           break
         else
           if OPERATORS[token]
             elements << token
-            elements << parse3(source)
+            elements << read_expression3
           else
             term = token
             break
@@ -100,25 +93,25 @@ module LiquidTranspiler
     end
 
     # rubocop:disable Style/CaseLikeIf
-    def self.parse3(source)
-      token = source.get
+    def read_expression3
+      token = get
 
       if token == '('
-        from, type = parse1(source)
+        from, type = read_expression1
 
         unless ['..', '...'].include? type
-          source.error(@offset, 'Expecting .. or ...')
+          error(@offset, 'Expecting .. or ...')
         end
 
-        to, term = parse1(source)
+        to, term = read_expression1
         unless term == ')'
-          source.error(@offset, 'Expecting )')
+          error(@offset, 'Expecting )')
         end
 
         Operators::Range.new(from, to, type)
 
       elsif token == "\n"
-        source.error(source.offset, 'Bad syntax')
+        error(offset, 'Bad syntax')
 
       elsif token.is_a?(String)
         Operators::Leaf.new(token)
@@ -133,12 +126,19 @@ module LiquidTranspiler
         Operators::Leaf.new(token)
 
       else
-        source.error(source.offset, 'Bad syntax')
+        error(offset, 'Bad syntax')
       end
     end
     # rubocop:enable Style/CaseLikeIf
 
-    def self.to_formula(elements)
+    def read_parameter(offset)
+      if get != ':'
+        error(offset, 'Expected :')
+      end
+      expect_expression
+    end
+
+    def to_formula(elements)
       i = 1
       while i + 1 < elements.size
         if (op = OPERATORS[elements[i]]) && (!op[1])

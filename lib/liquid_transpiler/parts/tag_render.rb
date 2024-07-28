@@ -100,9 +100,9 @@ module LiquidTranspiler
           if term1 == ':'
             name = source.expect_name
             source.get
-            @parameters[name], term = Expression.parse(source)
+            @parameters[name], term = source.expect_expression
           else
-            expr, term = Expression.parse(source)
+            expr, term = source.expect_expression
             if term == :as
               name = source.expect_name
               @parameters[name] = expr
@@ -117,7 +117,7 @@ module LiquidTranspiler
       end
 
       def setup_with(source)
-        expr, term = Expression.parse(source)
+        expr, term = source.expect_expression
         if term == :as
           name = source.expect_name
           term = source.get

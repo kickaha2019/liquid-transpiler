@@ -15,16 +15,16 @@ module LiquidTranspiler
           source.error(@offset, 'Expecting in')
         end
 
-        @expression, term = Expression.parse(source)
+        @expression, term = source.expect_expression
 
         loop do
           case term
           when :cols
-            @columns, term = Expression.parse_parameter(@offset, source)
+            @columns, term = source.read_parameter @offset
           when :limit
-            @limit, term = Expression.parse_parameter(@offset, source)
+            @limit, term = source.read_parameter @offset
           when :offset
-            @start, term = Expression.parse_parameter(@offset, source)
+            @start, term = source.read_parameter @offset
           else
             break
           end

@@ -13,11 +13,11 @@ class FilterBase
 
   def setup(source)
     source.skip_space
-    if source.next(':')
-      param, term = LiquidTranspiler::Expression.parse1(source)
+    if source.next_string?(':')
+      param, term = source.read_expression1
       @arguments << param
       while term == ','
-        param, term = LiquidTranspiler::Expression.parse1(source)
+        param, term = source.read_expression1
         @arguments << param
       end
     else

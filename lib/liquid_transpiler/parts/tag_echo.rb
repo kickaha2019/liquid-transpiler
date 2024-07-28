@@ -5,7 +5,7 @@ module LiquidTranspiler
     class TagEcho < Part
       def initialize(source, offset, parent)
         super
-        @expression, term = Expression.parse(source)
+        @expression, term = source.expect_expression
         source.unget term
       end
 
