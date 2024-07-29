@@ -5,11 +5,9 @@ require_relative 'filter_base'
 module LiquidTranspiler
   module Extensions
     class BridgetownDateToBase < FilterBase
-      TIMEZONE = Operators::Dereference.new(Operators::Leaf.new(:bridgetown), 'timezone').freeze
-
       def find_arguments(names)
         super
-        TIMEZONE.find_arguments(names)
+        @timezone.find_arguments(names)
       end
 
       def generate(context, filter)
@@ -18,12 +16,17 @@ module LiquidTranspiler
         end
         [filter,
          '(',
-         TIMEZONE.generate(context),
+         @timezone.generate(context),
          ',',
          @expression.generate(context),
          ',',
          arguments.join(','),
          ')'].join ''
+      end
+
+      def setup(source)
+        @timezone = source.read_object_from_string('bridgetown.timezone')
+        super
       end
     end
   end

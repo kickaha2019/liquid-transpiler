@@ -35,10 +35,8 @@ module LiquidTranspiler
 
         source.skip_space
         source.error(source.offset, 'Expecting ,') unless source.next_string?(',')
-        nested = source.expect_nested_source
 
-        @clause, term = nested.read_expression1
-        source.error(source.offset, 'Bad where clause') unless term.nil?
+        @clause = source.read_object_from_string(source.expect_literal)
         source.get
       end
     end

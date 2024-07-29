@@ -131,6 +131,12 @@ module LiquidTranspiler
     end
     # rubocop:enable Style/CaseLikeIf
 
+    def read_object_from_string(text)
+      expression, term = nest(text).expect_expression
+      error(@offset, "Unexpected: #{term}") if term
+      expression
+    end
+
     def read_parameter(offset)
       if get != ':'
         error(offset, 'Expected :')

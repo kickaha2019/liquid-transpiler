@@ -13,6 +13,17 @@ module LiquidTranspiler
 
     RESERVED_WORDS = [:true, :false, :empty].freeze
 
+    class NestedSource < Source
+      def initialize(parent, offset, text)
+        super(parent,nil,text)
+        @parent_offset = offset
+      end
+
+      def error(offset, msg)
+        @transpiler.error(@parent_offset, msg)
+      end
+    end
+
     def initialize(transpiler, path, text)
       @transpiler  = transpiler
       @path        = path
@@ -61,11 +72,6 @@ module LiquidTranspiler
         end
         token
       end
-    end
-
-    def expect_nested_source
-      text = expect_literal
-      Source.new(@transpiler, @path, text)
     end
 
     def filter_class(name)
@@ -142,6 +148,10 @@ module LiquidTranspiler
 
     def line_number
       @line
+    end
+
+    def nest(text)
+      NestedSource.new(self, @offset, text)
     end
 
     def next_string?(expected)
