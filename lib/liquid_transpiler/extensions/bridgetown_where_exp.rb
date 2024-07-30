@@ -5,6 +5,18 @@ require_relative 'filter_base'
 module LiquidTranspiler
   module Extensions
     class BridgetownWhereExp < FilterBase
+      def initialize(expression, parser)
+        @expression = expression
+        parser.skip_space
+        parser.error(parser.offset, 'Expecting :') unless parser.next_string?(':')
+        @variable = parser.expect_literal.to_sym
+
+        parser.skip_space
+        parser.error(parser.offset, 'Expecting ,') unless parser.next_string?(',')
+
+        @clause = parser.read_object_from_string(parser.expect_literal)
+      end
+
       def find_arguments(names)
         @expression.find_arguments(names)
         names = names.spawn
@@ -26,18 +38,6 @@ module LiquidTranspiler
         context.indent(-2).write 'end'
         context.endfor(@variable)
         temporary
-      end
-
-      def setup(source)
-        source.skip_space
-        source.error(source.offset, 'Expecting :') unless source.next_string?(':')
-        @variable = source.expect_literal.to_sym
-
-        source.skip_space
-        source.error(source.offset, 'Expecting ,') unless source.next_string?(',')
-
-        @clause = source.read_object_from_string(source.expect_literal)
-        source.get
       end
     end
   end

@@ -5,6 +5,11 @@ require_relative 'filter_base'
 module LiquidTranspiler
   module Extensions
     class BridgetownDateToBase < FilterBase
+      def initialize(expression, parser)
+        super
+        @timezone = parser.read_object_from_string('bridgetown.timezone')
+      end
+
       def find_arguments(names)
         super
         @timezone.find_arguments(names)
@@ -22,11 +27,6 @@ module LiquidTranspiler
          ',',
          arguments.join(','),
          ')'].join ''
-      end
-
-      def setup(source)
-        @timezone = source.read_object_from_string('bridgetown.timezone')
-        super
       end
     end
   end

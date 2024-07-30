@@ -5,6 +5,11 @@ require_relative 'bridgetown_relative_url'
 module LiquidTranspiler
   module Extensions
     class BridgetownAbsoluteURL < BridgetownRelativeURL
+      def initialize(expression, parser)
+        super
+        @url = parser.read_object_from_string('bridgetown.url')
+      end
+
       def find_arguments(names)
         super
         @url.find_arguments(names)
@@ -12,11 +17,6 @@ module LiquidTranspiler
 
       def generate(context)
         "filter_prepend(#{super(context)},#{@url.generate(context)})"
-      end
-
-      def setup(source)
-        @url = source.read_object_from_string('bridgetown.url')
-        super
       end
     end
   end

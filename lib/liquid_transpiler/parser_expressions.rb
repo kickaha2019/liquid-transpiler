@@ -21,8 +21,8 @@ module LiquidTranspiler
       while term == '|'
         filter, args = expect_name, []
         if clazz = filter_class(filter)
-          formula = clazz.new(formula)
-          term    = formula.setup(self)
+          formula = clazz.new(formula,self)
+          term    = get
         else
           skip_space
           if next_string?(':')
